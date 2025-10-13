@@ -24,6 +24,10 @@ import java.util.List;
 @EqualsAndHashCode(exclude = {"groups"})
 @ToString(exclude = {"groups"})
 @Table(name = "_user")
+@NamedEntityGraph(
+        name = "Users.withGroups",
+        attributeNodes = @NamedAttributeNode("groups")
+)
 public class User implements UserDetails {
 
   @Id

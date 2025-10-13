@@ -14,5 +14,6 @@ public interface ICompanyService {
     CompletableFuture<List<CompanyDTO>> getCompaniesByBuildingId(Long buildingId);
     CompletableFuture<Page<CompanyDTO>> getCompaniesByServiceType(ServiceType serviceType, Integer page, Integer size, String sortBy, String direction);
     CompletableFuture<List<CompanyDTO>> getCompaniesByBuildingIdAndServiceType(Long buildingId, ServiceType serviceType);
+    void removeCompany(Long companyId);
 
 }

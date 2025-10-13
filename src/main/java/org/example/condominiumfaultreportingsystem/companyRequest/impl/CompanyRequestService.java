@@ -13,14 +13,14 @@ import org.example.condominiumfaultreportingsystem.companyRequest.CompanyRequest
 import org.example.condominiumfaultreportingsystem.companyRequest.CompanyRequestRepository;
 import org.example.condominiumfaultreportingsystem.companyRequest.CompanyRequestStatus;
 import org.example.condominiumfaultreportingsystem.companyRequest.ICompanyRequestService;
-import org.example.condominiumfaultreportingsystem.event.companyEvents.CompanyRequestAcceptedEvent;
-import org.example.condominiumfaultreportingsystem.event.companyEvents.CompanyRequestRejectedEvent;
+import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyRequestAcceptedEvent;
+import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyRequestRejectedEvent;
 import org.example.condominiumfaultreportingsystem.exception.*;
 import org.example.condominiumfaultreportingsystem.group.Group;
 import org.example.condominiumfaultreportingsystem.group.GroupRepository;
 import org.example.condominiumfaultreportingsystem.group.impl.GroupService;
-import org.example.condominiumfaultreportingsystem.notification.CompanyNotification;
-import org.example.condominiumfaultreportingsystem.notification.NotificationType;
+import org.example.condominiumfaultreportingsystem.notificationHandler.notifications.CompanyNotification;
+import org.example.condominiumfaultreportingsystem.notificationHandler.NotificationType;
 import org.example.condominiumfaultreportingsystem.security.user.Role;
 import org.example.condominiumfaultreportingsystem.security.user.User;
 import org.example.condominiumfaultreportingsystem.security.user.UserRepository;
@@ -195,8 +195,6 @@ public class CompanyRequestService implements ICompanyRequestService {
         building.getCompanies().add(newCompany);
         buildingRepository.save(building);
 
-        //request send return !!
-
         companyRequest.setStatus(CompanyRequestStatus.ACCEPTED);
         companyRequestRepository.save(companyRequest);
 
@@ -249,6 +247,11 @@ public class CompanyRequestService implements ICompanyRequestService {
         return CompanyRequestInfoDTO.builder()
                 .requestId(companyRequest.getId())
                 .requesterId(companyRequest.getRequesterId())
+                .name(companyRequest.getCompanyName())
+                .email(companyRequest.getCompanyEmail())
+                .phoneNumber(companyRequest.getCompanyPhoneNumber())
+                .address(companyRequest.getCompanyAddress())
+                .serviceType(companyRequest.getServiceType())
                 .status(companyRequest.getStatus())
                 .createdAt(companyRequest.getCreatedAt())
                 .build();

@@ -3,6 +3,10 @@ package org.example.condominiumfaultreportingsystem.group.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.condominiumfaultreportingsystem.DTO.GroupDTO;
+import org.example.condominiumfaultreportingsystem.DTO.GroupTestDTO;
+import org.example.condominiumfaultreportingsystem.company.Company;
+import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyRemovedEvent;
+import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyRequestAcceptedEvent;
 import org.example.condominiumfaultreportingsystem.exception.GroupNotFoundException;
 import org.example.condominiumfaultreportingsystem.exception.UserNotFoundException;
 import org.example.condominiumfaultreportingsystem.group.Group;
@@ -11,12 +15,14 @@ import org.example.condominiumfaultreportingsystem.group.IGroupService;
 import org.example.condominiumfaultreportingsystem.security.user.User;
 import org.example.condominiumfaultreportingsystem.security.user.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,8 +33,22 @@ public class GroupService implements IGroupService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
 
+    private final ApplicationEventPublisher eventPublisher;
+
     @Value("${admin.group.name}")
     private String adminGroupName;
+
+    public GroupTestDTO getGroupById(Long groupId){
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(GroupNotFoundException::new);
+
+        return GroupTestDTO.builder()
+                .groupId(groupId)
+                .groupName(group.getGroupName())
+                .user(group.getUsers().getFirst())
+                .build();
+
+    }
 
     @Transactional
     public void addAdminToGroup(Long userId) {
@@ -82,8 +102,10 @@ public class GroupService implements IGroupService {
         user.getGroups().add(newGroup);
 
         try{
+
             groupRepository.save(newGroup);
             return mapToDto(newGroup);
+
         }catch (DataIntegrityViolationException ex){
 
             Group group = groupRepository.findWithUsersByGroupName(uniqueKey)
@@ -98,6 +120,32 @@ public class GroupService implements IGroupService {
 
         }
 
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void removeUserFromGroup(Long userId, Company companyToRemove){
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotFoundException(userId));
+
+        Optional<List<Group>> userGroupsOpt = groupRepository.findGroupsByUsersId(userId);
+
+        if (userGroupsOpt.isEmpty()){
+            return;
+        }
+
+        List<Group> userGroups = userGroupsOpt.get();
+
+        for (Group group : userGroups) {
+            group.getUsers().remove(user);
+            user.getGroups().remove(group);
+        }
+
+        groupRepository.saveAll(userGroups);
+
+        eventPublisher.publishEvent(
+                new CompanyRemovedEvent(companyToRemove,userId,userGroups)
+        );
 
     }
 

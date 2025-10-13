@@ -143,6 +143,11 @@ public class UserService {
         changeUserRole(currentUserId, userToUpdateId, Role.COMPANY, Role.ADMIN);
     }
 
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void demoteCompanyToUser(Long currentUserId, Long userToUpdateId){
+        changeUserRole(currentUserId, userToUpdateId, Role.USER, Role.ADMIN);
+    }
+
     private void changeUserRole(Long currentUserId, Long userToUpdateId, Role newRole, Role requiredRole){
 
         User currentUser = userRepository.findById(currentUserId)
@@ -159,14 +164,14 @@ public class UserService {
             throw new RoleValidationException("Can not change your role");
         }
 
-        validateRoles(userToUpdate.getRole(), newRole);
+        validateRoles(currentUser.getRole(), userToUpdate.getRole(), newRole);
 
         userToUpdate.setRole(newRole);
         userRepository.save(userToUpdate);
 
     }
 
-    private void validateRoles(Role currentRole, Role newRole){
+    private void validateRoles(Role actorRole, Role currentRole, Role newRole){
 
         if (newRole == Role.ADMIN) {
             throw new RoleValidationException("Admin role can only be assigned manually");
@@ -176,7 +181,7 @@ public class UserService {
             throw new RoleValidationException("Cannot demote admin users");
         }
 
-        if (currentRole == Role.COMPANY && newRole == Role.USER) {
+        if (actorRole != Role.ADMIN && currentRole == Role.COMPANY && newRole == Role.USER) {
             throw new RoleValidationException("Company users cannot revert to regular users");
         }
 

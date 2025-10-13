@@ -1,4 +1,4 @@
-package org.example.condominiumfaultreportingsystem.event.companyEvents;
+package org.example.condominiumfaultreportingsystem.eventHandler.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

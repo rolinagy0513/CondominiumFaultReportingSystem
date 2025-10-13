@@ -65,4 +65,11 @@ public class CompanyController {
         return companyService.getCompaniesByBuildingIdAndServiceType(buildingId, serviceType);
     }
 
+    @PutMapping("admin/company/removeCompany/{companyId}")
+    public void removeCompany(
+            @PathVariable Long companyId
+    ){
+        companyService.removeCompany(companyId);
+    }
+
 }

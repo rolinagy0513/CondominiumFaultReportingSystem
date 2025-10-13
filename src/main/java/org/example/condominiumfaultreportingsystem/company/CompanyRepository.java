@@ -19,6 +19,10 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     @Query("SELECT c FROM Company c WHERE c.user.id = :userId")
     Optional<Company> findCompanyWithUser(@Param("userId") Long userId);
 
+    @EntityGraph(attributePaths = "user")
+    @Query("SELECT c FROM Company c WHERE c.id = :companyId")
+    Optional<Company> findUserWithCompany(@Param("companyId") Long companyId);
+
     @Query("SELECT DISTINCT c FROM Company c JOIN c.buildings b WHERE b.id = :buildingId")
     Optional<List<Company>> getCompaniesByBuildingId(@Param("buildingId") Long buildingId);
 
@@ -27,5 +31,7 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
 
     @Query("SELECT DISTINCT c FROM Company c JOIN c.buildings b WHERE b.id = :buildingId AND c.serviceType = :serviceType")
     Optional<List<Company>> getCompaniesByBuildingIdAndServiceType(@Param("buildingId") Long buildingId, @Param("serviceType") ServiceType serviceType);
+
+
 
 }
