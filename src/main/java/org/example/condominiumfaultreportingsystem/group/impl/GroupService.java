@@ -1,0 +1,128 @@
+package org.example.condominiumfaultreportingsystem.group.impl;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.example.condominiumfaultreportingsystem.DTO.GroupDTO;
+import org.example.condominiumfaultreportingsystem.exception.GroupNotFoundException;
+import org.example.condominiumfaultreportingsystem.exception.UserNotFoundException;
+import org.example.condominiumfaultreportingsystem.group.Group;
+import org.example.condominiumfaultreportingsystem.group.GroupRepository;
+import org.example.condominiumfaultreportingsystem.group.IGroupService;
+import org.example.condominiumfaultreportingsystem.security.user.User;
+import org.example.condominiumfaultreportingsystem.security.user.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class GroupService implements IGroupService {
+
+    private final GroupRepository groupRepository;
+    private final UserRepository userRepository;
+
+    @Value("${admin.group.name}")
+    private String adminGroupName;
+
+    @Transactional
+    public void addAdminToGroup(Long userId) {
+
+        Group group = groupRepository.findWithUsersByGroupName(adminGroupName)
+                .orElseThrow(GroupNotFoundException::new);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        if (group.getUsers().contains(user)) {
+            return;
+        }
+
+        group.getUsers().add(user);
+        user.getGroups().add(group);
+
+        groupRepository.save(group);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public GroupDTO addUserToGroup(Integer buildingNumber, String buildingAddress, Long userId){
+
+        String uniqueKey = createGroupIdentifier(buildingNumber,buildingAddress);
+
+        Optional<Group> existingGroupOpt = groupRepository.findWithUsersByGroupName(uniqueKey);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotFoundException(userId));
+
+        if (existingGroupOpt.isPresent()){
+
+            Group existingGroup = existingGroupOpt.get();
+
+            if (existingGroup.getUsers().contains(user)) {
+                return mapToDto(existingGroup);
+            }
+
+            existingGroup.getUsers().add(user);
+            user.getGroups().add(existingGroup);
+
+            groupRepository.save(existingGroup);
+
+            return mapToDto(existingGroup);
+
+        }
+
+        Group newGroup = createGroup(uniqueKey);
+
+        newGroup.getUsers().add(user);
+        user.getGroups().add(newGroup);
+
+        try{
+            groupRepository.save(newGroup);
+            return mapToDto(newGroup);
+        }catch (DataIntegrityViolationException ex){
+
+            Group group = groupRepository.findWithUsersByGroupName(uniqueKey)
+                    .orElseThrow(() -> new IllegalStateException("Group should exist after conflict"));
+            if (!group.getUsers().contains(user)) {
+                group.getUsers().add(user);
+                user.getGroups().add(group);
+                groupRepository.save(group);
+            }
+
+            return mapToDto(group);
+
+        }
+
+
+    }
+
+    private Group createGroup(String uniqueKey){
+        return Group.builder()
+                .groupName(uniqueKey)
+                .users(new ArrayList<>())
+                .build();
+    }
+
+    private String createGroupIdentifier(Integer buildingNumber, String buildingAddress){
+
+        String sanitized = buildingAddress.trim()
+                .replaceAll("\\s+", "_")
+                .replaceAll("[^a-zA-Z0-9_-]", "");
+
+        return sanitized + "_" + buildingNumber;
+    }
+
+    private GroupDTO mapToDto(Group group){
+        return GroupDTO.builder()
+                .groupId(group.getId())
+                .groupName(group.getGroupName())
+                .build();
+    }
+
+
+}

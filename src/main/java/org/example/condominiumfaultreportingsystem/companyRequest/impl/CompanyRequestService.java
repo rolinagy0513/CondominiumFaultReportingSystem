@@ -1,0 +1,259 @@
+package org.example.condominiumfaultreportingsystem.companyRequest.impl;
+
+import lombok.RequiredArgsConstructor;
+import org.example.condominiumfaultreportingsystem.DTO.*;
+import org.example.condominiumfaultreportingsystem.apartmentRequest.RequestResponseStatus;
+import org.example.condominiumfaultreportingsystem.building.Building;
+import org.example.condominiumfaultreportingsystem.building.BuildingRepository;
+import org.example.condominiumfaultreportingsystem.cache.CacheService;
+import org.example.condominiumfaultreportingsystem.company.Company;
+import org.example.condominiumfaultreportingsystem.company.CompanyRepository;
+import org.example.condominiumfaultreportingsystem.company.ServiceType;
+import org.example.condominiumfaultreportingsystem.companyRequest.CompanyRequest;
+import org.example.condominiumfaultreportingsystem.companyRequest.CompanyRequestRepository;
+import org.example.condominiumfaultreportingsystem.companyRequest.CompanyRequestStatus;
+import org.example.condominiumfaultreportingsystem.companyRequest.ICompanyRequestService;
+import org.example.condominiumfaultreportingsystem.event.companyEvents.CompanyRequestAcceptedEvent;
+import org.example.condominiumfaultreportingsystem.event.companyEvents.CompanyRequestRejectedEvent;
+import org.example.condominiumfaultreportingsystem.exception.*;
+import org.example.condominiumfaultreportingsystem.group.Group;
+import org.example.condominiumfaultreportingsystem.group.GroupRepository;
+import org.example.condominiumfaultreportingsystem.group.impl.GroupService;
+import org.example.condominiumfaultreportingsystem.notification.CompanyNotification;
+import org.example.condominiumfaultreportingsystem.notification.NotificationType;
+import org.example.condominiumfaultreportingsystem.security.user.Role;
+import org.example.condominiumfaultreportingsystem.security.user.User;
+import org.example.condominiumfaultreportingsystem.security.user.UserRepository;
+import org.example.condominiumfaultreportingsystem.security.user.UserService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
+public class CompanyRequestService implements ICompanyRequestService {
+
+    private final CompanyRequestRepository companyRequestRepository;
+    private final CompanyRepository companyRepository;
+    private final BuildingRepository buildingRepository;
+    private final GroupRepository groupRepository;
+    private final UserRepository userRepository;
+
+    private final UserService userService;
+    private final GroupService groupService;
+    private final CacheService cacheService;
+
+    private final SimpMessagingTemplate messagingTemplate;
+    private final ApplicationEventPublisher eventPublisher;
+
+    @Value("${admin.group.name}")
+    private String adminGroupName;
+
+    @Transactional
+    public CompanyRequestInfoDTO sendCompanyRequest(CompanyRequestDTO companyRequestDTO){
+
+        try{
+
+            UserDTO currentUser = userService.getCurrentUser();
+
+            validateUserCanCreateRequest(currentUser.getId());
+
+            CompanyRequest newRequest = CompanyRequest.builder()
+                    .requesterId(currentUser.getId())
+                    .requesterName(currentUser.getUserName())
+                    .buildingId(companyRequestDTO.getBuildingId())
+                    .buildingNumber(companyRequestDTO.getBuildingNumber())
+                    .buildingAddress(companyRequestDTO.getBuildingAddress())
+                    .companyName(companyRequestDTO.getCompanyName())
+                    .companyEmail(companyRequestDTO.getCompanyEmail())
+                    .companyPhoneNumber(companyRequestDTO.getCompanyPhoneNumber())
+                    .companyAddress(companyRequestDTO.getCompanyAddress())
+                    .serviceType(companyRequestDTO.getServiceType())
+                    .status(CompanyRequestStatus.PENDING)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+
+            companyRequestRepository.save(newRequest);
+
+
+            Optional<Group> adminGroupOpt = groupRepository.findByGroupName(adminGroupName);
+
+            if (adminGroupOpt.isEmpty()){
+                throw new GroupNotFoundException();
+            }
+
+            Group adminGroup = adminGroupOpt.get();
+            Long adminGroupId = adminGroup.getId();
+
+            CompanyNotification companyNotification = CompanyNotification.builder()
+                    .senderName(currentUser.getUserName())
+                    .companyName(companyRequestDTO.getCompanyName())
+                    .companyEmail(companyRequestDTO.getCompanyEmail())
+                    .serviceType(companyRequestDTO.getServiceType())
+                    .type(NotificationType.REQUEST)
+                    .message("New company request came!")
+                    .build();
+
+            messagingTemplate.convertAndSend("/topic/group/" + adminGroupId, companyNotification);
+
+            return mapToDto(newRequest);
+
+        }catch (DataIntegrityViolationException ex){
+
+            throw new ExistingPendingRequestException();
+
+        }
+
+    }
+
+    @Transactional
+    public void sendCompanyRequestResponse(RequestResponseDTO responseDTO){
+
+        try{
+
+            UserWithRoleDTO currentAdmin = userService.getCurrentUserWithRole();
+
+            if (currentAdmin.getRole() != Role.ADMIN){
+                throw new InvalidRoleException();
+            }
+
+            CompanyRequest request = companyRequestRepository.findById(responseDTO.getRequestId())
+                    .orElseThrow(()-> new RequestNotFoundException(responseDTO.getRequestId()));
+
+            if (request.getStatus() != CompanyRequestStatus.PENDING){
+                throw new InvalidRequestException(request.getStatus());
+            }
+
+            if (responseDTO.getStatus() == RequestResponseStatus.ACCEPTED){
+                acceptRequest(request, currentAdmin.getId());
+
+            } else if (responseDTO.getStatus() == RequestResponseStatus.REJECTED) {
+                rejectRequest(request);
+            }
+            else {
+                throw new RequestStatusNotValidException("The companyRequest needs to have a status");
+            }
+
+        }catch (ObjectOptimisticLockingFailureException ex){
+
+            throw new MultipleModificationException();
+
+        }
+
+    }
+
+    public List<CompanyRequestInfoDTO> getAllPendingRequests(){
+
+        List<CompanyRequest> companyRequests = companyRequestRepository.findByStatus(CompanyRequestStatus.PENDING);
+
+        return companyRequests.stream().map(companyRequest ->
+                CompanyRequestInfoDTO.builder()
+                        .requestId(companyRequest.getId())
+                        .requesterId(companyRequest.getRequesterId())
+                        .buildingId(companyRequest.getBuildingId())
+                        .name(companyRequest.getCompanyName())
+                        .email(companyRequest.getCompanyEmail())
+                        .phoneNumber(companyRequest.getCompanyPhoneNumber())
+                        .address(companyRequest.getCompanyAddress())
+                        .status(companyRequest.getStatus())
+                        .createdAt(companyRequest.getCreatedAt())
+                        .build())
+                .toList();
+    }
+
+    private void acceptRequest(CompanyRequest companyRequest, Long currentUserId){
+
+        Building building = buildingRepository.findById(companyRequest.getBuildingId())
+                .orElseThrow(()-> new BuildingIsNotFoundException(companyRequest.getBuildingId()));
+
+        User user = userRepository.findById(companyRequest.getRequesterId())
+                .orElseThrow(()-> new UserNotFoundException(companyRequest.getRequesterId()));
+
+        userService.promoteUserToCompany(currentUserId, user.getId());
+
+        Company newCompany = Company.builder()
+                .name(companyRequest.getCompanyName())
+                .email(companyRequest.getCompanyEmail())
+                .phoneNumber(companyRequest.getCompanyPhoneNumber())
+                .address(companyRequest.getCompanyAddress())
+                .serviceType(companyRequest.getServiceType())
+                .buildings(new ArrayList<>())
+                .user(user)
+                .build();
+
+        companyRepository.save(newCompany);
+
+        building.getCompanies().add(newCompany);
+        buildingRepository.save(building);
+
+        //request send return !!
+
+        companyRequest.setStatus(CompanyRequestStatus.ACCEPTED);
+        companyRequestRepository.save(companyRequest);
+
+        Long buildingId = building.getId();
+        ServiceType serviceType = newCompany.getServiceType();
+
+        cacheService.evictCompanyByBuildingCache(buildingId);
+        cacheService.evictCompanyByServiceTypeCache();
+        cacheService.evictCompanyByBuildingIdAndServiceTypeCache(buildingId, serviceType);
+        cacheService.evictAllCompaniesCache();
+
+        GroupDTO companyGroup = groupService.addUserToGroup(companyRequest.getBuildingNumber(), companyRequest.getBuildingAddress(), user.getId());
+
+        eventPublisher.publishEvent(
+                new CompanyRequestAcceptedEvent(companyRequest, companyGroup)
+        );
+
+    }
+
+    private void rejectRequest(CompanyRequest companyRequest){
+
+        companyRequest.setStatus(CompanyRequestStatus.REJECTED);
+        companyRequestRepository.save(companyRequest);
+
+        eventPublisher.publishEvent(
+                new CompanyRequestRejectedEvent(companyRequest)
+        );
+
+
+    }
+
+    private void validateUserCanCreateRequest(Long userId) {
+
+        Optional<Company> existingCompanyForUser = companyRepository.findCompanyWithUser(userId);
+
+        if (existingCompanyForUser.isPresent()) {
+            throw new UserAlreadyHasCompanyException(userId);
+        }
+
+        Optional<CompanyRequest> existingPendingRequest =
+                companyRequestRepository.existsForUserWithStatus(userId, CompanyRequestStatus.PENDING);
+
+        if (existingPendingRequest.isPresent()) {
+            throw new ExistingPendingRequestException(userId);
+        }
+    }
+
+    private CompanyRequestInfoDTO mapToDto(CompanyRequest companyRequest){
+
+        return CompanyRequestInfoDTO.builder()
+                .requestId(companyRequest.getId())
+                .requesterId(companyRequest.getRequesterId())
+                .status(companyRequest.getStatus())
+                .createdAt(companyRequest.getCreatedAt())
+                .build();
+
+    }
+
+
+}

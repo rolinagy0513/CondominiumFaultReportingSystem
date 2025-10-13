@@ -1,0 +1,13 @@
+package org.example.condominiumfaultreportingsystem.companyRequest;
+
+import org.example.condominiumfaultreportingsystem.DTO.CompanyRequestDTO;
+import org.example.condominiumfaultreportingsystem.DTO.CompanyRequestInfoDTO;
+import org.example.condominiumfaultreportingsystem.DTO.RequestResponseDTO;
+
+import java.util.List;
+
+public interface ICompanyRequestService {
+    CompanyRequestInfoDTO sendCompanyRequest(CompanyRequestDTO companyRequestDTO);
+    void sendCompanyRequestResponse(RequestResponseDTO responseDTO);
+    List<CompanyRequestInfoDTO> getAllPendingRequests();
+}
