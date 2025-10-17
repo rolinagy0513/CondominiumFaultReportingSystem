@@ -19,14 +19,14 @@ public class ApartmentRequestController {
 
     private final ApartmentRequestService apartmentRequestService;
 
-    @PostMapping("/apartmentRequest/send")
+    @MessageMapping("/apartmentRequest/send")
     public ApartmentRequestInfoDTO sendApartmentRequest(
             @RequestBody ApartmentRequestDTO apartmentRequestDTO
     ){
         return apartmentRequestService.sendApartmentRequest(apartmentRequestDTO);
     }
 
-    @PutMapping("/admin/apartmentRequest/response")
+    @MessageMapping("/admin/apartmentRequest/response")
     public void sendApartmentRequestResponse(
         @RequestBody RequestResponseDTO responseDTO
 

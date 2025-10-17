@@ -2,6 +2,7 @@ package org.example.condominiumfaultreportingsystem.security.user;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.condominiumfaultreportingsystem.apartment.Apartment;
 import org.example.condominiumfaultreportingsystem.company.Company;
 import org.example.condominiumfaultreportingsystem.group.Group;
 import org.example.condominiumfaultreportingsystem.security.token.Token;
@@ -54,6 +55,9 @@ public class User implements UserDetails {
 
   @OneToMany(mappedBy = "user")
   private List<Token> tokens;
+
+  @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
+  private List<Apartment> ownedApartments = new ArrayList<>();
 
   @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
   private List<Group> groups = new ArrayList<>();

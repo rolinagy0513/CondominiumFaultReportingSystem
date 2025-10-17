@@ -6,15 +6,18 @@ import org.example.condominiumfaultreportingsystem.apartment.Apartment;
 import org.example.condominiumfaultreportingsystem.apartment.ApartmentRepository;
 import org.example.condominiumfaultreportingsystem.apartment.ApartmentStatus;
 import org.example.condominiumfaultreportingsystem.apartmentRequest.*;
+import org.example.condominiumfaultreportingsystem.cache.CacheService;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.ApartmentRequestAcceptedEvent;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.ApartmentRequestRejectedEvent;
 import org.example.condominiumfaultreportingsystem.exception.*;
 import org.example.condominiumfaultreportingsystem.group.Group;
 import org.example.condominiumfaultreportingsystem.group.GroupRepository;
 import org.example.condominiumfaultreportingsystem.group.impl.GroupService;
-import org.example.condominiumfaultreportingsystem.notificationHandler.notifications.ApartmentNotification;
 import org.example.condominiumfaultreportingsystem.notificationHandler.NotificationType;
+import org.example.condominiumfaultreportingsystem.notificationHandler.notifications.ApartmentNotification;
 import org.example.condominiumfaultreportingsystem.security.user.Role;
+import org.example.condominiumfaultreportingsystem.security.user.User;
+import org.example.condominiumfaultreportingsystem.security.user.UserRepository;
 import org.example.condominiumfaultreportingsystem.security.user.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
@@ -35,12 +38,15 @@ public class ApartmentRequestService implements IApartmentRequestService {
     private final ApartmentRepository apartmentRepository;
     private final ApartmentRequestRepository apartmentRequestRepository;
     private final GroupRepository groupRepository;
+    private final UserRepository userRepository;
 
     private final UserService userService;
     private final GroupService groupService;
+    private final CacheService cacheService;
 
     private final SimpMessagingTemplate messagingTemplate;
     private final ApplicationEventPublisher eventPublisher;
+
 
     @Value("${admin.group.name}")
     private String adminGroupName;
@@ -136,6 +142,9 @@ public class ApartmentRequestService implements IApartmentRequestService {
             apartmentRequest.getApartment().setStatus(ApartmentStatus.PENDING);
             acceptRequest(apartmentRequest);
 
+            cacheService.evictAAllApartmentsByBuildingCache();
+            cacheService.evictAllApartmentByFloorAndBuildingCache();
+
         } else if (responseDTO.getStatus() == RequestResponseStatus.REJECTED) {
 
             rejectRequest(apartmentRequest);
@@ -166,7 +175,11 @@ public class ApartmentRequestService implements IApartmentRequestService {
 
         Apartment apartment = apartmentRequest.getApartment();
 
-        apartment.setOwnerId(apartmentRequest.getRequesterId());
+        User userToAdd  = userRepository.findById(apartmentRequest.getRequesterId())
+                        .orElseThrow(()-> new UserNotFoundException(apartmentRequest.getRequesterId()));
+
+        apartment.setOwner(userToAdd);
+        userToAdd.getOwnedApartments().add(apartment);
         apartment.setStatus(ApartmentStatus.OCCUPIED);
         apartmentRepository.save(apartment);
 
@@ -176,7 +189,7 @@ public class ApartmentRequestService implements IApartmentRequestService {
         Integer buildingNumber = apartment.getBuilding().getBuildingNumber();
         String buildingAddress = apartment.getBuilding().getAddress();
 
-        GroupDTO usersGroup = groupService.addUserToGroup(buildingNumber,buildingAddress,apartmentRequest.getRequesterId());
+        GroupDTO usersGroup = groupService.addUserToGroup(buildingNumber,buildingAddress, userToAdd);
 
         eventPublisher.publishEvent(
                 new ApartmentRequestAcceptedEvent(apartmentRequest,apartment,usersGroup)

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.example.condominiumfaultreportingsystem.apartmentRequest.ApartmentRequest;
 import org.example.condominiumfaultreportingsystem.building.Building;
+import org.example.condominiumfaultreportingsystem.security.user.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,23 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@NamedEntityGraphs({
+        @NamedEntityGraph(
+                name = "Apartment.withUser",
+                attributeNodes = @NamedAttributeNode("owner")
+        ),
+        @NamedEntityGraph(
+                name = "Apartment.withBuilding",
+                attributeNodes = @NamedAttributeNode("building")
+        ),
+        @NamedEntityGraph(
+                name = "Apartment.withUserAndBuilding",
+                attributeNodes = {
+                        @NamedAttributeNode("owner"),
+                        @NamedAttributeNode("building")
+                }
+        )
+})
 public class Apartment {
 
     @Id
@@ -22,8 +40,6 @@ public class Apartment {
 
     private Integer floor;
     private Integer apartmentNumber;
-
-    private Long ownerId;
 
     @Enumerated(EnumType.STRING)
     private ApartmentStatus status;
@@ -35,8 +51,11 @@ public class Apartment {
     @OneToMany(mappedBy = "apartment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ApartmentRequest> requests = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id")
+    private User owner;
+
     @Version
     private Long version;
-
 
 }

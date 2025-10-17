@@ -10,6 +10,7 @@ import java.util.Optional;
 
 public interface GroupRepository extends JpaRepository<Group, Long> {
 
+    @EntityGraph(attributePaths = "users")
     @Query("SELECT g FROM Group g WHERE g.groupName = :groupName")
     Optional<Group> findByGroupName(@Param("groupName") String groupName);
 

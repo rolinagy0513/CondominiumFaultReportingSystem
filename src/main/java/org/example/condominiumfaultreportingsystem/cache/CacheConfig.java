@@ -31,7 +31,8 @@ public class CacheConfig {
         cacheManager.setCaffeine(caffeine);
         cacheManager.setAsyncCacheMode(true);
         cacheManager.setCacheNames(List.of(
-                "companiesByBuilding","companiesByServiceType","companiesByBuildingIdAndServiceType","allCompanies"
+                "companiesByBuilding","companiesByServiceType","companiesByBuildingIdAndServiceType","allCompanies",
+                "apartmentsByBuilding","apartmentByFloorAndBuilding"
         ));
         return cacheManager;
     }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.ApartmentRequestAcceptedEvent;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.ApartmentRequestRejectedEvent;
+import org.example.condominiumfaultreportingsystem.eventHandler.events.UserLeftEvent;
 import org.example.condominiumfaultreportingsystem.notificationHandler.NotificationService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
@@ -33,6 +34,16 @@ public class ApartmentNotificationEventListener {
         } catch (Exception e) {
             log.error("Failed to send rejection notification for request {}",
                     event.getApartmentRequest().getId(), e);
+        }
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handleUserLeftEvent(UserLeftEvent event){
+        try{
+            notificationService.sendUserLeftNotification(event.getApartment(), event.getUser(), event.getGroup());
+        }catch (Exception e){
+            log.error("Failed to send the user left event to: {}",
+                    event.getUser().getName());
         }
     }
 

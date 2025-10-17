@@ -1,0 +1,181 @@
+package org.example.condominiumfaultreportingsystem.apartment.impl;
+
+import lombok.RequiredArgsConstructor;
+import org.example.condominiumfaultreportingsystem.DTO.ApartmentDTO;
+import org.example.condominiumfaultreportingsystem.DTO.UserWithRoleDTO;
+import org.example.condominiumfaultreportingsystem.apartment.Apartment;
+import org.example.condominiumfaultreportingsystem.apartment.ApartmentRepository;
+import org.example.condominiumfaultreportingsystem.apartment.ApartmentStatus;
+import org.example.condominiumfaultreportingsystem.apartment.IApartmentService;
+import org.example.condominiumfaultreportingsystem.building.Building;
+import org.example.condominiumfaultreportingsystem.cache.CacheService;
+import org.example.condominiumfaultreportingsystem.exception.*;
+import org.example.condominiumfaultreportingsystem.group.impl.GroupService;
+import org.example.condominiumfaultreportingsystem.security.user.Role;
+import org.example.condominiumfaultreportingsystem.security.user.User;
+import org.example.condominiumfaultreportingsystem.security.user.UserRepository;
+import org.example.condominiumfaultreportingsystem.security.user.UserService;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+
+@Service
+@RequiredArgsConstructor
+public class ApartmentService implements IApartmentService {
+
+    //FRONTEND :(
+
+    private final ApartmentRepository apartmentRepository;
+
+    private final UserService userService;
+    private final GroupService groupService;
+    private final CacheService cacheService;
+
+    @Async("asyncExecutor")
+    @Cacheable(value = "apartmentsByBuilding")
+    public CompletableFuture<Page<ApartmentDTO>> getApartmentsInBuilding(
+            Long buildingId,
+            Integer page,
+            Integer size,
+            String sortBy,
+            String direction
+    ){
+
+        Sort sort;
+
+        if (direction.equalsIgnoreCase("ASC")) {
+            sort = Sort.by(sortBy).ascending();
+        } else {
+            sort = Sort.by(sortBy).descending();
+        }
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Optional<Page<Apartment>> apartmentsPageOpt = apartmentRepository.findAllByBuildingId(buildingId,pageable);
+
+        if (apartmentsPageOpt.isEmpty()){
+            throw new ApartmentNotFoundInBuildingException(buildingId);
+        }
+
+        Page<Apartment> apartmentsPage = apartmentsPageOpt.get();
+
+        Page<ApartmentDTO> dtoPage = apartmentsPage.map(this::mapToDto);
+        return CompletableFuture.completedFuture(dtoPage);
+
+    }
+
+    public ApartmentDTO getApartmentById(Long apartmentId){
+
+        Apartment apartment = apartmentRepository.findById(apartmentId)
+                .orElseThrow(()-> new ApartmentNotFoundException(apartmentId));
+
+        return mapToDto(apartment);
+
+    }
+
+    @Async("asyncExecutor")
+    @Cacheable(value = "apartmentByFloorAndBuilding")
+    public CompletableFuture<Page<ApartmentDTO>> getApartmentsByFloorAndBuilding(
+            Long buildingId,
+            Integer floorNumber,
+            Integer page,
+            Integer size,
+            String sortBy,
+            String direction
+    ){
+
+        Sort sort;
+
+        if (direction.equalsIgnoreCase("ASC")) {
+            sort = Sort.by(sortBy).ascending();
+        } else {
+            sort = Sort.by(sortBy).descending();
+        }
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Optional<Page<Apartment>> apartmentsPageOpt = apartmentRepository.findAllByFloorAndBuilding(buildingId,floorNumber,pageable);
+
+        if (apartmentsPageOpt.isEmpty()){
+            throw new ApartmentNotFoundInBuildingException(buildingId, floorNumber);
+        }
+
+        Page<Apartment> apartmentsPage = apartmentsPageOpt.get();
+
+        Page<ApartmentDTO> dtoPage = apartmentsPage.map(this::mapToDto);
+        return CompletableFuture.completedFuture(dtoPage);
+
+    }
+
+    @Transactional
+    public void removeUserFromApartment(Long apartmentId){
+
+        try{
+
+            UserWithRoleDTO currentAdmin = userService.getCurrentUserWithRole();
+
+            if (currentAdmin.getRole() != Role.ADMIN){
+                throw new InvalidRoleException();
+            }
+
+            Optional<Apartment> apartmentOpt = apartmentRepository.findUserAndBuildingWithApartmentId(apartmentId);
+
+            if (apartmentOpt.isEmpty()){
+                throw new ApartmentNotFoundException(apartmentId);
+            }
+
+            Apartment usersApartment = apartmentOpt.get();
+            User userToRemove = usersApartment.getOwner();
+            Building apartmentsBuilding = usersApartment.getBuilding();
+
+            validateInputs(usersApartment, userToRemove, apartmentsBuilding);
+
+            usersApartment.setOwner(null);
+
+            userToRemove.getOwnedApartments().remove(usersApartment);
+            usersApartment.setStatus(ApartmentStatus.AVAILABLE);
+
+            apartmentRepository.save(usersApartment);
+
+            groupService.removeUserFromGroup(usersApartment, userToRemove, apartmentsBuilding.getBuildingNumber(), apartmentsBuilding.getAddress());
+
+            cacheService.evictAAllApartmentsByBuildingCache();
+            cacheService.evictAllApartmentByFloorAndBuildingCache();
+
+        }catch (ObjectOptimisticLockingFailureException ex){
+
+            throw new MultipleModificationException();
+
+        }
+
+    }
+
+    private void validateInputs(Apartment apartment, User user, Building building){
+
+        if (apartment == null || user == null || building == null){
+            throw new InvalidInputsException();
+        }
+
+    }
+
+    private ApartmentDTO mapToDto(Apartment apartment){
+
+        return ApartmentDTO.builder()
+                .apartmentNumber(apartment.getApartmentNumber())
+                .floorNumber(apartment.getFloor())
+                .ownerName(apartment.getOwner() != null ? apartment.getOwner().getName() : "UNASSIGNED")
+                .build();
+
+    }
+
+}

@@ -8,6 +8,7 @@ import org.example.condominiumfaultreportingsystem.company.Company;
 import org.example.condominiumfaultreportingsystem.companyRequest.CompanyRequest;
 import org.example.condominiumfaultreportingsystem.group.Group;
 import org.example.condominiumfaultreportingsystem.notificationHandler.notifications.*;
+import org.example.condominiumfaultreportingsystem.security.user.User;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -132,6 +133,33 @@ public class NotificationService {
         String userIdString = request.getRequesterId().toString();
         messagingTemplate.convertAndSendToUser(userIdString, "/queue/request-response", notificationForUser);
 
+    }
+
+    public void sendUserLeftNotification(Apartment apartment, User userThatLeft, Group group){
+
+        ApartmentNotification notificationForUser = ApartmentNotification.builder()
+                .senderName("SYSTEM")
+                .apartmentId(apartment.getId())
+                .apartmentNumber(apartment.getApartmentNumber())
+                .floor(apartment.getFloor())
+                .apartmentStatus(apartment.getStatus())
+                .buildingNumber(apartment.getBuilding().getBuildingNumber())
+                .message("You has been removed from the apartment.")
+                .build();
+
+        String userIdString = userThatLeft.getId().toString();
+        messagingTemplate.convertAndSendToUser(userIdString, "/queue/removal", notificationForUser);
+
+        UserLeftNotification notificationForGroup = UserLeftNotification.builder()
+                .userName(userThatLeft.getName())
+                .apartmentNumber(apartment.getApartmentNumber())
+                .message(userThatLeft.getName() + " has left from the " + apartment.getApartmentNumber() + " apartment")
+                .type(NotificationType.REMOVAL)
+                .build();
+
+        String groupDestination = group.getGroupName();
+
+        messagingTemplate.convertAndSend("/topic/group/" + groupDestination, notificationForGroup);
     }
 
 }

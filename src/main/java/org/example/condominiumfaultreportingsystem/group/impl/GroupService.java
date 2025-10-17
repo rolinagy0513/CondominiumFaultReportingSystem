@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.condominiumfaultreportingsystem.DTO.GroupDTO;
 import org.example.condominiumfaultreportingsystem.DTO.GroupTestDTO;
+import org.example.condominiumfaultreportingsystem.apartment.Apartment;
 import org.example.condominiumfaultreportingsystem.company.Company;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyRemovedEvent;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyRequestAcceptedEvent;
+import org.example.condominiumfaultreportingsystem.eventHandler.events.UserLeftEvent;
 import org.example.condominiumfaultreportingsystem.exception.GroupNotFoundException;
 import org.example.condominiumfaultreportingsystem.exception.UserNotFoundException;
 import org.example.condominiumfaultreportingsystem.group.Group;
@@ -70,25 +72,23 @@ public class GroupService implements IGroupService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public GroupDTO addUserToGroup(Integer buildingNumber, String buildingAddress, Long userId){
+    public GroupDTO addUserToGroup(Integer buildingNumber, String buildingAddress, User userToAdd){
 
         String uniqueKey = createGroupIdentifier(buildingNumber,buildingAddress);
 
         Optional<Group> existingGroupOpt = groupRepository.findWithUsersByGroupName(uniqueKey);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(()-> new UserNotFoundException(userId));
 
         if (existingGroupOpt.isPresent()){
 
             Group existingGroup = existingGroupOpt.get();
 
-            if (existingGroup.getUsers().contains(user)) {
+            if (existingGroup.getUsers().contains(userToAdd)) {
                 return mapToDto(existingGroup);
             }
 
-            existingGroup.getUsers().add(user);
-            user.getGroups().add(existingGroup);
+            existingGroup.getUsers().add(userToAdd);
+            userToAdd.getGroups().add(existingGroup);
 
             groupRepository.save(existingGroup);
 
@@ -98,8 +98,8 @@ public class GroupService implements IGroupService {
 
         Group newGroup = createGroup(uniqueKey);
 
-        newGroup.getUsers().add(user);
-        user.getGroups().add(newGroup);
+        newGroup.getUsers().add(userToAdd);
+        userToAdd.getGroups().add(newGroup);
 
         try{
 
@@ -110,9 +110,9 @@ public class GroupService implements IGroupService {
 
             Group group = groupRepository.findWithUsersByGroupName(uniqueKey)
                     .orElseThrow(() -> new IllegalStateException("Group should exist after conflict"));
-            if (!group.getUsers().contains(user)) {
-                group.getUsers().add(user);
-                user.getGroups().add(group);
+            if (!group.getUsers().contains(userToAdd)) {
+                group.getUsers().add(userToAdd);
+                userToAdd.getGroups().add(group);
                 groupRepository.save(group);
             }
 
@@ -123,7 +123,28 @@ public class GroupService implements IGroupService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public void removeUserFromGroup(Long userId, Company companyToRemove){
+    public void removeUserFromGroup(Apartment apartment, User userToRemove, Integer buildingNumber, String buildingAddress) {
+
+        String groupName = createGroupIdentifier(buildingNumber, buildingAddress);
+        Optional<Group> usersGroupOpt = groupRepository.findByGroupName(groupName);
+
+        if (usersGroupOpt.isEmpty()){
+            return;
+        }
+
+        Group usersGroup = usersGroupOpt.get();
+        usersGroup.getUsers().remove(userToRemove);
+        userToRemove.getGroups().remove(usersGroup);
+
+        groupRepository.save(usersGroup);
+
+        eventPublisher.publishEvent(
+                new UserLeftEvent(apartment, userToRemove, usersGroup)
+        );
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void removeUserFromAllGroups(Long userId, Company companyToRemove){
 
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new UserNotFoundException(userId));

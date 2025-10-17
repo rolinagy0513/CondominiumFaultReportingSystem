@@ -288,6 +288,58 @@ public class GlobalExceptionHandler {
         );
     }
 
+    /**
+     * Handles ApartmentNotFoundInBuildingException.
+     * Returns HTTP 404 if the apartments are not found inside the building with the provided id
+     * (can be used with the id only and together with the floorNumber).
+     *
+     * @param ex the ApartmentNotFoundInBuildingException thrown
+     * @return ResponseEntity with ApiError and HTTP 404 status
+     */
+    @ExceptionHandler(ApartmentNotFoundInBuildingException.class)
+    public ResponseEntity<ApiError> handleApartmentNotFoundInBuildingException(ApartmentNotFoundInBuildingException ex) {
+        return new ResponseEntity<>(
+                new ApiError(ex.getMessage(),
+                        "The apartment was not found in the building",
+                        LocalDateTime.now()),
+                HttpStatus.NOT_FOUND
+        );
+    }
+
+    /**
+     * Handles ApartmentRequestAlreadyPendingException.
+     * Returns HTTP 409 if the requested apartment has a PENDING,OCCUPIED or UNAVAILABLE status.
+     *
+     * @param ex the ApartmentRequestAlreadyPendingException thrown
+     * @return ResponseEntity with ApiError and HTTP 409 status
+     */
+    @ExceptionHandler(ApartmentRequestAlreadyPendingException.class)
+    public ResponseEntity<ApiError> handleApartmentRequestIsAlreadyPendingException(ApartmentRequestAlreadyPendingException ex) {
+        return new ResponseEntity<>(
+                new ApiError(ex.getMessage(),
+                        "The apartment is either unavailable, in progress or is already occupied",
+                        LocalDateTime.now()),
+                HttpStatus.CONFLICT
+        );
+    }
+
+    /**
+     * Handles InvalidInputsException.
+     * Returns HTTP 400 when the provided inputs are null.
+     *
+     * @param ex the InvalidInputsException thrown
+     * @return ResponseEntity with ApiError and HTTP 400 status
+     */
+    @ExceptionHandler(InvalidInputsException.class)
+    public ResponseEntity<ApiError> handleInvalidInputsException(InvalidInputsException ex) {
+        return new ResponseEntity<>(
+                new ApiError(ex.getMessage(),
+                        "The provided inputs can not be null",
+                        LocalDateTime.now()),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
 
     /**
      * Handles DataAccessException from Spring Data.

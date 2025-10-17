@@ -5,6 +5,7 @@ import org.example.condominiumfaultreportingsystem.DTO.CompanyDTO;
 import org.example.condominiumfaultreportingsystem.company.impl.CompanyService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -65,7 +66,7 @@ public class CompanyController {
         return companyService.getCompaniesByBuildingIdAndServiceType(buildingId, serviceType);
     }
 
-    @PutMapping("admin/company/removeCompany/{companyId}")
+    @MessageMapping("admin/company/removeCompany/{companyId}")
     public void removeCompany(
             @PathVariable Long companyId
     ){

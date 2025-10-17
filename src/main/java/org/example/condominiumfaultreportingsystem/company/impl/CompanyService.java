@@ -3,10 +3,14 @@ package org.example.condominiumfaultreportingsystem.company.impl;
 import lombok.RequiredArgsConstructor;
 import org.example.condominiumfaultreportingsystem.DTO.CompanyDTO;
 import org.example.condominiumfaultreportingsystem.DTO.UserWithRoleDTO;
+import org.example.condominiumfaultreportingsystem.building.Building;
+import org.example.condominiumfaultreportingsystem.building.BuildingRepository;
+import org.example.condominiumfaultreportingsystem.cache.CacheService;
 import org.example.condominiumfaultreportingsystem.company.Company;
 import org.example.condominiumfaultreportingsystem.company.CompanyRepository;
 import org.example.condominiumfaultreportingsystem.company.ICompanyService;
 import org.example.condominiumfaultreportingsystem.company.ServiceType;
+import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyRemovedEvent;
 import org.example.condominiumfaultreportingsystem.exception.CompanyNotFoundException;
 import org.example.condominiumfaultreportingsystem.exception.CompanyNotFoundInBuildingException;
 import org.example.condominiumfaultreportingsystem.exception.InvalidRoleException;
@@ -24,6 +28,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -32,18 +37,13 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 public class CompanyService implements ICompanyService {
 
-    //Ami még kell az egy method ami leveszi a Buildng-ből a company-t.
-    //Utánna tesztelni
-    //Majd evictelni a cache-t
-
-    //Ugyan ez kellene az apartmannak is ami itt van
-    //Meg a frontend :(
-
     private final CompanyRepository companyRepository;
     private final UserRepository userRepository;
+    private final BuildingRepository buildingRepository;
 
     private final UserService userService;
     private final GroupService groupService;
+    private final CacheService cacheService;
 
     @Async("asyncExecutor")
     @Cacheable(value = "allCompanies")
@@ -145,28 +145,51 @@ public class CompanyService implements ICompanyService {
 
     @Transactional
     public void removeCompany(Long companyId){
-
         UserWithRoleDTO currentAdmin = userService.getCurrentUserWithRole();
 
         if (currentAdmin.getRole() != Role.ADMIN){
             throw new InvalidRoleException();
         }
 
-        Company companyToRemove = companyRepository.findUserWithCompany(companyId)
-                .orElseThrow(()-> new CompanyNotFoundException(companyId));
+        Company companyToRemove = companyRepository.getCompanyWithBuildings(companyId)
+                .orElseThrow(() -> new CompanyNotFoundException(companyId));
 
-        User userToUpdate  = companyToRemove.getUser();
+        User userToUpdate = companyToRemove.getUser();
+
+        if (companyToRemove.getBuildings() != null && !companyToRemove.getBuildings().isEmpty()) {
+
+            List<Building> buildings = new ArrayList<>(companyToRemove.getBuildings());
+
+            for (Building building : buildings) {
+
+                if (building.getCompanies() != null) {
+                    building.getCompanies().remove(companyToRemove);
+                }
+
+                companyToRemove.getBuildings().remove(building);
+
+                cacheService.evictCompanyByBuildingCache(building.getId());
+                cacheService.evictCompanyByBuildingIdAndServiceTypeCache(building.getId(), companyToRemove.getServiceType());
+
+            }
+
+            buildingRepository.saveAll(buildings);
+        }
 
         if (userToUpdate != null) {
             userToUpdate.setCompany(null);
-            companyToRemove.setUser(null);
             userRepository.save(userToUpdate);
+
+            groupService.removeUserFromAllGroups(userToUpdate.getId(), companyToRemove);
+            userService.demoteCompanyToUser(currentAdmin.getId(), userToUpdate.getId());
+
         }
 
-        groupService.removeUserFromGroup(userToUpdate.getId(),companyToRemove);
-        userService.demoteCompanyToUser(currentAdmin.getId(), userToUpdate.getId());
-
+        companyToRemove.setUser(null);
         companyRepository.delete(companyToRemove);
+
+        cacheService.evictAllCompaniesCache();
+        cacheService.evictCompanyByServiceTypeCache();
 
     }
 

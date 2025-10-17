@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.condominiumfaultreportingsystem.building.Building;
-import org.example.condominiumfaultreportingsystem.companyRequest.CompanyRequest;
 import org.example.condominiumfaultreportingsystem.security.user.User;
 
 import java.util.ArrayList;
