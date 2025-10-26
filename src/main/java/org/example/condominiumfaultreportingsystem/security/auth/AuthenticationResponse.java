@@ -28,5 +28,6 @@ public class AuthenticationResponse {
 
   private String message;
   private UserResponseDTO user;
+  private boolean permission;
 
 }

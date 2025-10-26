@@ -33,8 +33,6 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 public class ApartmentService implements IApartmentService {
 
-    //FRONTEND :(
-
     private final ApartmentRepository apartmentRepository;
 
     private final UserService userService;

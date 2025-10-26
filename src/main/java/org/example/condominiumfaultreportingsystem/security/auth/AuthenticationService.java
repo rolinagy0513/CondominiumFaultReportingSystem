@@ -74,9 +74,9 @@ public class AuthenticationService {
     }
 
     var user = User.builder()
-            .firstname(request.getFirstname())
-            .lastname(request.getLastname())
-            .userName(request.getFirstname() + " " + request.getLastname())
+            .firstname(request.getFirstName())
+            .lastname(request.getLastName())
+            .userName(request.getFirstName() + " " + request.getLastName())
             .email(request.getEmail())
             .password(passwordEncoder.encode(request.getPassword()))
             .build();
@@ -104,6 +104,9 @@ public class AuthenticationService {
    * @throws InvalidPasswordException if the provided credentials are invalid.
    */
   public AuthenticationResponse authenticate(AuthenticationRequest request, HttpServletResponse response) {
+
+    boolean permission = false;
+
     try {
       authenticationManager.authenticate(
               new UsernamePasswordAuthenticationToken(
@@ -127,11 +130,13 @@ public class AuthenticationService {
 
     if (user.getRole().equals(Role.ADMIN)){
       groupService.addAdminToGroup(user.getId());
+      permission = true;
     }
 
     return AuthenticationResponse.builder()
             .message("Login complete")
             .user(mapToUserResponseDto(user))
+            .permission(permission)
             .build();
   }
 
@@ -281,7 +286,7 @@ public class AuthenticationService {
   private UserResponseDTO mapToUserResponseDto(User user) {
     return UserResponseDTO.builder()
             .id(user.getId())
-            .userName(user.getUsername())
+            .userName(user.getName())
             .build();
   }
 

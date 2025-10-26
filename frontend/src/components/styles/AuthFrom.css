@@ -1,0 +1,212 @@
+.auth-form-container {
+    width: 100%;
+}
+
+.auth-form-element {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.auth-form-element > div {
+    position: relative;
+    width: 100%;
+}
+
+.auth-form-element input[type="text"],
+.auth-form-element input[type="password"] {
+    padding: 18px 20px 18px 50px;
+    border: 2px solid #94a3b8;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #f1f5f9;
+    color: #1a202c;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.auth-form-element input[type="text"]:focus,
+.auth-form-element input[type="password"]:focus {
+    outline: none;
+    border-color: #2c5282;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.15);
+    transform: translateY(-2px);
+}
+
+.auth-form-element input[type="text"]::placeholder,
+.auth-form-element input[type="password"]::placeholder {
+    color: #a0aec0;
+}
+
+.firstName-icon,
+.lastName-icon,
+.email-icon,
+.password-icon,
+.confirmPassword-icon {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    font-size: 18px;
+    z-index: 2;
+    transition: color 0.3s ease;
+}
+
+.auth-form-element > div:focus-within .firstName-icon,
+.auth-form-element > div:focus-within .lastName-icon,
+.auth-form-element > div:focus-within .email-icon,
+.auth-form-element > div:focus-within .password-icon,
+.auth-form-element > div:focus-within .confirmPassword-icon {
+    color: #2c5282;
+}
+
+.auth-form-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    color: #1a202c;
+    font-size: 15px;
+    padding: 8px 0;
+    transition: color 0.3s ease;
+}
+
+.auth-form-checkbox:hover {
+    color: #2c5282;
+}
+
+.auth-form-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #2c5282;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.auth-form-text p {
+    text-align: center;
+    color: #2c5282;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin: 15px 0;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 15px;
+}
+
+.auth-form-text p:hover {
+    color: #1a365d;
+    background: linear-gradient(135deg, rgba(44, 82, 130, 0.08), rgba(26, 54, 93, 0.08));
+    transform: translateY(-1px);
+}
+
+.auth-form-element button {
+    padding: 18px;
+    background: linear-gradient(135deg, #2c5282 0%, #1a365d 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 10px;
+    font-family: inherit;
+}
+
+.auth-form-element button:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(44, 82, 130, 0.4);
+    background: linear-gradient(135deg, #1e4a82 0%, #15325c 100%);
+}
+
+.auth-form-element button:active {
+    transform: translateY(-1px);
+}
+
+.auth-form-element button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+
+.feedback-message {
+    min-height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.feedback-message div {
+    color: #d63031;
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 968px) {
+    .auth-form-element {
+        gap: 20px;
+    }
+
+    .auth-form-element input[type="text"],
+    .auth-form-element input[type="password"] {
+        padding: 16px 18px 16px 48px;
+    }
+
+    .auth-form-element button {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-form-element {
+        gap: 18px;
+    }
+
+    .auth-form-element input[type="text"],
+    .auth-form-element input[type="password"] {
+        padding: 15px 16px 15px 45px;
+        font-size: 15px;
+    }
+
+    .firstName-icon,
+    .lastName-icon,
+    .email-icon,
+    .password-icon,
+    .confirmPassword-icon {
+        left: 15px;
+        font-size: 16px;
+    }
+
+    .auth-form-element button {
+        padding: 15px;
+        font-size: 15px;
+    }
+
+    .auth-form-text p {
+        font-size: 14px;
+        padding: 10px;
+    }
+}
