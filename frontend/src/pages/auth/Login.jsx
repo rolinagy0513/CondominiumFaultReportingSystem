@@ -7,6 +7,7 @@ import {FeedbackContext} from "../../context/FeedbackContext.jsx";
 import {AuthContext} from "../../context/AuthContext.jsx";
 
 import AuthForm from "../../components/AuthForm.jsx";
+import loginImage from "../../assets/building.png";
 
 import "./styles/Login.css"
 
@@ -58,6 +59,9 @@ const Login = () =>{
                 navigate("/welcome-page")
             }
 
+            localStorage.setItem("authenticatedUserId", response.user.id);
+            localStorage.setItem("authenticatedUserName", response.user.userName);
+
         }catch(error){
 
             setMessage(error.message);
@@ -97,7 +101,7 @@ const Login = () =>{
 
             <div className='image-side'>
                 <img
-                    src="../../assets/building.png"
+                    src={loginImage}
                     alt="Modern home interior"
                     className="login-image"
                 />

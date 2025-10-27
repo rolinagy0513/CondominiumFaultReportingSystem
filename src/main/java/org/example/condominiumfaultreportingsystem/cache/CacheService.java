@@ -22,6 +22,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CacheService {
 
+    @CacheEvict(value = "buildings", allEntries = true)
+    public void evictBuildingsCache(){}
+
     @CacheEvict(value = "companiesByBuilding", key = "#buildingId")
     public void evictCompanyByBuildingCache(Long buildingId){}
 

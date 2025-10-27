@@ -8,10 +8,6 @@
  * ### Responsibilities:
  * - Maintains the `registerFormData` state to store user input during registration.
  * - Manages the `loginFormData` state to hold credentials entered during login.
- *
- * ## Usage
- * Wrap your root component with `<AuthProvider>` and use `useContext(AuthContext)` inside
- * any nested component to access authentication data and update functions.
  */
 
 

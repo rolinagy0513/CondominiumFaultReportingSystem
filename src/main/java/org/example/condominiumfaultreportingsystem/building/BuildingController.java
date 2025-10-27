@@ -7,6 +7,7 @@ import org.example.condominiumfaultreportingsystem.building.impl.BuildingService
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,6 +21,11 @@ public class BuildingController {
             @RequestBody BuildingRequestDTO requestDTO
     ) {
         return buildingService.addNewBuilding(requestDTO);
+    }
+
+    @GetMapping("/admin/building/getAll")
+    public CompletableFuture<List<BuildingDTO>> getAll(){
+        return buildingService.getAll();
     }
 
     @GetMapping("building/getById/{buildingId}")

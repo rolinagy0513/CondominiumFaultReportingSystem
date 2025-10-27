@@ -5,6 +5,8 @@ import {AuthContext} from "../../context/AuthContext.jsx";
 import apiServices from "../../services/ApiServices.js";
 import AuthForm from "../../components/AuthForm.jsx";
 
+import registerImage from "../../assets/building.png";
+
 import "./styles/Register.css"
 
 const Register = () =>{
@@ -54,7 +56,7 @@ const Register = () =>{
 
             resetForm()
 
-            // navigate("/main");
+            navigate("/welcome-page");
 
         }catch(error){
 
@@ -96,7 +98,7 @@ const Register = () =>{
 
             <div className='image-side'>
                 <img
-                    src="../../assets/building.png"
+                    src={registerImage}
                     alt="Modern home interior"
                     className="register-image"
                 />

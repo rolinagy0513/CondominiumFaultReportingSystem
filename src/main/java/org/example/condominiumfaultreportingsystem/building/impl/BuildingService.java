@@ -10,17 +10,23 @@ import org.example.condominiumfaultreportingsystem.apartment.ApartmentStatus;
 import org.example.condominiumfaultreportingsystem.building.Building;
 import org.example.condominiumfaultreportingsystem.building.BuildingRepository;
 import org.example.condominiumfaultreportingsystem.building.IBuildingService;
+import org.example.condominiumfaultreportingsystem.cache.CacheService;
 import org.example.condominiumfaultreportingsystem.exception.BuildingIsNotFoundException;
 import org.example.condominiumfaultreportingsystem.exception.BuildingIsPresentException;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class BuildingService implements IBuildingService {
+
+    private final CacheService cacheService;
 
     private final BuildingRepository buildingRepository;
     private final ApartmentRepository apartmentRepository;
@@ -82,6 +88,8 @@ public class BuildingService implements IBuildingService {
         buildingRepository.save(building);
         apartmentRepository.saveAll(apartments);
 
+        cacheService.evictBuildingsCache();
+
         return mapToDTO(building);
 
     }
@@ -99,7 +107,20 @@ public class BuildingService implements IBuildingService {
 
         Building existingBuilding = existingBuildingOpt.get();
 
+        cacheService.evictBuildingsCache();
+
         return mapToDTO(existingBuilding);
+
+    }
+
+    @Async("asyncExecutor")
+    @Cacheable(value = "buildings")
+    public CompletableFuture<List<BuildingDTO>> getAll(){
+
+        List<Building> buildings = buildingRepository.findAll();
+
+        List<BuildingDTO> dtoList = buildings.stream().map(this::mapToDTO).toList();
+        return CompletableFuture.completedFuture(dtoList);
 
     }
 
