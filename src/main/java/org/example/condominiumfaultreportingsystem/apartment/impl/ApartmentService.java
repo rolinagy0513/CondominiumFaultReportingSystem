@@ -1,6 +1,7 @@
 package org.example.condominiumfaultreportingsystem.apartment.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.condominiumfaultreportingsystem.DTO.ApartmentDTO;
 import org.example.condominiumfaultreportingsystem.DTO.UserWithRoleDTO;
 import org.example.condominiumfaultreportingsystem.apartment.Apartment;
@@ -31,6 +32,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ApartmentService implements IApartmentService {
 
     private final ApartmentRepository apartmentRepository;

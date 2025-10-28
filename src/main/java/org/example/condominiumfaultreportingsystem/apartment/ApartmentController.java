@@ -1,6 +1,7 @@
 package org.example.condominiumfaultreportingsystem.apartment;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.condominiumfaultreportingsystem.DTO.ApartmentDTO;
 import org.example.condominiumfaultreportingsystem.apartment.impl.ApartmentService;
 import org.springframework.data.domain.Page;
