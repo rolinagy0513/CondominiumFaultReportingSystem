@@ -3,10 +3,10 @@ import {useNavigate} from 'react-router-dom';
 
 import apiServices from "../../services/ApiServices.js";
 
-import {FeedbackContext} from "../../context/FeedbackContext.jsx";
-import {AuthContext} from "../../context/AuthContext.jsx";
+import {FeedbackContext} from "../../context/general/FeedbackContext.jsx";
+import {AuthContext} from "../../context/auth/AuthContext.jsx";
 
-import AuthForm from "../../components/AuthForm.jsx";
+import AuthForm from "./components/AuthForm.jsx";
 import loginImage from "../../assets/building.png";
 
 import "./styles/Login.css"

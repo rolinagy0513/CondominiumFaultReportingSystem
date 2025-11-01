@@ -1,9 +1,9 @@
 import {useNavigate} from "react-router-dom";
 import React, {useContext, useEffect} from "react";
-import {FeedbackContext} from "../../context/FeedbackContext.jsx";
-import {AuthContext} from "../../context/AuthContext.jsx";
+import {FeedbackContext} from "../../context/general/FeedbackContext.jsx";
+import {AuthContext} from "../../context/auth/AuthContext.jsx";
 import apiServices from "../../services/ApiServices.js";
-import AuthForm from "../../components/AuthForm.jsx";
+import AuthForm from "./components/AuthForm.jsx";
 
 import registerImage from "../../assets/building.png";
 

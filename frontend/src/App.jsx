@@ -1,8 +1,11 @@
 import {BrowserRouter as Router} from 'react-router-dom';
-import {FeedBackProvider} from "./context/FeedbackContext.jsx";
+import {FeedBackProvider} from "./context/general/FeedbackContext.jsx";
 import {AdminRoutes, AuthRoutes, MainRoutes} from "./routes/RoutesConfig.jsx";
-import {AuthProvider} from "./context/AuthContext.jsx";
-import {UserProvider} from "./context/UserContext.jsx";
+import {AuthProvider} from "./context/auth/AuthContext.jsx";
+import {UserProvider} from "./context/general/UserContext.jsx";
+import {AddBuildingProvider} from "./context/admin/AddBuildingContext.jsx";
+import {AdminPanelProvider} from "./context/admin/AdminPanelContext.jsx";
+import {PaginationProvider} from "./context/general/PaginationContext.jsx";
 
 function App() {
 
@@ -11,9 +14,15 @@ function App() {
       <FeedBackProvider>
           <AuthProvider>
               <UserProvider>
-                  <AuthRoutes/>
-                  <MainRoutes/>
-                  <AdminRoutes/>
+                  <AddBuildingProvider>
+                      <AdminPanelProvider>
+                          <PaginationProvider>
+                              <AuthRoutes/>
+                              <MainRoutes/>
+                              <AdminRoutes/>
+                          </PaginationProvider>
+                      </AdminPanelProvider>
+                  </AddBuildingProvider>
               </UserProvider>
           </AuthProvider>
       </FeedBackProvider>

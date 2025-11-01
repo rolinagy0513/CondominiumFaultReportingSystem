@@ -13,6 +13,7 @@ import org.example.condominiumfaultreportingsystem.building.IBuildingService;
 import org.example.condominiumfaultreportingsystem.cache.CacheService;
 import org.example.condominiumfaultreportingsystem.exception.BuildingIsNotFoundException;
 import org.example.condominiumfaultreportingsystem.exception.BuildingIsPresentException;
+import org.example.condominiumfaultreportingsystem.exception.FloorCanNotBeNullException;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,10 @@ public class BuildingService implements IBuildingService {
 
     @Transactional
     public BuildingDTO addNewBuilding(BuildingRequestDTO buildingRequestDTO){
+
+        if (buildingRequestDTO.getNumberOfFloors() == 0) {
+            throw new FloorCanNotBeNullException();
+        }
 
         Integer buildingNumber = buildingRequestDTO.getBuildingNumber();
 

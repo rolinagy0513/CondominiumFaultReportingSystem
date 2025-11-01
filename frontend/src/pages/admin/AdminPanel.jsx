@@ -1,31 +1,47 @@
-import {useContext, useEffect, useState} from "react";
-import "./styles/AdminPanel.css";
-import {UserContext} from "../../context/UserContext.jsx";
+import {useContext, useEffect} from "react";
+
+import {UserContext} from "../../context/general/UserContext.jsx";
 import apiServices from "../../services/ApiServices.js";
+import {AddBuildingContext} from "../../context/admin/AddBuildingContext.jsx";
+import {FeedbackContext} from "../../context/general/FeedbackContext.jsx";
+import {AdminPanelContext} from "../../context/admin/AdminPanelContext.jsx";
+import {PaginationContext} from "../../context/general/PaginationContext.jsx";
+
+import AddBuildingForm from "./components/AddBuildingForm.jsx";
+
+import { IoNotifications } from "react-icons/io5";
+import { IoLogOutSharp } from "react-icons/io5";
+import {FaBuilding} from "react-icons/fa6";
+import { MdBusinessCenter } from "react-icons/md";
+
+import "./styles/AdminPanel.css";
 
 const AdminPanel = () => {
     const ADMIN_BUILDING_API_PATH = import.meta.env.VITE_API_ADMIN_BUILDING_URL;
     const BASE_APARTMENT_API_PATH = import.meta.env.VITE_API_BASE_APARTMENT_URL;
 
-    //Tudod te
-
     const ADD_BUILDING_URL = `${ADMIN_BUILDING_API_PATH}/addNew`;
     const GET_ALL_BUILDING_URL = `${ADMIN_BUILDING_API_PATH}/getAll`;
     const GET_APARTMENT_URL = `${BASE_APARTMENT_API_PATH}/getByBuildingId`;
 
-    const [currentView, setCurrentView] = useState('buildings');
+    const {
+        currentView, setCurrentView,
+        buildings, setBuildings,
+        selectedBuilding, setSelectedBuilding,
+        apartments, setApartments,
+        loadingApartments, setLoadingApartments
+    } = useContext(AdminPanelContext);
+
+    const {
+        currentPage, setCurrentPage,
+        totalPages, setTotalPages,
+        totalElements, setTotalElements,
+        pageSize
+    } = useContext(PaginationContext);
+
     const {authenticatedUserName} = useContext(UserContext);
-
-    const [buildings, setBuildings] = useState([]);
-    const [selectedBuilding, setSelectedBuilding] = useState(null);
-    const [apartments, setApartments] = useState([]);
-    const [loadingApartments, setLoadingApartments] = useState(false);
-
-    // Pagination state
-    const [currentPage, setCurrentPage] = useState(0);
-    const [totalPages, setTotalPages] = useState(0);
-    const [totalElements, setTotalElements] = useState(0);
-    const pageSize = 10;
+    const {addBuildingFormData, setAddBuildingFormData} = useContext(AddBuildingContext)
+    const {isLoading, setIsLoading, message, setMessage} = useContext(FeedbackContext);
 
     useEffect(() => {
         getAllBuildings();
@@ -33,6 +49,20 @@ const AdminPanel = () => {
 
     const handleAddBuilding = () => {
         setCurrentView('add-building');
+    };
+
+    const handleInputChange = (e) => {
+        setMessage("");
+        const { name, value, type } = e.target;
+
+        const processedValue = type === 'number' ?
+            (value === '' ? 0 : parseInt(value, 10)) :
+            value;
+
+        setAddBuildingFormData((prev) => ({
+            ...prev,
+            [name]: processedValue,
+        }));
     };
 
     const handleBackToBuildings = () => {
@@ -57,7 +87,6 @@ const AdminPanel = () => {
     const getApartments = async(buildingId, page = 0) => {
         setLoadingApartments(true);
         try {
-            // Build URL with pagination parameters
             const params = new URLSearchParams({
                 page: page.toString(),
                 size: pageSize.toString(),
@@ -68,9 +97,6 @@ const AdminPanel = () => {
             const url = `${GET_APARTMENT_URL}/${buildingId}?${params.toString()}`;
             const response = await apiServices.get(url);
 
-            console.log("Apartments response:", response);
-
-            // Handle Spring Page response
             if (response && response.content) {
                 setApartments(response.content);
                 setCurrentPage(response.number);
@@ -86,6 +112,7 @@ const AdminPanel = () => {
             const building = buildings.find(b => b.id === buildingId);
             setSelectedBuilding(building);
             setCurrentView('apartments');
+
         } catch (error) {
             console.error("Error fetching apartments:", error.message);
             setApartments([]);
@@ -94,6 +121,36 @@ const AdminPanel = () => {
         } finally {
             setLoadingApartments(false);
         }
+    }
+
+    const addBuilding = async(e) =>{
+
+        e.preventDefault();
+
+        try {
+            setIsLoading(true);
+            const response = await apiServices.post(`${ADD_BUILDING_URL}`,addBuildingFormData);
+
+            setAddBuildingFormData({
+                numberOfFloors: 0,
+                numberOfApartmentsInOneFloor: 0,
+                buildingNumber: 0,
+                address: '',
+                overrides: [],
+            });
+
+            await getAllBuildings();
+
+            setCurrentView('buildings');
+
+        }catch (error){
+            console.error(error.message);
+            setMessage(error.message)
+            setIsLoading(false);
+        }finally{
+            setIsLoading(false);
+        }
+
     }
 
     const handlePageChange = (newPage) => {
@@ -117,7 +174,6 @@ const AdminPanel = () => {
                     </div>
                 </div>
 
-                {/* Navigation */}
                 <nav className="navigation">
                     <div className="nav-section">
                         <h4 className="nav-title">MANAGEMENT</h4>
@@ -125,14 +181,12 @@ const AdminPanel = () => {
                             className={`nav-item ${currentView === 'buildings' ? 'active' : ''}`}
                             onClick={() => setCurrentView('buildings')}
                         >
-                            🏢 Buildings
+                            <FaBuilding/> Buildings
                         </button>
-                        <button className="nav-item">👥 Residents</button>
-                        <button className="nav-item">🔧 Reports</button>
+                        <button className="nav-item"> <MdBusinessCenter/> Companies</button>
                     </div>
                 </nav>
 
-                {/* Buildings List */}
                 <div className="buildings-section">
                     <div className="section-header">
                         <h4 className="section-title">BUILDINGS</h4>
@@ -150,7 +204,6 @@ const AdminPanel = () => {
                                 className={`building-item ${selectedBuilding?.id === building.id ? 'selected' : ''}`}
                                 onClick={() => getApartments(building.id)}
                             >
-                                <div className="building-icon">🏢</div>
                                 <div className="building-info">
                                     <div className="building-name">Building {building.buildingNumber}</div>
                                     <div className="building-address">{building.address}</div>
@@ -162,9 +215,7 @@ const AdminPanel = () => {
                 </div>
             </div>
 
-            {/* Main Content */}
             <div className="main-content">
-                {/* Top Header */}
                 <header className="top-header">
                     <div className="header-left">
                         <h1 className="page-title">
@@ -178,15 +229,14 @@ const AdminPanel = () => {
                     </div>
                     <div className="header-right">
                         <button className="notification-btn">
-                            🔔 Notifications
+                            <IoNotifications/> <span>Notifications</span>
                         </button>
                         <button className="notification-btn">
-                            ⚙️ Settings
+                            <IoLogOutSharp/> <span>Log out</span>
                         </button>
                     </div>
                 </header>
 
-                {/* Content Area */}
                 <div className="content-area">
                     {currentView === 'buildings' ? (
                         <div className="buildings-content">
@@ -238,7 +288,6 @@ const AdminPanel = () => {
                                         )}
                                     </div>
 
-                                    {/* Pagination Controls */}
                                     {totalPages > 1 && (
                                         <div className="pagination">
                                             <button
@@ -250,15 +299,47 @@ const AdminPanel = () => {
                                             </button>
 
                                             <div className="pagination-pages">
-                                                {[...Array(totalPages)].map((_, index) => (
-                                                    <button
-                                                        key={index}
-                                                        className={`pagination-page ${currentPage === index ? 'active' : ''}`}
-                                                        onClick={() => handlePageChange(index)}
-                                                    >
-                                                        {index + 1}
-                                                    </button>
-                                                ))}
+                                                {/* Show first page if not in first group */}
+                                                {currentPage >= 3 && (
+                                                    <>
+                                                        <button
+                                                            className="pagination-page"
+                                                            onClick={() => handlePageChange(0)}
+                                                        >
+                                                            1
+                                                        </button>
+                                                        {currentPage > 3 && <span className="pagination-ellipsis">...</span>}
+                                                    </>
+                                                )}
+
+                                                {/* Show 3 pages around current page */}
+                                                {[...Array(totalPages)].map((_, index) => {
+                                                    // Only show pages that are within ±1 of current page
+                                                    if (index >= currentPage - 1 && index <= currentPage + 1 && index >= 0 && index < totalPages) {
+                                                        return (
+                                                            <button
+                                                                key={index}
+                                                                className={`pagination-page ${currentPage === index ? 'active' : ''}`}
+                                                                onClick={() => handlePageChange(index)}
+                                                            >
+                                                                {index + 1}
+                                                            </button>
+                                                        );
+                                                    }
+                                                    return null;
+                                                })}
+
+                                                {currentPage <= totalPages - 4 && (
+                                                    <>
+                                                        {currentPage < totalPages - 4 && <span className="pagination-ellipsis">...</span>}
+                                                        <button
+                                                            className="pagination-page"
+                                                            onClick={() => handlePageChange(totalPages - 1)}
+                                                        >
+                                                            {totalPages}
+                                                        </button>
+                                                    </>
+                                                )}
                                             </div>
 
                                             <button
@@ -285,20 +366,13 @@ const AdminPanel = () => {
                                 <h2>Add New Building</h2>
                             </div>
                             <div className="building-form">
-                                <div className="form-placeholder">
-                                    <h3>Building Information Form</h3>
-                                    <p>This is where the building form will be displayed.</p>
-                                    <div className="form-fields">
-                                        <div className="field">Building Number Input</div>
-                                        <div className="field">Address Input</div>
-                                        <div className="field">Floors Input</div>
-                                        <div className="field">Apartments per Floor Input</div>
-                                        <div className="field">Floor Overrides Section</div>
-                                    </div>
-                                    <button className="submit-button">
-                                        Create Building
-                                    </button>
-                                </div>
+                                <AddBuildingForm
+                                    handleChange={handleInputChange}
+                                    handleSubmit={addBuilding}
+                                    formData={addBuildingFormData}
+                                    isLoading={isLoading}
+                                    message={message}
+                                />
                             </div>
                         </div>
                     )}

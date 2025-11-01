@@ -340,6 +340,23 @@ public class GlobalExceptionHandler {
         );
     }
 
+    /**
+     * Handles FloorCanNotBeNullException.
+     * Returns HTTP 400 when the provided inputs are null.
+     *
+     * @param ex the FloorCanNotBeNullException thrown
+     * @return ResponseEntity with ApiError and HTTP 400 status
+     */
+    @ExceptionHandler(FloorCanNotBeNullException.class)
+    public ResponseEntity<ApiError> handleFloorCanNotBeNullException(FloorCanNotBeNullException ex) {
+        return new ResponseEntity<>(
+                new ApiError(ex.getMessage(),
+                        "The floor van not be 0",
+                        LocalDateTime.now()),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
 
     /**
      * Handles DataAccessException from Spring Data.
