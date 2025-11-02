@@ -3,7 +3,7 @@ import {Route, Routes} from "react-router-dom";
 
 import Login from "../pages/auth/Login.jsx";
 import Register from "../pages/auth/Register.jsx"
-import WelcomePage from "../pages/main/WelcomePage.jsx";
+import ChooseRole from "../pages/role-selection/ChooseRole.jsx";
 import AdminPanel from "../pages/admin/AdminPanel.jsx";
 
 export const AuthRoutes = () =>{
@@ -18,7 +18,7 @@ export const AuthRoutes = () =>{
 export const MainRoutes = () => {
     return (
         <Routes>
-            <Route path="/welcome-page" element={<WelcomePage/>}/>
+            <Route path="/welcome-page" element={<ChooseRole/>}/>
         </Routes>
     )
 }

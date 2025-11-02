@@ -1,16 +1,11 @@
-import {FeedbackContext} from "../../../context/general/FeedbackContext.jsx";
-import React, {useContext, useState} from "react";
+import React, {useState} from "react";
 
-import {FaBuilding} from "react-icons/fa6";
-import { FaHouse } from "react-icons/fa6";
-import { MdAddHomeWork } from "react-icons/md";
-import { FaLocationDot } from "react-icons/fa6";
-import { FaPlus, FaTrash } from "react-icons/fa";
+import {FaBuilding, FaHouse, FaLocationDot} from "react-icons/fa6";
+import {MdAddHomeWork} from "react-icons/md";
+import {FaPlus, FaTrash} from "react-icons/fa";
 
 import "./component-styles/AddBuildingForm.css"
 
-//Külön kell szedni az admin-panelt componentek-re
-//Welcome-page
 
 const AddBuildingForm = ({ handleChange, handleSubmit, formData, isLoading, message }) => {
 
@@ -150,7 +145,7 @@ const AddBuildingForm = ({ handleChange, handleSubmit, formData, isLoading, mess
                                         />
                                         <input
                                             type="number"
-                                            value={override.apartmentsOnFloor || 0} // ✅ Fixed: apartmentsOnFloor
+                                            value={override.apartmentsOnFloor || 0}
                                             onChange={(e) => handleOverrideChange(index, 'apartmentsOnFloor', e.target.value)} // ✅ Fixed: apartmentsOnFloor
                                             min="1"
                                             placeholder="Apartments on this floor"

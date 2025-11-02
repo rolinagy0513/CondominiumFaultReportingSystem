@@ -59,16 +59,14 @@ const apiServices = {
      *
      * @param {string} url - The endpoint to send the POST request to.
      * @param {Object} [data=null] - Optional data object to be sent as JSON in the request body.
-     * @returns {Promise<Object>} - Parsed JSON response from the server.
+     * @returns {Promise<Object|string|null>} - Parsed JSON response from the server, plain text if JSON parsing fails, or null if response body is empty.
      * @throws {Error} - Throws an error if the request fails or returns a non-OK response.
      */
 
-    post: async (url, data = null) =>{
-
-        try{
-
+    post: async (url, data = null) => {
+        try {
             const headers = {
-                "Content-Type":"application/json"
+                "Content-Type": "application/json"
             }
 
             const body = JSON.stringify(data)
@@ -80,19 +78,30 @@ const apiServices = {
                 body: body
             });
 
-            const responseData = await response.json();
-
             if (!response.ok) {
-                throw new Error(responseData.message || "Request failed");
+                let errorData;
+                try {
+                    errorData = await response.json();
+                } catch {
+                    errorData = await response.text();
+                }
+                throw new Error(errorData?.message || errorData || "Request failed");
             }
 
-            return responseData;
+            const text = await response.text();
+            if (!text || text.trim().length === 0) {
+                return null;
+            }
 
-        }catch(error){
+            try {
+                return JSON.parse(text);
+            } catch (jsonError) {
+                return text;
+            }
 
+        } catch(error) {
             console.error("Api error: " + error.message)
             throw error;
-
         }
     },
 

@@ -1,0 +1,61 @@
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.page-title {
+    margin: 0;
+    color: #2d3748;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.building-address {
+    margin: 0;
+    color: #718096;
+    font-size: 14px;
+    font-style: italic;
+}
+
+.header-right {
+    display: flex;
+    gap: 15px;
+}
+
+.notification-btn {
+    background: white;
+    border: 1px solid #e2e8f0;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.notification-btn:hover {
+    background: #f7fafc;
+    border-color: #cbd5e0;
+}
+
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 18px;
+    }
+
+    .notification-btn span {
+        display: none;
+    }
+}
