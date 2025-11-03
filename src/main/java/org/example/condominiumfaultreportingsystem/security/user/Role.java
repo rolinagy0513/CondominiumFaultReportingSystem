@@ -20,6 +20,8 @@ import static org.example.condominiumfaultreportingsystem.security.user.Permissi
 public enum Role {
 
   USER(Collections.emptySet()),
+  RESIDENT(Collections.emptySet()),
+
   ADMIN(
           Set.of(
                   ADMIN_READ,

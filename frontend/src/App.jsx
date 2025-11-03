@@ -7,6 +7,7 @@ import {AddBuildingProvider} from "./context/admin/AddBuildingContext.jsx";
 import {AdminPanelProvider} from "./context/admin/AdminPanelContext.jsx";
 import {PaginationProvider} from "./context/general/PaginationContext.jsx";
 import {AdminModalProvider} from "./context/admin/AdminModalContext.jsx";
+import {AdminUserProvider} from "./context/admin/AdminUserContext.jsx";
 
 function App() {
 
@@ -19,9 +20,11 @@ function App() {
                       <AdminPanelProvider>
                           <PaginationProvider>
                               <AdminModalProvider>
-                                  <AuthRoutes/>
-                                  <MainRoutes/>
-                                  <AdminRoutes/>
+                                  <AdminUserProvider>
+                                      <AuthRoutes/>
+                                      <MainRoutes/>
+                                      <AdminRoutes/>
+                                  </AdminUserProvider>
                               </AdminModalProvider>
                           </PaginationProvider>
                       </AdminPanelProvider>

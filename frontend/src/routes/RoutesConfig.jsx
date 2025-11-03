@@ -18,7 +18,7 @@ export const AuthRoutes = () =>{
 export const MainRoutes = () => {
     return (
         <Routes>
-            <Route path="/welcome-page" element={<ChooseRole/>}/>
+            <Route path="/choose-role" element={<ChooseRole/>}/>
         </Routes>
     )
 }

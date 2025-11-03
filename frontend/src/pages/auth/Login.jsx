@@ -16,6 +16,11 @@ const Login = () =>{
     const AUTH_API_PATH = import.meta.env.VITE_API_BASE_AUTH_URL;
     const LOGIN_URL = `${AUTH_API_PATH}/authenticate`;
 
+    const ADMIN_ROLE = import.meta.env.VITE_ADMIN_ROLE_STRING;
+    const COMPANY_ROLE = import.meta.env.VITE_COMPANY_ROLE_STRING;
+    const RESIDENT_ROLE = import.meta.env.VITE_RESIDENT_ROLE_STRING;
+    const USER_ROLE = import.meta.env.VITE_USER_ROLE_STRING;
+
     const navigate = useNavigate();
 
     const { message, setMessage, isLoading, setIsLoading } = useContext(FeedbackContext);
@@ -53,14 +58,41 @@ const Login = () =>{
 
             resetForm()
 
-            if (response.permission){
+            console.log(response.role)
+            console.log(response.groupId)
+
+            if (  response.role === ADMIN_ROLE && response.groupId){
+                localStorage.setItem("adminGroupId",response.groupId);
+                localStorage.setItem("authenticatedAdminId",response.user.id);
+                localStorage.setItem("authenticatedAdminUserName",response.user.userName);
+
+                console.log("In the Login")
+                console.log(localStorage.getItem("adminGroupId"))
+                console.log(localStorage.getItem("authenticatedAdminId"))
+                console.log(localStorage.getItem("authenticatedAdminUserName"))
+
                 navigate("/admin-panel")
-            }else{
-                navigate("/welcome-page")
             }
 
-            localStorage.setItem("authenticatedUserId", response.user.id);
-            localStorage.setItem("authenticatedUserName", response.user.userName);
+            if (response.role === RESIDENT_ROLE){
+                localStorage.setItem("residentGroupId",response.groupId);
+                localStorage.setItem("authenticatedResidentId",response.user.id);
+                localStorage.setItem("authenticatedResidentUserName",response.user.userName);
+            }
+
+            if(response.role === COMPANY_ROLE){
+                localStorage.setItem("companyGroupId",response.groupId);
+                localStorage.setItem("authenticatedCompanyUserId",response.user.id);
+                localStorage.setItem("authenticatedCompanyUserName",response.user.userName);
+            }
+
+            if (response.role === USER_ROLE){
+
+                localStorage.setItem("authenticatedUserId", response.user.id);
+                localStorage.setItem("authenticatedUserName", response.user.userName);
+
+                navigate("/choose-role")
+            }
 
         }catch(error){
 

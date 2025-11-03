@@ -1,13 +1,15 @@
-import {useContext, useEffect} from "react";
+import {useContext, useEffect, useRef} from "react";
 import {useNavigate} from "react-router-dom";
 
-import {UserContext} from "../../context/general/UserContext.jsx";
 import apiServices from "../../services/ApiServices.js";
+import websocketServices from "../../services/WebsocketServices.js";
+
 import {AddBuildingContext} from "../../context/admin/AddBuildingContext.jsx";
 import {FeedbackContext} from "../../context/general/FeedbackContext.jsx";
 import {AdminPanelContext} from "../../context/admin/AdminPanelContext.jsx";
 import {PaginationContext} from "../../context/general/PaginationContext.jsx";
 import {AdminModalContext} from "../../context/admin/AdminModalContext.jsx";
+import {AdminUserContext} from "../../context/admin/AdminUserContext.jsx";
 
 import SideBar from "./components/SideBar.jsx";
 import TopHeader from "./components/TopHeader.jsx";
@@ -16,10 +18,14 @@ import NotificationModal from "./components/NotificationModal.jsx";
 
 import "./styles/AdminPanel.css";
 
+//Más kell at id tárolásra mint ami most van hogy meg is maradjon a state
+//ChooseRole page
+
 const AdminPanel = () => {
     const ADMIN_BUILDING_API_PATH = import.meta.env.VITE_API_ADMIN_BUILDING_URL;
     const AUTH_API_PATH = import.meta.env.VITE_API_BASE_AUTH_URL;
     const BASE_APARTMENT_API_PATH = import.meta.env.VITE_API_BASE_APARTMENT_URL;
+    const SOCK_URL = import.meta.env.VITE_API_WEBSOCKET_BASE_URL;
 
     const LOGOUT_URL = `${AUTH_API_PATH}/logout`
     const ADD_BUILDING_URL = `${ADMIN_BUILDING_API_PATH}/addNew`;
@@ -43,14 +49,75 @@ const AdminPanel = () => {
         pageSize
     } = useContext(PaginationContext);
 
-    const {authenticatedUserName} = useContext(UserContext);
-    const {addBuildingFormData, setAddBuildingFormData} = useContext(AddBuildingContext)
+    const {adminGroupId, authenticatedAdminUserName} = useContext(AdminUserContext);
+
+    console.log("The group id: " + adminGroupId)
+    const {addBuildingFormData, setAddBuildingFormData} = useContext(AddBuildingContext);
     const {isLoading, setIsLoading, message, setMessage} = useContext(FeedbackContext);
     const {isAdminModalOpen, setIsAdminModalOpen} = useContext(AdminModalContext);
+
+    const subscriptionRef = useRef(null);
 
     useEffect(() => {
         getAllBuildings();
     }, []);
+
+    useEffect(() => {
+        if (!adminGroupId) {
+            console.log("⚠️ No adminGroupId, skipping WebSocket setup");
+            return;
+        }
+
+        console.log("🔌 Setting up WebSocket connection for admin group:", adminGroupId);
+
+        websocketServices.connect(SOCK_URL, {
+            onConnect: () => {
+                console.log("✅ Admin WebSocket connected successfully");
+
+                const topic = `/topic/group/${adminGroupId}`;
+                console.log("📡 Subscribing to:", topic);
+
+                subscriptionRef.current = websocketServices.subscribe(
+                    topic,
+                    handleNotification
+                );
+
+                if (subscriptionRef.current) {
+                    console.log("✅ Successfully subscribed to group notifications");
+                } else {
+                    console.error("❌ Failed to subscribe");
+                }
+            },
+            onDisconnect: () => {
+                console.log("🔌 Admin WebSocket disconnected");
+                subscriptionRef.current = null;
+            },
+            onError: (error) => {
+                console.error("❌ WebSocket error:", error);
+                subscriptionRef.current = null;
+            },
+            reconnectDelay: 5000,
+            heartbeatIncoming: 4000,
+            heartbeatOutgoing: 4000,
+            withCredentials: true
+        });
+
+        return () => {
+            console.log("🧹 Cleaning up WebSocket subscriptions...");
+
+            if (subscriptionRef.current) {
+                subscriptionRef.current.unsubscribe();
+                subscriptionRef.current = null;
+            }
+
+            websocketServices.disconnect();
+        };
+    }, [adminGroupId]);
+
+    const handleNotification = (notification) => {
+        console.log("🔔 Notification received:", notification);
+        setIsAdminModalOpen(true);
+    };
 
     const handleAddBuilding = () => {
         setCurrentView('add-building');
@@ -165,10 +232,16 @@ const AdminPanel = () => {
     const handleLogout = async () =>{
 
         try {
+            // Clean up WebSocket before logout
+            if (subscriptionRef.current) {
+                subscriptionRef.current.unsubscribe();
+                subscriptionRef.current = null;
+            }
+            websocketServices.disconnect();
 
             await apiServices.post(LOGOUT_URL);
-            localStorage.removeItem("authenticatedUserId");
-            localStorage.removeItem("authenticatedUserName");
+            localStorage.removeItem("authenticatedAdminId");
+            localStorage.removeItem("authenticatedAdminUserName");
 
             navigate("/");
 
@@ -182,40 +255,40 @@ const AdminPanel = () => {
         <div className="admin-panel">
 
             <SideBar
-            authenticatedUserName={authenticatedUserName}
-            currentView={currentView}
-            setCurrentView={setCurrentView}
-            handleAddBuilding={handleAddBuilding}
-            buildings={buildings}
-            getApartments={getApartments}
-            selectedBuilding={selectedBuilding}
+                authenticatedAdminUserName={authenticatedAdminUserName}
+                currentView={currentView}
+                setCurrentView={setCurrentView}
+                handleAddBuilding={handleAddBuilding}
+                buildings={buildings}
+                getApartments={getApartments}
+                selectedBuilding={selectedBuilding}
             />
 
             <div className="main-content">
 
                 <TopHeader
-                currentView={currentView}
-                selectedBuilding={selectedBuilding}
-                handleLogout={handleLogout}
-                setIsAdminModalOpen={setIsAdminModalOpen}
+                    currentView={currentView}
+                    selectedBuilding={selectedBuilding}
+                    handleLogout={handleLogout}
+                    setIsAdminModalOpen={setIsAdminModalOpen}
                 />
 
                 <ContentArea
-                currentView={currentView}
-                buildings={buildings}
-                handleBackToBuildings={handleBackToBuildings}
-                apartments={apartments}
-                currentPage={currentPage}
-                pageSize={pageSize}
-                totalElements={totalElements}
-                loadingApartments={loadingApartments}
-                handlePageChange={handlePageChange}
-                totalPages={totalPages}
-                handleInputChange={handleInputChange}
-                addBuilding={addBuilding}
-                addBuildingFormData={addBuildingFormData}
-                isLoading={isLoading}
-                message={message}
+                    currentView={currentView}
+                    buildings={buildings}
+                    handleBackToBuildings={handleBackToBuildings}
+                    apartments={apartments}
+                    currentPage={currentPage}
+                    pageSize={pageSize}
+                    totalElements={totalElements}
+                    loadingApartments={loadingApartments}
+                    handlePageChange={handlePageChange}
+                    totalPages={totalPages}
+                    handleInputChange={handleInputChange}
+                    addBuilding={addBuilding}
+                    addBuildingFormData={addBuildingFormData}
+                    isLoading={isLoading}
+                    message={message}
                 />
 
             </div>

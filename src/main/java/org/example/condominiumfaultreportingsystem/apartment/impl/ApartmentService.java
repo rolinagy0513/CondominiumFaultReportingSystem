@@ -149,6 +149,8 @@ public class ApartmentService implements IApartmentService {
 
             groupService.removeUserFromGroup(usersApartment, userToRemove, apartmentsBuilding.getBuildingNumber(), apartmentsBuilding.getAddress());
 
+            userToRemove.setRole(Role.USER);
+
             cacheService.evictAAllApartmentsByBuildingCache();
             cacheService.evictAllApartmentByFloorAndBuildingCache();
 

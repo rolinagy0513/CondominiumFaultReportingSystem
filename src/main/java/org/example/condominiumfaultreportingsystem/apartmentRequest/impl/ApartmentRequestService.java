@@ -191,6 +191,8 @@ public class ApartmentRequestService implements IApartmentRequestService {
 
         GroupDTO usersGroup = groupService.addUserToGroup(buildingNumber,buildingAddress, userToAdd);
 
+        userToAdd.setRole(Role.RESIDENT);
+
         eventPublisher.publishEvent(
                 new ApartmentRequestAcceptedEvent(apartmentRequest,apartment,usersGroup)
         );

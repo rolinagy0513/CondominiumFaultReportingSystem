@@ -5,8 +5,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.example.condominiumfaultreportingsystem.DTO.UserResponseDTO;
+import org.example.condominiumfaultreportingsystem.exception.GroupNotFoundException;
 import org.example.condominiumfaultreportingsystem.exception.InvalidPasswordException;
 import org.example.condominiumfaultreportingsystem.exception.UserNotFoundException;
+import org.example.condominiumfaultreportingsystem.group.Group;
+import org.example.condominiumfaultreportingsystem.group.GroupRepository;
 import org.example.condominiumfaultreportingsystem.group.impl.GroupService;
 import org.example.condominiumfaultreportingsystem.security.config.JwtService;
 import org.example.condominiumfaultreportingsystem.security.token.Token;
@@ -29,6 +32,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Service class responsible for handling authentication-related operations such as
@@ -41,11 +45,16 @@ import java.util.Arrays;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
+
   private final UserRepository repository;
   private final TokenRepository tokenRepository;
+  private final GroupRepository groupRepository;
+
   private final PasswordEncoder passwordEncoder;
+
   private final JwtService jwtService;
   private final GroupService groupService;
+
   private final AuthenticationManager authenticationManager;
 
   @Value("${application.security.jwt.expiration}")
@@ -53,6 +62,9 @@ public class AuthenticationService {
 
   @Value("${application.security.jwt.refresh-token.expiration}")
   private long refreshExpiration;
+
+  @Value("${admin.group.name}")
+  private String adminGroupName;
 
   private static final String ACCESS_TOKEN_COOKIE_NAME = "access_token";
   private static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
@@ -105,7 +117,7 @@ public class AuthenticationService {
    */
   public AuthenticationResponse authenticate(AuthenticationRequest request, HttpServletResponse response) {
 
-    boolean permission = false;
+    Long groupId = null;
 
     try {
       authenticationManager.authenticate(
@@ -130,13 +142,23 @@ public class AuthenticationService {
 
     if (user.getRole().equals(Role.ADMIN)){
       groupService.addAdminToGroup(user.getId());
-      permission = true;
+
+      Optional<Group> groupOpt = groupRepository.findByGroupName(adminGroupName);
+
+      if (groupOpt.isEmpty()){
+        throw new GroupNotFoundException();
+      }
+
+      Group adminGroup = groupOpt.get();
+      groupId = adminGroup.getId();
+
     }
 
     return AuthenticationResponse.builder()
             .message("Login complete")
             .user(mapToUserResponseDto(user))
-            .permission(permission)
+            .role(user.getRole())
+            .groupId(groupId)
             .build();
   }
 

@@ -52,11 +52,10 @@ const Register = () =>{
         try{
 
             const response = await apiServices.post(REGISTER_URL,registerFormData);
-            console.log("Successfully logged in")
 
             resetForm()
 
-            navigate("/welcome-page");
+            navigate("/choose-role");
 
         }catch(error){
 

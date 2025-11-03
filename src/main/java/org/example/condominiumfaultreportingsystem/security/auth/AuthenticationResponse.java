@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.condominiumfaultreportingsystem.DTO.UserResponseDTO;
+import org.example.condominiumfaultreportingsystem.security.user.Role;
 
 /**
  * Data Transfer Object (DTO) representing the authentication response payload.
@@ -28,6 +29,7 @@ public class AuthenticationResponse {
 
   private String message;
   private UserResponseDTO user;
-  private boolean permission;
+  private Long groupId;
+  private Role role;
 
 }

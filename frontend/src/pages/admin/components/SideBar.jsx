@@ -5,18 +5,18 @@ import BuildingsList from "./BuildingsList.jsx";
 
 import "./component-styles/SideBar.css"
 
-const SideBar = ({authenticatedUserName, currentView, setCurrentView, handleAddBuilding, buildings, getApartments, selectedBuilding}) =>{
+const SideBar = ({authenticatedAdminUserName, currentView, setCurrentView, handleAddBuilding, buildings, getApartments, selectedBuilding}) =>{
 
     return(
         <div className="sidebar">
             <div className="user-section">
                 <div className="user-avatar">
                     <div className="avatar-placeholder">
-                        {authenticatedUserName.split(' ').map(n => n[0]).join('')}
+                        {authenticatedAdminUserName.charAt(0).toUpperCase()}
                     </div>
                 </div>
                 <div className="user-info">
-                    <h3 className="user-name">{authenticatedUserName}</h3>
+                    <h3 className="user-name">{authenticatedAdminUserName}</h3>
                     <p className="user-role">Administrator</p>
                 </div>
             </div>
