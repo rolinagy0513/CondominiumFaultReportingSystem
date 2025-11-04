@@ -140,7 +140,7 @@ public class ApartmentRequestService implements IApartmentRequestService {
         if (responseDTO.getStatus() == RequestResponseStatus.ACCEPTED){
 
             apartmentRequest.getApartment().setStatus(ApartmentStatus.PENDING);
-            acceptRequest(apartmentRequest);
+            acceptRequest(apartmentRequest, currentAdmin);
 
             cacheService.evictAAllApartmentsByBuildingCache();
             cacheService.evictAllApartmentByFloorAndBuildingCache();
@@ -171,7 +171,7 @@ public class ApartmentRequestService implements IApartmentRequestService {
 
     }
 
-    private void acceptRequest(ApartmentRequest apartmentRequest){
+    private void acceptRequest(ApartmentRequest apartmentRequest, UserWithRoleDTO currentAdmin){
 
         Apartment apartment = apartmentRequest.getApartment();
 
@@ -191,7 +191,7 @@ public class ApartmentRequestService implements IApartmentRequestService {
 
         GroupDTO usersGroup = groupService.addUserToGroup(buildingNumber,buildingAddress, userToAdd);
 
-        userToAdd.setRole(Role.RESIDENT);
+        userService.promoteUserToResident(currentAdmin.getId(),userToAdd.getId());
 
         eventPublisher.publishEvent(
                 new ApartmentRequestAcceptedEvent(apartmentRequest,apartment,usersGroup)

@@ -20,7 +20,7 @@ public class ApartmentController {
 
     private final ApartmentService apartmentService;
 
-    @GetMapping("/apartment/getByBuildingId/{buildingId}")
+    @GetMapping("/resident/apartment/getByBuildingId/{buildingId}")
     public CompletableFuture<Page<ApartmentDTO>> getApartmentsInBuilding(
             @PathVariable Long buildingId,
 
@@ -32,14 +32,14 @@ public class ApartmentController {
         return apartmentService.getApartmentsInBuilding(buildingId, page, size, sortBy, direction);
     }
 
-    @GetMapping("/apartment/getById/{apartmentId}")
+    @GetMapping("/resident/apartment/getById/{apartmentId}")
     public ApartmentDTO getApartmentById(
             @PathVariable Long apartmentId
     ){
         return apartmentService.getApartmentById(apartmentId);
     }
 
-    @GetMapping("/apartment/getByFloorAndBuilding/{buildingId}/{floorNumber}")
+    @GetMapping("/resident/apartment/getByFloorAndBuilding/{buildingId}/{floorNumber}")
     public CompletableFuture<Page<ApartmentDTO>> getApartmentsByFloorAndBuilding(
             @PathVariable Long buildingId,
             @PathVariable Integer floorNumber,
@@ -52,7 +52,7 @@ public class ApartmentController {
         return apartmentService.getApartmentsByFloorAndBuilding(buildingId,floorNumber, page,size,sortBy,direction);
     }
 
-    @MessageMapping("/admin/apartment/removeUserFromApartment/{apartmentId}")
+    @PutMapping("/admin/apartment/removeUserFromApartment/{apartmentId}")
     public void removeUserFromApartment(
             @PathVariable Long apartmentId
     ){

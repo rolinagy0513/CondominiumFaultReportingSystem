@@ -18,19 +18,17 @@ import NotificationModal from "./components/NotificationModal.jsx";
 
 import "./styles/AdminPanel.css";
 
-//Más kell at id tárolásra mint ami most van hogy meg is maradjon a state
-//ChooseRole page
-
 const AdminPanel = () => {
     const ADMIN_BUILDING_API_PATH = import.meta.env.VITE_API_ADMIN_BUILDING_URL;
+    const BUILDING_API_PATH = import.meta.env.VITE_API_BASE_BUILDING_URL
     const AUTH_API_PATH = import.meta.env.VITE_API_BASE_AUTH_URL;
-    const BASE_APARTMENT_API_PATH = import.meta.env.VITE_API_BASE_APARTMENT_URL;
+    const RESIDENT_APARTMENT_API_PATH = import.meta.env.VITE_API_RESIDENT_APARTMENT_URL
     const SOCK_URL = import.meta.env.VITE_API_WEBSOCKET_BASE_URL;
 
     const LOGOUT_URL = `${AUTH_API_PATH}/logout`
     const ADD_BUILDING_URL = `${ADMIN_BUILDING_API_PATH}/addNew`;
-    const GET_ALL_BUILDING_URL = `${ADMIN_BUILDING_API_PATH}/getAll`;
-    const GET_APARTMENT_URL = `${BASE_APARTMENT_API_PATH}/getByBuildingId`;
+    const GET_ALL_BUILDING_URL = `${BUILDING_API_PATH}/getAll`;
+    const GET_APARTMENT_URL = `${RESIDENT_APARTMENT_API_PATH}/getByBuildingId`;
 
     const navigate = useNavigate();
 
@@ -51,7 +49,6 @@ const AdminPanel = () => {
 
     const {adminGroupId, authenticatedAdminUserName} = useContext(AdminUserContext);
 
-    console.log("The group id: " + adminGroupId)
     const {addBuildingFormData, setAddBuildingFormData} = useContext(AddBuildingContext);
     const {isLoading, setIsLoading, message, setMessage} = useContext(FeedbackContext);
     const {isAdminModalOpen, setIsAdminModalOpen} = useContext(AdminModalContext);

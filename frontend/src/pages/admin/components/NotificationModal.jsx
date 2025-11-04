@@ -4,8 +4,6 @@ const NotificationModal = ({ setIsAdminModalOpen }) => {
 
     //Hozzá kell adni a logikát
     //Hova menjen a company és hova az apartment request
-    //Megcsinálni a websocket connection-t és feliratkoztatni a csatornára
-    //Role-Selection-Page
 
     const handleBackdropClick = (e) => {
         if (e.target === e.currentTarget) {

@@ -13,14 +13,25 @@ import static org.example.condominiumfaultreportingsystem.security.user.Permissi
 
 /**
  * An ENUM for the roles inside the app
- * Either simple USER, ADMIN or MANAGER
- * Or the project specific TRAINER for the different functionalities and UI
+ * Either:
+ * - USER for the endpoints that are not restricted
+ * - ADMIN for the administration endpoints and for everything else
+ * - COMPANY for the company related endpoints(ADMIN has permission too)
+ * - RESIDENT for the resident related endpoints(ADMIN has permission too)
  */
 @RequiredArgsConstructor
 public enum Role {
 
   USER(Collections.emptySet()),
-  RESIDENT(Collections.emptySet()),
+
+  RESIDENT(
+          Set.of(
+                  RESIDENT_READ,
+                  RESIDENT_UPDATE,
+                  RESIDENT_DELETE,
+                  RESIDENT_CREATE
+    )
+  ),
 
   ADMIN(
           Set.of(

@@ -30,14 +30,14 @@ public class CompanyController {
         return companyService.getAllCompanies(page, size, sortBy, direction);
     }
 
-    @GetMapping("company/getById/{companyId}")
+    @GetMapping("/resident/company/getById/{companyId}")
     public CompanyDTO getCompanyById(
             @PathVariable Long companyId
     ){
         return companyService.getCompanyById(companyId);
     }
 
-    @GetMapping("company/getByBuildingId/{buildingId}")
+    @GetMapping("/resident/company/getByBuildingId/{buildingId}")
     public CompletableFuture<List<CompanyDTO>> getCompaniesByBuildingId(
             @PathVariable Long buildingId
     ){
@@ -58,7 +58,7 @@ public class CompanyController {
         return companyService.getCompaniesByServiceType(serviceType, page, size, sortBy, direction);
     }
 
-    @GetMapping("company/getByBuildingIdAndServiceType")
+    @GetMapping("/resident/company/getByBuildingIdAndServiceType")
     public CompletableFuture<List<CompanyDTO>> getCompaniesByBuildingIdAndServiceType(
             @RequestParam Long buildingId,
             @RequestParam ServiceType serviceType

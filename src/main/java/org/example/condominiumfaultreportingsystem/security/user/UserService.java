@@ -144,8 +144,18 @@ public class UserService {
     }
 
     @Transactional(propagation = Propagation.MANDATORY)
+    public void promoteUserToResident(Long currentUserId, Long userToUpdateId){
+        changeUserRole(currentUserId,userToUpdateId, Role.RESIDENT, Role.ADMIN);
+    }
+
+    @Transactional(propagation = Propagation.MANDATORY)
     public void demoteCompanyToUser(Long currentUserId, Long userToUpdateId){
         changeUserRole(currentUserId, userToUpdateId, Role.USER, Role.ADMIN);
+    }
+
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void demoteResidentToUser(Long currentUserId, Long userToUpdateId){
+        changeUserRole(currentUserId,userToUpdateId, Role.USER, Role.ADMIN);
     }
 
     private void changeUserRole(Long currentUserId, Long userToUpdateId, Role newRole, Role requiredRole){
@@ -181,12 +191,19 @@ public class UserService {
             throw new RoleValidationException("Cannot demote admin users");
         }
 
-        if (actorRole != Role.ADMIN && currentRole == Role.COMPANY && newRole == Role.USER) {
-            throw new RoleValidationException("Company users cannot revert to regular users");
+        if ((currentRole == Role.COMPANY || currentRole == Role.RESIDENT)
+                && newRole == Role.USER
+                && actorRole != Role.ADMIN) {
+            throw new RoleValidationException("Only admin can demote company or resident users to USER");
         }
 
-        if (currentRole == Role.COMPANY && newRole == Role.COMPANY){
-            throw new RoleValidationException("You are already present in the system as a company");
+        if (currentRole == newRole) {
+            throw new RoleValidationException("User already has this role");
+        }
+
+        if ((currentRole == Role.COMPANY && newRole == Role.RESIDENT)
+                || (currentRole == Role.RESIDENT && newRole == Role.COMPANY)) {
+            throw new RoleValidationException("Cannot switch directly between company and resident roles");
         }
 
     }

@@ -93,6 +93,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(WHITE_LIST_URL)
                                 .permitAll()
+
                                 .requestMatchers("/api/admin/**").hasAnyRole(ADMIN.name())
                                 .requestMatchers(GET, "/api/admin/**").hasAnyAuthority(ADMIN_READ.name())
                                 .requestMatchers(POST, "/api/admin/**").hasAnyAuthority(ADMIN_CREATE.name())
@@ -104,6 +105,13 @@ public class SecurityConfiguration {
                                 .requestMatchers(POST, "/api/company/**").hasAnyAuthority(COMPANY_CREATE.name(), ADMIN_CREATE.name())
                                 .requestMatchers(PUT, "/api/company/**").hasAnyAuthority(COMPANY_UPDATE.name(), ADMIN_UPDATE.name())
                                 .requestMatchers(DELETE, "/api/company/**").hasAnyAuthority(COMPANY_DELETE.name(), ADMIN_DELETE.name())
+
+                                .requestMatchers("/api/resident/**").hasAnyRole(RESIDENT.name(), ADMIN.name())
+                                .requestMatchers(GET, "/api/resident/**").hasAnyAuthority(RESIDENT_READ.name(), ADMIN_READ.name())
+                                .requestMatchers(POST, "/api/resident/**").hasAnyAuthority(RESIDENT_CREATE.name(),ADMIN_CREATE.name())
+                                .requestMatchers(PUT, "/api/resident/**").hasAnyAuthority(RESIDENT_UPDATE.name(), ADMIN_UPDATE.name())
+                                .requestMatchers(DELETE, "/api/resident/**").hasAnyAuthority(RESIDENT_DELETE.name(), ADMIN_DELETE.name())
+
                                 .anyRequest()
                                 .authenticated()
                 )

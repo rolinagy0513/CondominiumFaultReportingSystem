@@ -12,7 +12,7 @@
  */
 
 
-import {useState, createContext, useEffect} from "react";
+import {useState, createContext} from "react";
 
 export const AdminUserContext = createContext();
 
@@ -29,30 +29,6 @@ export const AdminUserProvider = ({ children }) => {
     const [authenticatedAdminUserName, setAuthenticatedAdminUserName] = useState(() =>
         localStorage.getItem("authenticatedAdminUserName")
     );
-
-    useEffect(() => {
-        if (adminGroupId) {
-            localStorage.setItem("adminGroupId", adminGroupId);
-        } else {
-            localStorage.removeItem("adminGroupId");
-        }
-    }, [adminGroupId]);
-
-    useEffect(() => {
-        if (authenticatedAdminId) {
-            localStorage.setItem("authenticatedAdminId", authenticatedAdminId);
-        } else {
-            localStorage.removeItem("authenticatedAdminId");
-        }
-    }, [authenticatedAdminId]);
-
-    useEffect(() => {
-        if (authenticatedAdminUserName) {
-            localStorage.setItem("authenticatedAdminUserName", authenticatedAdminUserName);
-        } else {
-            localStorage.removeItem("authenticatedAdminUserName");
-        }
-    }, [authenticatedAdminUserName]);
 
     return (
         <AdminUserContext.Provider value={{

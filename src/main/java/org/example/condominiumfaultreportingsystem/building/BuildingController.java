@@ -23,26 +23,26 @@ public class BuildingController {
         return buildingService.addNewBuilding(requestDTO);
     }
 
-    @GetMapping("/admin/building/getAll")
+    @GetMapping("/building/getAll")
     public CompletableFuture<List<BuildingDTO>> getAll(){
         return buildingService.getAll();
     }
 
-    @GetMapping("building/getById/{buildingId}")
+    @GetMapping("/resident/building/getById/{buildingId}")
     public BuildingDTO getById(
             @PathVariable Long buildingId
     ){
         return buildingService.getById(buildingId);
     }
 
-    @GetMapping("building/getByNumber/{buildingNumber}")
+    @GetMapping("/resident/building/getByNumber/{buildingNumber}")
     public BuildingDTO getByNumber(
             @PathVariable Integer buildingNumber
     ){
         return buildingService.getByNumber(buildingNumber);
     }
 
-    @GetMapping("building/getByAddress")
+    @GetMapping("/resident/building/getByAddress")
     public List<BuildingDTO> getByAddress(
             @RequestParam String address
     ){

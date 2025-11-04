@@ -17,14 +17,14 @@ public class CompanyRequestController {
 
     private final CompanyRequestService companyRequestService;
 
-    @MessageMapping("/companyRequest/send")
+    @PostMapping("/companyRequest/send")
     public CompanyRequestInfoDTO sendCompanyRequest(
             @RequestBody CompanyRequestDTO companyRequestDTO
             ){
         return companyRequestService.sendCompanyRequest(companyRequestDTO);
     }
 
-    @MessageMapping("/admin/companyRequest/response")
+    @PutMapping("/admin/companyRequest/response")
     public void sendCompanyRequestResponse(
             @RequestBody RequestResponseDTO responseDTO
     ){
