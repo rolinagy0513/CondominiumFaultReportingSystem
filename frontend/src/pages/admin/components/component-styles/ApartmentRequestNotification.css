@@ -1,0 +1,259 @@
+/* Apartment Request Notification Styles */
+.apartment-request-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 350px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-left: 4px solid #3b82f6;
+    z-index: 9999;
+    transform: translateX(400px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.apartment-request-notification.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.apartment-request-notification.hide {
+    transform: translateX(400px);
+    opacity: 0;
+}
+
+.notification-content {
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Notification Header */
+.notification-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 16px 12px 16px;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.notification-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+}
+
+.notification-service-icon {
+    font-size: 20px;
+}
+
+.apartment-icon {
+    color: #3b82f6;
+}
+
+.notification-title-section {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-title {
+    margin: 0 0 4px 0;
+    color: #1e40af;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    color: white;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.close-notification-btn {
+    background: none;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.close-notification-btn:hover {
+    background: #e2e8f0;
+    color: #374151;
+}
+
+/* Notification Body */
+.notification-body {
+    padding: 12px 16px;
+}
+
+.notification-message {
+    margin: 0 0 12px 0;
+    color: #2d3748;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.notification-details {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.detail-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 12px;
+    line-height: 1.3;
+}
+
+.detail-row strong {
+    color: #374151;
+    min-width: 80px;
+    font-weight: 600;
+}
+
+.detail-row span {
+    color: #4b5563;
+    word-break: break-word;
+}
+
+/* Notification Footer */
+.notification-footer {
+    padding: 8px 16px 12px 16px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.notification-sender {
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.notification-progress-bar {
+    width: 100%;
+    height: 3px;
+    background: #e2e8f0;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    border-radius: 2px;
+    animation: progressShrink 5s linear forwards;
+}
+
+@keyframes progressShrink {
+    0% {
+        width: 100%;
+    }
+    100% {
+        width: 0%;
+    }
+}
+
+/* Status-specific border colors */
+.apartment-request-notification.available {
+    border-left-color: #10b981;
+}
+
+.apartment-request-notification.occupied {
+    border-left-color: #ef4444;
+}
+
+.apartment-request-notification.pending {
+    border-left-color: #f59e0b;
+}
+
+.apartment-request-notification.unavailable {
+    border-left-color: #6b7280;
+}
+
+/* Hover Effects */
+.apartment-request-notification:hover {
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.apartment-request-notification.show:hover {
+    transform: translateX(0) translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .apartment-request-notification {
+        width: calc(100vw - 40px);
+        right: 20px;
+        left: 20px;
+        transform: translateY(-100px);
+    }
+
+    .apartment-request-notification.show {
+        transform: translateY(0);
+    }
+
+    .apartment-request-notification.hide {
+        transform: translateY(-100px);
+    }
+
+    .detail-row {
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .detail-row strong {
+        min-width: auto;
+    }
+}
+
+/* Animation for new notification */
+@keyframes slideInRight {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+}

@@ -12,9 +12,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ApartmentRequestInfoDTO {
+public class ApartmentRequestDetailedInfoDTO {
 
     private Long requestId;
+
+    private String requesterName;
+    private Integer apartmentNumber;
+    private String buildingAddress;
+
     private Long requesterId;
     private Long apartmentId;
     private ApartmentRequestStatus status;

@@ -16,4 +16,7 @@ public interface CompanyRequestRepository extends JpaRepository<CompanyRequest, 
     @Query("SELECT r FROM CompanyRequest r WHERE r.status = :companyRequestStatus")
     List<CompanyRequest> findByStatus(@Param("companyRequestStatus") CompanyRequestStatus companyRequestStatus);
 
+    @Query("SELECT r FROM CompanyRequest r WHERE r.requesterId = :requesterId AND r.status = :status")
+    Optional<CompanyRequest> findByRequesterIdAndStatus(@Param("requesterId") Long requesterId, @Param("status") CompanyRequestStatus status);
+
 }

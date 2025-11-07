@@ -1,7 +1,8 @@
 package org.example.condominiumfaultreportingsystem.notificationHandler;
 
 public enum NotificationType {
-    REQUEST,
+    COMPANY_REQUEST,
+    APARTMENT_REQUEST,
     RESPONSE,
     WELCOME,
     REMOVAL,

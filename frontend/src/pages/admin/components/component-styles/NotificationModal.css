@@ -104,6 +104,7 @@
     gap: 15px;
 }
 
+/* === NOTIFICATION ITEM STYLES === */
 .notification-item {
     display: flex;
     align-items: flex-start;
@@ -159,7 +160,119 @@
     font-weight: 500;
 }
 
-/* Placeholder styles for future real data */
+/* === REAL NOTIFICATION STYLES === */
+.notification-item.real-notification {
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
+    border-left: 4px solid #3b82f6;
+    animation: none;
+}
+
+.notification-item.real-notification:hover {
+    background: #f8fafc;
+    border-color: #3b82f6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: #f59e0b; /* Default pending color */
+}
+
+.notification-item.real-notification .notification-title {
+    color: #1e40af;
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+.notification-item.real-notification .notification-description {
+    color: #4b5563;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+.notification-item.real-notification .notification-description strong {
+    color: #374151;
+}
+
+/* === BUTTON STYLES === */
+.notification-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.accept-btn, .reject-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex: 1;
+}
+
+.accept-btn {
+    background: #10b981;
+    color: white;
+}
+
+.accept-btn:hover {
+    background: #059669;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.reject-btn {
+    background: #ef4444;
+    color: white;
+}
+
+.reject-btn:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+/* === NO REQUESTS STATE === */
+.no-requests {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    color: #6b7280;
+}
+
+.no-requests .notification-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.no-requests p {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* === PLACEHOLDER STYLES === */
 .notification-item.placeholder {
     background: linear-gradient(90deg, #f8fafc 0%, #f1f5f9 50%, #f8fafc 100%);
     background-size: 200% 100%;
@@ -175,7 +288,7 @@
     }
 }
 
-/* Scrollbar styling for modal content */
+/* === SCROLLBAR STYLING === */
 .modal-content::-webkit-scrollbar {
     width: 6px;
 }
@@ -193,7 +306,150 @@
     background: #a0aec0;
 }
 
-/* Responsive design */
+/* === SERVICE TYPE SPECIFIC STYLES === */
+
+/* Service type icon container */
+.service-type-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Electrician Service */
+.electrician-icon {
+    color: #f59e0b; /* Amber */
+}
+
+.notification-item.electrician-request {
+    border-left-color: #f59e0b;
+}
+
+.notification-item.electrician-request:hover {
+    border-color: #f59e0b;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+}
+
+/* Plumber Service */
+.plumber-icon {
+    color: #3b82f6; /* Blue */
+}
+
+.notification-item.plumber-request {
+    border-left-color: #3b82f6;
+}
+
+.notification-item.plumber-request:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+/* Cleaning Service */
+.cleaning-icon {
+    color: #10b981; /* Green */
+}
+
+.notification-item.cleaning-request {
+    border-left-color: #10b981;
+}
+
+.notification-item.cleaning-request:hover {
+    border-color: #10b981;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+}
+
+/* Security Service */
+.security-icon {
+    color: #ef4444; /* Red */
+}
+
+.notification-item.security-request {
+    border-left-color: #ef4444;
+}
+
+.notification-item.security-request:hover {
+    border-color: #ef4444;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+}
+
+/* Elevator Maintenance */
+.elevator-icon {
+    color: #8b5cf6; /* Purple */
+}
+
+.notification-item.elevator_maintenance-request {
+    border-left-color: #8b5cf6;
+}
+
+.notification-item.elevator_maintenance-request:hover {
+    border-color: #8b5cf6;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+}
+
+/* Gardening Service */
+.gardening-icon {
+    color: #22c55e; /* Green */
+}
+
+.notification-item.gardening-request {
+    border-left-color: #22c55e;
+}
+
+.notification-item.gardening-request:hover {
+    border-color: #22c55e;
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);
+}
+
+/* Other Services */
+.other-icon {
+    color: #6b7280; /* Gray */
+}
+
+.notification-item.other-request {
+    border-left-color: #6b7280;
+}
+
+.notification-item.other-request:hover {
+    border-color: #6b7280;
+    box-shadow: 0 4px 12px rgba(107, 114, 128, 0.15);
+}
+
+/* Default Company Icon */
+.default-company-icon {
+    color: #8b5cf6; /* Purple */
+}
+
+/* Service type badge styling */
+.service-type-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    background: #e0e7ff;
+    color: #3730a3;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Company request base styling */
+.notification-item.company-request {
+    border-left-color: #8b5cf6;
+}
+
+.notification-item.company-request:hover {
+    border-color: #8b5cf6;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+}
+
+/* Enhanced notification title for company requests */
+.notification-item.company-request .notification-title {
+    color: #1e40af;
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+/* === RESPONSIVE DESIGN === */
 @media (max-width: 768px) {
     .notification-modal {
         width: 95%;
@@ -222,6 +478,36 @@
         height: 35px;
         font-size: 18px;
     }
+
+    .notification-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .status-badge {
+        align-self: flex-start;
+    }
+
+    .notification-actions {
+        flex-direction: column;
+    }
+
+    .accept-btn, .reject-btn {
+        padding: 10px;
+    }
+
+    .service-type-badge {
+        font-size: 10px;
+        padding: 3px 6px;
+        margin-left: 6px;
+    }
+
+    .notification-icon.service-type-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -248,5 +534,13 @@
 
     .notification-icon {
         align-self: center;
+    }
+
+    .service-type-badge {
+        display: block;
+        margin: 4px 0;
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
     }
 }

@@ -19,8 +19,11 @@ public class CompanyRequestInfoDTO {
 
     private Long requestId;
     private Long requesterId;
+    private String requesterName;
 
     private Long buildingId;
+    private String buildingAddress;
+    private Integer buildingNumber;
 
     private String name;
     private String email;

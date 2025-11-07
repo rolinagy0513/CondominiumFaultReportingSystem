@@ -7,6 +7,9 @@ import org.example.condominiumfaultreportingsystem.apartment.ApartmentRepository
 import org.example.condominiumfaultreportingsystem.apartment.ApartmentStatus;
 import org.example.condominiumfaultreportingsystem.apartmentRequest.*;
 import org.example.condominiumfaultreportingsystem.cache.CacheService;
+import org.example.condominiumfaultreportingsystem.companyRequest.CompanyRequest;
+import org.example.condominiumfaultreportingsystem.companyRequest.CompanyRequestRepository;
+import org.example.condominiumfaultreportingsystem.companyRequest.CompanyRequestStatus;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.ApartmentRequestAcceptedEvent;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.ApartmentRequestRejectedEvent;
 import org.example.condominiumfaultreportingsystem.exception.*;
@@ -39,6 +42,7 @@ public class ApartmentRequestService implements IApartmentRequestService {
     private final ApartmentRequestRepository apartmentRequestRepository;
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
+    private final CompanyRequestRepository companyRequestRepository;
 
     private final UserService userService;
     private final GroupService groupService;
@@ -56,7 +60,13 @@ public class ApartmentRequestService implements IApartmentRequestService {
 
         try{
 
-            UserDTO currentUser = userService.getCurrentUser();
+            UserWithRoleDTO currentUser = userService.getCurrentUserWithRole();
+
+            if (currentUser.getRole() == Role.COMPANY || currentUser.getRole() == Role.RESIDENT){
+                throw new InvalidRoleException();
+            }
+
+            validateRequests(currentUser.getId());
 
             Long requestedApartmentId = apartmentRequestDTO.getRequestedApartmentId();
             Long buildingId = apartmentRequestDTO.getBuildingId();
@@ -77,6 +87,8 @@ public class ApartmentRequestService implements IApartmentRequestService {
             ){
                 throw new ApartmentRequestAlreadyPendingException();
             }
+
+            requestedApartment.setStatus(ApartmentStatus.PENDING);
 
             ApartmentRequest request = ApartmentRequest.builder()
                     .requesterId(currentUser.getId())
@@ -105,7 +117,7 @@ public class ApartmentRequestService implements IApartmentRequestService {
                     .apartmentStatus(requestedApartment.getStatus())
                     .buildingNumber(requestedApartment.getBuilding().getBuildingNumber())
                     .message("New apartment request came!")
-                    .type(NotificationType.REQUEST)
+                    .type(NotificationType.APARTMENT_REQUEST)
                     .build();
 
             messagingTemplate.convertAndSend("/topic/group/" + adminGroupId, apartmentNotification);
@@ -155,12 +167,15 @@ public class ApartmentRequestService implements IApartmentRequestService {
 
     }
 
-    public List<ApartmentRequestInfoDTO> getAllPendingRequests(){
+    public List<ApartmentRequestDetailedInfoDTO> getAllPendingRequests(){
 
         List<ApartmentRequest> apartmentRequests =  apartmentRequestRepository.findByStatus(ApartmentRequestStatus.PENDING);
 
         return apartmentRequests.stream().map(apartmentRequest ->
-                ApartmentRequestInfoDTO.builder()
+                ApartmentRequestDetailedInfoDTO.builder()
+                        .requesterName(apartmentRequest.getRequesterName())
+                        .buildingAddress(apartmentRequest.getApartment().getBuilding().getAddress())
+                        .apartmentNumber(apartmentRequest.getApartment().getApartmentNumber())
                         .requestId(apartmentRequest.getId())
                         .requesterId(apartmentRequest.getRequesterId())
                         .apartmentId(apartmentRequest.getApartment().getId())
@@ -209,6 +224,26 @@ public class ApartmentRequestService implements IApartmentRequestService {
         eventPublisher.publishEvent(
                 new ApartmentRequestRejectedEvent(apartmentRequest,apartment)
         );
+
+    }
+
+    private void validateRequests(Long userId){
+
+        Optional<ApartmentRequest> apartmentRequestOpt = apartmentRequestRepository.findByRequesterIdAndStatus(userId, ApartmentRequestStatus.PENDING);
+        Optional<CompanyRequest> companyRequestOpt = companyRequestRepository.findByRequesterIdAndStatus(userId, CompanyRequestStatus.PENDING);
+
+        if (apartmentRequestOpt.isPresent()){
+            throw new UserAlreadyHasRequestException(
+                    "You already submitted a request to be a resident in the system. You need to wait until it is sorted out to send another request."
+            );
+        }
+
+        if (companyRequestOpt.isPresent()){
+            throw new UserAlreadyHasRequestException(
+                    "You already submitted a request to be a company. You need to wait until it is sorted out to send another request."
+            );
+        }
+
 
     }
 

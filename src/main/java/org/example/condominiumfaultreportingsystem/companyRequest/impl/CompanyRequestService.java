@@ -2,6 +2,9 @@ package org.example.condominiumfaultreportingsystem.companyRequest.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.condominiumfaultreportingsystem.DTO.*;
+import org.example.condominiumfaultreportingsystem.apartmentRequest.ApartmentRequest;
+import org.example.condominiumfaultreportingsystem.apartmentRequest.ApartmentRequestRepository;
+import org.example.condominiumfaultreportingsystem.apartmentRequest.ApartmentRequestStatus;
 import org.example.condominiumfaultreportingsystem.apartmentRequest.RequestResponseStatus;
 import org.example.condominiumfaultreportingsystem.building.Building;
 import org.example.condominiumfaultreportingsystem.building.BuildingRepository;
@@ -33,6 +36,7 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.plaf.OptionPaneUI;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +58,7 @@ public class CompanyRequestService implements ICompanyRequestService {
 
     private final SimpMessagingTemplate messagingTemplate;
     private final ApplicationEventPublisher eventPublisher;
+    private final ApartmentRequestRepository apartmentRequestRepository;
 
     @Value("${admin.group.name}")
     private String adminGroupName;
@@ -63,7 +68,11 @@ public class CompanyRequestService implements ICompanyRequestService {
 
         try{
 
-            UserDTO currentUser = userService.getCurrentUser();
+            UserWithRoleDTO currentUser = userService.getCurrentUserWithRole();
+
+            if (currentUser.getRole() == Role.COMPANY || currentUser.getRole() == Role.RESIDENT){
+                throw new InvalidRoleException();
+            }
 
             validateUserCanCreateRequest(currentUser.getId());
 
@@ -99,7 +108,7 @@ public class CompanyRequestService implements ICompanyRequestService {
                     .companyName(companyRequestDTO.getCompanyName())
                     .companyEmail(companyRequestDTO.getCompanyEmail())
                     .serviceType(companyRequestDTO.getServiceType())
-                    .type(NotificationType.REQUEST)
+                    .type(NotificationType.COMPANY_REQUEST)
                     .message("New company request came!")
                     .build();
 
@@ -159,12 +168,16 @@ public class CompanyRequestService implements ICompanyRequestService {
                 CompanyRequestInfoDTO.builder()
                         .requestId(companyRequest.getId())
                         .requesterId(companyRequest.getRequesterId())
+                        .requesterName(companyRequest.getRequesterName())
                         .buildingId(companyRequest.getBuildingId())
+                        .buildingAddress(companyRequest.getBuildingAddress())
+                        .buildingNumber(companyRequest.getBuildingNumber())
                         .name(companyRequest.getCompanyName())
                         .email(companyRequest.getCompanyEmail())
                         .phoneNumber(companyRequest.getCompanyPhoneNumber())
                         .address(companyRequest.getCompanyAddress())
                         .status(companyRequest.getStatus())
+                        .serviceType(companyRequest.getServiceType())
                         .createdAt(companyRequest.getCreatedAt())
                         .build())
                 .toList();
@@ -227,6 +240,14 @@ public class CompanyRequestService implements ICompanyRequestService {
     }
 
     private void validateUserCanCreateRequest(Long userId) {
+
+        Optional<ApartmentRequest> apartmentRequestOpt = apartmentRequestRepository.findByRequesterIdAndStatus(userId, ApartmentRequestStatus.PENDING);
+
+        if (apartmentRequestOpt.isPresent()){
+            throw new UserAlreadyHasRequestException(
+                    "You already submitted a request to be a resident in the system. You need to wait until it is sorted out to send another request."
+            );
+        }
 
         Optional<Company> existingCompanyForUser = companyRepository.findCompanyWithUser(userId);
 

@@ -2,6 +2,7 @@ package org.example.condominiumfaultreportingsystem.apartmentRequest;
 
 import lombok.RequiredArgsConstructor;
 import org.example.condominiumfaultreportingsystem.DTO.ApartmentRequestDTO;
+import org.example.condominiumfaultreportingsystem.DTO.ApartmentRequestDetailedInfoDTO;
 import org.example.condominiumfaultreportingsystem.DTO.ApartmentRequestInfoDTO;
 import org.example.condominiumfaultreportingsystem.DTO.RequestResponseDTO;
 import org.example.condominiumfaultreportingsystem.apartmentRequest.impl.ApartmentRequestService;
@@ -35,7 +36,7 @@ public class ApartmentRequestController {
     }
 
     @GetMapping("/admin/apartmentRequest/getPendingRequests")
-    public List<ApartmentRequestInfoDTO> getAllPendingRequests(){
+    public List<ApartmentRequestDetailedInfoDTO> getAllPendingRequests(){
         return apartmentRequestService.getAllPendingRequests();
     }
 

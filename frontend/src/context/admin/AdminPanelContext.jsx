@@ -25,6 +25,8 @@ export const AdminPanelProvider = ({ children }) => {
     const [selectedBuilding, setSelectedBuilding] = useState(null);
     const [apartments, setApartments] = useState([]);
     const [loadingApartments, setLoadingApartments] = useState(false);
+    const[companyNotification, setCompanyNotification] = useState(null);
+    const[apartmentNotification, setApartmentNotification] = useState(null);
 
     return (
         <AdminPanelContext.Provider value={{
@@ -32,7 +34,9 @@ export const AdminPanelProvider = ({ children }) => {
             buildings, setBuildings,
             selectedBuilding, setSelectedBuilding,
             apartments, setApartments,
-            loadingApartments, setLoadingApartments
+            loadingApartments, setLoadingApartments,
+            companyNotification, setCompanyNotification,
+            apartmentNotification, setApartmentNotification
         }}>
             {children}
         </AdminPanelContext.Provider>

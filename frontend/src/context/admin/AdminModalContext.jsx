@@ -8,6 +8,7 @@
  * ### Responsibilities:
  * - Manages isAdminModalOpen which decides that a model is displayed or not.
  * - Manages the setIsAdminModalOpen which sets that the modal should be open or not.
+ * - Manages the apartmentRequest and companyRequest states and their setter to store the apartment request and company request arrays
  */
 
 
@@ -18,11 +19,15 @@ export const AdminModalContext = createContext();
 export const AdminModalProvider = ({ children }) => {
 
     const[isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+    const[apartmentRequests, setApartmentRequests] = useState([]);
+    const[companyRequests, setCompanyRequests] = useState([]);
 
 
     return (
         <AdminModalContext.Provider value={{
-            isAdminModalOpen, setIsAdminModalOpen
+            isAdminModalOpen, setIsAdminModalOpen,
+            apartmentRequests, setApartmentRequests,
+            companyRequests, setCompanyRequests
         }}>
             {children}
         </AdminModalContext.Provider>

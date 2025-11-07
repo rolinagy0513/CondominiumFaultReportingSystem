@@ -357,6 +357,23 @@ public class GlobalExceptionHandler {
         );
     }
 
+    /**
+     * Handles UserAlreadyHasRequestException.
+     * Returns HTTP 409 when the user has an ongoing pending request.
+     *
+     * @param ex the UserAlreadyHasRequestException thrown
+     * @return ResponseEntity with ApiError and HTTP 409 status
+     */
+    @ExceptionHandler(UserAlreadyHasRequestException.class)
+    public ResponseEntity<ApiError> handleUserAlreadyHasRequestException(UserAlreadyHasRequestException ex) {
+        return new ResponseEntity<>(
+                new ApiError(ex.getMessage(),
+                        "The user already submitted a pending request that needs to be sorted first",
+                        LocalDateTime.now()),
+                HttpStatus.CONFLICT
+        );
+    }
+
 
     /**
      * Handles DataAccessException from Spring Data.

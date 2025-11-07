@@ -15,29 +15,45 @@ import SideBar from "./components/SideBar.jsx";
 import TopHeader from "./components/TopHeader.jsx";
 import ContentArea from "./components/ContentArea.jsx";
 import NotificationModal from "./components/NotificationModal.jsx";
+import CompanyRequestNotification from "./components/CompanyRequestNotification.jsx";
 
 import "./styles/AdminPanel.css";
+import ApartmentRequestnotification from "./components/ApartmentRequestnotification.jsx";
 
 const AdminPanel = () => {
     const ADMIN_BUILDING_API_PATH = import.meta.env.VITE_API_ADMIN_BUILDING_URL;
     const BUILDING_API_PATH = import.meta.env.VITE_API_BASE_BUILDING_URL
+
     const AUTH_API_PATH = import.meta.env.VITE_API_BASE_AUTH_URL;
     const RESIDENT_APARTMENT_API_PATH = import.meta.env.VITE_API_RESIDENT_APARTMENT_URL
+
+    const ADMIN_APARTMENT_REQUEST_API_PATH = import.meta.env.VITE_API_ADMIN_APARTMENT_REQUEST_URL
+    const ADMIN_COMPANY_REQUEST_API_PATH = import.meta.env.VITE_API_ADMIN_COMPANY_REQUEST_URL
+
     const SOCK_URL = import.meta.env.VITE_API_WEBSOCKET_BASE_URL;
 
     const LOGOUT_URL = `${AUTH_API_PATH}/logout`
     const ADD_BUILDING_URL = `${ADMIN_BUILDING_API_PATH}/addNew`;
     const GET_ALL_BUILDING_URL = `${BUILDING_API_PATH}/getAll`;
     const GET_APARTMENT_URL = `${RESIDENT_APARTMENT_API_PATH}/getByBuildingId`;
+    const GET_PENDING_APARTMENT_REQUEST_URL = `${ADMIN_APARTMENT_REQUEST_API_PATH}/getPendingRequests`
+    const GET_PENDING_COMPANY_REQUEST_URL = `${ADMIN_COMPANY_REQUEST_API_PATH}/getPendingRequests`
 
     const navigate = useNavigate();
+
+    //Hozzá kell még adni az accept reject logikát§
+    //Meg kell csinálni a company view-t it az admin panelban
+    //A welcome page ahol majd lehet küldeni a requesteket
+    //Report rendszer
 
     const {
         currentView, setCurrentView,
         buildings, setBuildings,
         selectedBuilding, setSelectedBuilding,
         apartments, setApartments,
-        loadingApartments, setLoadingApartments
+        loadingApartments, setLoadingApartments,
+        companyNotification, setCompanyNotification,
+        apartmentNotification, setApartmentNotification
     } = useContext(AdminPanelContext);
 
     const {
@@ -47,11 +63,16 @@ const AdminPanel = () => {
         pageSize
     } = useContext(PaginationContext);
 
+    const {
+        isAdminModalOpen, setIsAdminModalOpen,
+        apartmentRequests, setApartmentRequests,
+        companyRequests, setCompanyRequests
+    } = useContext(AdminModalContext);
+
     const {adminGroupId, authenticatedAdminUserName} = useContext(AdminUserContext);
 
     const {addBuildingFormData, setAddBuildingFormData} = useContext(AddBuildingContext);
     const {isLoading, setIsLoading, message, setMessage} = useContext(FeedbackContext);
-    const {isAdminModalOpen, setIsAdminModalOpen} = useContext(AdminModalContext);
 
     const subscriptionRef = useRef(null);
 
@@ -60,19 +81,24 @@ const AdminPanel = () => {
     }, []);
 
     useEffect(() => {
+        if (isAdminModalOpen) {
+            handleGetPendingApartmentRequests();
+            handleGetPendingCompanyRequests();
+            console.log("The requests fetching has been called")
+        }
+    }, [isAdminModalOpen]);
+
+    useEffect(() => {
         if (!adminGroupId) {
             console.log("⚠️ No adminGroupId, skipping WebSocket setup");
             return;
         }
-
-        console.log("🔌 Setting up WebSocket connection for admin group:", adminGroupId);
 
         websocketServices.connect(SOCK_URL, {
             onConnect: () => {
                 console.log("✅ Admin WebSocket connected successfully");
 
                 const topic = `/topic/group/${adminGroupId}`;
-                console.log("📡 Subscribing to:", topic);
 
                 subscriptionRef.current = websocketServices.subscribe(
                     topic,
@@ -112,8 +138,21 @@ const AdminPanel = () => {
     }, [adminGroupId]);
 
     const handleNotification = (notification) => {
-        console.log("🔔 Notification received:", notification);
-        setIsAdminModalOpen(true);
+        if (notification.type === 'COMPANY_REQUEST') {
+            setCompanyNotification(notification);
+        }
+
+        if (notification.type === 'APARTMENT_REQUEST'){
+            setApartmentNotification(notification);
+        }
+    };
+
+    const handleCloseApartmentNotification = () =>{
+        setApartmentNotification(null)
+    }
+
+    const handleCloseCompanyNotification = () => {
+        setCompanyNotification(null);
     };
 
     const handleAddBuilding = () => {
@@ -226,10 +265,39 @@ const AdminPanel = () => {
         }
     };
 
+    const handleGetPendingApartmentRequests = async () =>{
+
+        try {
+
+            const response = await apiServices.get(GET_PENDING_APARTMENT_REQUEST_URL)
+
+            setApartmentRequests(response || []);
+
+        }catch (error){
+            console.error(error.message)
+        }
+
+    }
+
+    const handleGetPendingCompanyRequests = async() =>{
+
+        try {
+
+            console.log(GET_PENDING_COMPANY_REQUEST_URL)
+
+            const response = await apiServices.get(GET_PENDING_COMPANY_REQUEST_URL)
+
+            setCompanyRequests(response || [])
+
+        }catch (error){
+            console.error(error.message)
+        }
+
+    }
+
     const handleLogout = async () =>{
 
         try {
-            // Clean up WebSocket before logout
             if (subscriptionRef.current) {
                 subscriptionRef.current.unsubscribe();
                 subscriptionRef.current = null;
@@ -291,7 +359,27 @@ const AdminPanel = () => {
             </div>
 
             <div>
-                {isAdminModalOpen && <NotificationModal setIsAdminModalOpen={setIsAdminModalOpen} />}
+                {isAdminModalOpen &&
+                    <NotificationModal
+                        setIsAdminModalOpen={setIsAdminModalOpen}
+                        apartmentRequests={apartmentRequests}
+                        companyRequests={companyRequests}
+                     />}
+
+                {companyNotification && (
+                    <CompanyRequestNotification
+                        notification={companyNotification}
+                        onClose={handleCloseCompanyNotification}
+                    />
+                )}
+
+                {apartmentNotification && (
+                    <ApartmentRequestnotification
+                    notification={apartmentNotification}
+                    onClose={handleCloseApartmentNotification}
+                    />
+                )}
+
             </div>
 
         </div>
