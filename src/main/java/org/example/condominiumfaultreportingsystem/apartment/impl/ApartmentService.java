@@ -176,6 +176,7 @@ public class ApartmentService implements IApartmentService {
                 .apartmentNumber(apartment.getApartmentNumber())
                 .floorNumber(apartment.getFloor())
                 .ownerName(apartment.getOwner() != null ? apartment.getOwner().getName() : "UNASSIGNED")
+                .status(apartment.getStatus())
                 .build();
 
     }

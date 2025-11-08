@@ -1,4 +1,4 @@
-import {useContext, useEffect, useRef} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 import apiServices from "../../services/ApiServices.js";
@@ -30,6 +30,9 @@ const AdminPanel = () => {
     const ADMIN_APARTMENT_REQUEST_API_PATH = import.meta.env.VITE_API_ADMIN_APARTMENT_REQUEST_URL
     const ADMIN_COMPANY_REQUEST_API_PATH = import.meta.env.VITE_API_ADMIN_COMPANY_REQUEST_URL
 
+
+const SEND_APARTMENT_RESPONSE = import.meta.env.VITE_API_ADMIN_WEBSOCKET_APARTMENT_REQUEST_DESTINATION
+
     const SOCK_URL = import.meta.env.VITE_API_WEBSOCKET_BASE_URL;
 
     const LOGOUT_URL = `${AUTH_API_PATH}/logout`
@@ -41,8 +44,8 @@ const AdminPanel = () => {
 
     const navigate = useNavigate();
 
-    //Hozzá kell még adni az accept reject logikát§
     //Meg kell csinálni a company view-t it az admin panelban
+    //A user kidobása a rendszerből, vagy egy gomb az apartman-nál vagy az egész egy gomb de fel kell majd valami modal-t dobnia
     //A welcome page ahol majd lehet küldeni a requesteket
     //Report rendszer
 
@@ -283,8 +286,6 @@ const AdminPanel = () => {
 
         try {
 
-            console.log(GET_PENDING_COMPANY_REQUEST_URL)
-
             const response = await apiServices.get(GET_PENDING_COMPANY_REQUEST_URL)
 
             setCompanyRequests(response || [])
@@ -294,6 +295,50 @@ const AdminPanel = () => {
         }
 
     }
+
+    const handleAcceptApartmentRequest = (requestId) => {
+
+        const responseData = ({
+            requestId:requestId,
+            status:'ACCEPTED'
+        })
+
+        const success = websocketServices.sendMessage(
+            SEND_APARTMENT_RESPONSE,
+            responseData
+        );
+
+        if (success) {
+            console.log(`Accepted apartment request ID: ${requestId}`);
+            setApartmentRequests(prev => prev.filter(request => request.requestId !== requestId));
+            setCurrentView("buildings")
+        } else {
+            console.error('Failed to send acceptance via WebSocket');
+        }
+
+    };
+
+    const handleRejectApartmentRequest = (requestId) => {
+
+        const responseData = ({
+            requestId:requestId,
+            status:'REJECTED'
+        })
+
+        const success = websocketServices.sendMessage(
+            SEND_APARTMENT_RESPONSE,
+            responseData
+        );
+
+        if (success) {
+            console.log(`REJECTED apartment request ID: ${requestId}`);
+            setApartmentRequests(prev => prev.filter(request => request.requestId !== requestId));
+            setCurrentView("buildings")
+        } else {
+            console.error('Failed to send reluctance via WebSocket');
+        }
+
+    };
 
     const handleLogout = async () =>{
 
@@ -364,6 +409,8 @@ const AdminPanel = () => {
                         setIsAdminModalOpen={setIsAdminModalOpen}
                         apartmentRequests={apartmentRequests}
                         companyRequests={companyRequests}
+                        handleAcceptApartmentRequest={handleAcceptApartmentRequest}
+                        handleRejectApartmentRequest={handleRejectApartmentRequest}
                      />}
 
                 {companyNotification && (

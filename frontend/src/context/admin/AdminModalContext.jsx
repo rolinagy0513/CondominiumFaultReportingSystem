@@ -22,12 +22,11 @@ export const AdminModalProvider = ({ children }) => {
     const[apartmentRequests, setApartmentRequests] = useState([]);
     const[companyRequests, setCompanyRequests] = useState([]);
 
-
     return (
         <AdminModalContext.Provider value={{
             isAdminModalOpen, setIsAdminModalOpen,
             apartmentRequests, setApartmentRequests,
-            companyRequests, setCompanyRequests
+            companyRequests, setCompanyRequests,
         }}>
             {children}
         </AdminModalContext.Provider>

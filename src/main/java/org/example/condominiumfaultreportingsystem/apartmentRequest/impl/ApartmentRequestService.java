@@ -1,6 +1,7 @@
 package org.example.condominiumfaultreportingsystem.apartmentRequest.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.condominiumfaultreportingsystem.DTO.*;
 import org.example.condominiumfaultreportingsystem.apartment.Apartment;
 import org.example.condominiumfaultreportingsystem.apartment.ApartmentRepository;
@@ -29,11 +30,13 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ApartmentRequestService implements IApartmentRequestService {
@@ -132,9 +135,17 @@ public class ApartmentRequestService implements IApartmentRequestService {
     }
 
     @Transactional
-    public void sendApartmentRequestResponse(RequestResponseDTO responseDTO){
+    public void sendApartmentRequestResponse(RequestResponseDTO responseDTO, Principal principal){
 
-        UserWithRoleDTO currentAdmin = userService.getCurrentUserWithRole();
+        User user = userService.getUserFromPrincipal(principal);
+
+//        UserWithRoleDTO currentAdmin = userService.getCurrentUserWithRole();
+
+        UserWithRoleDTO currentAdmin = UserWithRoleDTO.builder()
+                .id(user.getId())
+                .userName(user.getEmail())
+                .role(user.getRole())
+                .build();
 
         Long requestId = responseDTO.getRequestId();
 

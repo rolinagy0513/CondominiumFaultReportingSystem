@@ -5,11 +5,12 @@ import org.example.condominiumfaultreportingsystem.DTO.ApartmentRequestDetailedI
 import org.example.condominiumfaultreportingsystem.DTO.ApartmentRequestInfoDTO;
 import org.example.condominiumfaultreportingsystem.DTO.RequestResponseDTO;
 
+import java.security.Principal;
 import java.util.List;
 
 public interface IApartmentRequestService {
 
     ApartmentRequestInfoDTO sendApartmentRequest(ApartmentRequestDTO apartmentRequestDTO);
-    void sendApartmentRequestResponse(RequestResponseDTO responseDTO);
+    void sendApartmentRequestResponse(RequestResponseDTO responseDTO, Principal principal);
     List<ApartmentRequestDetailedInfoDTO> getAllPendingRequests();
 }

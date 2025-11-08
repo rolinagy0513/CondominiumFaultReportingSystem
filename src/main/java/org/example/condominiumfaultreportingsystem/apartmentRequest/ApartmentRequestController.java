@@ -7,9 +7,11 @@ import org.example.condominiumfaultreportingsystem.DTO.ApartmentRequestInfoDTO;
 import org.example.condominiumfaultreportingsystem.DTO.RequestResponseDTO;
 import org.example.condominiumfaultreportingsystem.apartmentRequest.impl.ApartmentRequestService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -27,12 +29,13 @@ public class ApartmentRequestController {
         return apartmentRequestService.sendApartmentRequest(apartmentRequestDTO);
     }
 
-    @PutMapping("/admin/apartmentRequest/response")
+    @MessageMapping("/admin/apartmentRequest/response")
     public void sendApartmentRequestResponse(
-        @RequestBody RequestResponseDTO responseDTO
+        @Payload RequestResponseDTO responseDTO,
+        Principal principal
 
     ){
-        apartmentRequestService.sendApartmentRequestResponse(responseDTO);
+        apartmentRequestService.sendApartmentRequestResponse(responseDTO, principal);
     }
 
     @GetMapping("/admin/apartmentRequest/getPendingRequests")

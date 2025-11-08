@@ -9,7 +9,8 @@ import { IoMdBuild } from "react-icons/io";
 
 import "./component-styles/NotificationModal.css"
 
-const NotificationModal = ({ setIsAdminModalOpen, apartmentRequests, companyRequests }) => {
+const NotificationModal = ({ setIsAdminModalOpen, apartmentRequests, companyRequests, handleAcceptApartmentRequest, handleRejectApartmentRequest }) => {
+
     const handleBackdropClick = (e) => {
         if (e.target === e.currentTarget) {
             setIsAdminModalOpen(false);
@@ -66,14 +67,6 @@ const NotificationModal = ({ setIsAdminModalOpen, apartmentRequests, companyRequ
             default:
                 return serviceType || 'Unknown Service';
         }
-    };
-
-    const handleAccept = (requestId) => {
-        console.log(`Accepted request ID: ${requestId}`);
-    };
-
-    const handleReject = (requestId) => {
-        console.log(`Rejected request ID: ${requestId}`);
     };
 
     const handleAcceptCompany = (requestId) => {
@@ -135,13 +128,13 @@ const NotificationModal = ({ setIsAdminModalOpen, apartmentRequests, companyRequ
                                             <div className="notification-actions">
                                                 <button
                                                     className="accept-btn"
-                                                    onClick={() => handleAccept(request.requestId)}
+                                                    onClick={() => handleAcceptApartmentRequest(request.requestId)}
                                                 >
                                                     Accept
                                                 </button>
                                                 <button
                                                     className="reject-btn"
-                                                    onClick={() => handleReject(request.requestId)}
+                                                    onClick={() => handleRejectApartmentRequest(request.requestId)}
                                                 >
                                                     Reject
                                                 </button>
