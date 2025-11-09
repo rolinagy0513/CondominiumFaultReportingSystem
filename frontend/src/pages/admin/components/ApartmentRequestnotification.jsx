@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import {useNotificationVisibility} from "../../../hooks/useNotificationVisibility.js";
+
 import { FaTimes } from "react-icons/fa";
 import { FaBuilding} from "react-icons/fa6";
 
@@ -6,25 +7,7 @@ import "./component-styles/ApartmentRequestNotification.css";
 
 const ApartmentRequestNotification = ({ notification, onClose }) => {
 
-    const [isVisible, setIsVisible] = useState(false);
-
-    useEffect(() => {
-        if (notification) {
-            setIsVisible(true);
-
-            const timer = setTimeout(() => {
-                setIsVisible(false);
-                setTimeout(() => onClose(), 300);
-            }, 15000);
-
-            return () => clearTimeout(timer);
-        }
-    }, [notification, onClose]);
-
-    const handleClose = () => {
-        setIsVisible(false);
-        setTimeout(() => onClose(), 300);
-    };
+    const { isVisible, handleClose } = useNotificationVisibility(notification, onClose);
 
     const getStatusInfo = (status) => {
         switch (status?.toUpperCase()) {

@@ -139,8 +139,6 @@ public class ApartmentRequestService implements IApartmentRequestService {
 
         User user = userService.getUserFromPrincipal(principal);
 
-//        UserWithRoleDTO currentAdmin = userService.getCurrentUserWithRole();
-
         UserWithRoleDTO currentAdmin = UserWithRoleDTO.builder()
                 .id(user.getId())
                 .userName(user.getEmail())

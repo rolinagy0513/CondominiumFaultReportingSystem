@@ -27,6 +27,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -118,11 +119,17 @@ public class ApartmentService implements IApartmentService {
     }
 
     @Transactional
-    public void removeUserFromApartment(Long apartmentId){
+    public void removeUserFromApartment(Long apartmentId, Principal principal){
 
         try{
 
-            UserWithRoleDTO currentAdmin = userService.getCurrentUserWithRole();
+            User user = userService.getUserFromPrincipal(principal);
+
+            UserWithRoleDTO currentAdmin = UserWithRoleDTO.builder()
+                    .id(user.getId())
+                    .userName(user.getEmail())
+                    .role(user.getRole())
+                    .build();
 
             if (currentAdmin.getRole() != Role.ADMIN){
                 throw new InvalidRoleException();
@@ -173,6 +180,7 @@ public class ApartmentService implements IApartmentService {
     private ApartmentDTO mapToDto(Apartment apartment){
 
         return ApartmentDTO.builder()
+                .id(apartment.getId())
                 .apartmentNumber(apartment.getApartmentNumber())
                 .floorNumber(apartment.getFloor())
                 .ownerName(apartment.getOwner() != null ? apartment.getOwner().getName() : "UNASSIGNED")

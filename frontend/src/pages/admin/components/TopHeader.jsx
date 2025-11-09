@@ -16,6 +16,9 @@ const TopHeader = ({currentView, selectedBuilding, handleLogout, setIsAdminModal
             {currentView === 'apartments' && (
                 <p className="building-address">{selectedBuilding?.address}</p>
             )}
+            {currentView === 'companies' && (
+                <p className="page-title">Company Management</p>
+            )}
         </div>
         <div className="header-right">
             <button className="notification-btn" onClick={() => setIsAdminModalOpen(true)}>

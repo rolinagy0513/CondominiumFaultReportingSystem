@@ -1,5 +1,8 @@
 import AddBuildingForm from "./AddBuildingForm.jsx";
 
+import {getServiceIcon} from "../../../utility/GetCompanyLogoUtility.jsx";
+import {getServiceTypeDisplay} from "../../../utility/GetCompanyLogoUtility.jsx";
+
 import "./component-styles/ContentArea.css"
 
 const ContentArea = ({
@@ -10,8 +13,21 @@ const ContentArea = ({
                          handlePageChange, totalPages,
                          handleInputChange, addBuilding,
                          addBuildingFormData, isLoading,
-                         message
-}) =>{
+                         message, companies,
+                         loadingCompanies, handleCompaniesPageChange,
+                         companiesCurrentPage, companiesTotalPages,
+                         companiesTotalElements, setTargetApartmentId,
+                         setIsRemovalModalOpen,
+                     }) =>{
+
+    const removeResidentAction = (apartmentId) =>{
+
+        setTargetApartmentId(apartmentId);
+        console.log("IN THE CONTENT AREA AT THE FUNCTION WHICH SETS THE APARTMENT ID AND OPENS THE MODAL")
+        console.log(apartmentId)
+        setIsRemovalModalOpen(true);
+
+    }
 
     return(
         <div className="content-area">
@@ -49,13 +65,14 @@ const ContentArea = ({
                                             <div className="apartment-header">
                                                 <h4>Apartment {apartment.apartmentNumber}</h4>
                                                 <span className={`status ${apartment.status?.toLowerCase() || 'available'}`}>
-                                                            {apartment.status || 'Available'}
-                                                        </span>
+                                                    {apartment.status || 'Available'}
+                                                </span>
                                             </div>
                                             <div className="apartment-details">
                                                 <p><strong>Floor:</strong> {apartment.floorNumber}</p>
                                                 <p><strong>Owner:</strong> {apartment.ownerName || 'Not assigned'}</p>
                                             </div>
+                                            <button className="apartment-resident-remove" onClick={()=>removeResidentAction(apartment.id)}>Remove Resident</button>
                                         </div>
                                     ))
                                 ) : (
@@ -128,6 +145,117 @@ const ContentArea = ({
                         </>
                     )}
                 </div>
+            ) : currentView === 'companies' ? (
+                <div className="companies-content">
+                    <div className="content-header">
+                        <button
+                            className="back-button"
+                            onClick={handleBackToBuildings}
+                        >
+                            ← Back to Buildings
+                        </button>
+                        <h3>Companies List</h3>
+                        <p className="pagination-info">
+                            Showing {companies.length > 0 ? (companiesCurrentPage * pageSize + 1) : 0} - {Math.min((companiesCurrentPage + 1) * pageSize, companiesTotalElements)} of {companiesTotalElements} companies
+                        </p>
+                    </div>
+
+                    {loadingCompanies ? (
+                        <div className="loading">Loading companies...</div>
+                    ) : (
+                        <>
+                            <div className="companies-list">
+                                {companies.length > 0 ? (
+                                    companies.map(company => (
+                                        <div key={company.id} className="company-card">
+                                            <div className="company-header">
+                                                <div className="company-title-section">
+                                                    <div className="company-icon-wrapper">
+                                                        {getServiceIcon(company.serviceType)}
+                                                    </div>
+                                                    <h4>{company.name}</h4>
+                                                </div>
+                                                <span className={`service-type ${company.serviceType?.toLowerCase() || 'unknown'}`}>
+                                                    {getServiceTypeDisplay(company.serviceType)}
+                                                </span>
+                                            </div>
+                                            <div className="company-details">
+                                                <p><strong>Email:</strong> {company.email}</p>
+                                                <p><strong>Phone:</strong> {company.phoneNumber}</p>
+                                                <p><strong>Address:</strong> {company.address}</p>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="no-companies">
+                                        No companies found.
+                                    </div>
+                                )}
+                            </div>
+
+                            {companiesTotalPages > 1 && (
+                                <div className="pagination">
+                                    <button
+                                        className="pagination-btn"
+                                        onClick={() => handleCompaniesPageChange(companiesCurrentPage - 1)}
+                                        disabled={companiesCurrentPage === 0}
+                                    >
+                                        ← Previous
+                                    </button>
+
+                                    <div className="pagination-pages">
+                                        {companiesCurrentPage >= 3 && (
+                                            <>
+                                                <button
+                                                    className="pagination-page"
+                                                    onClick={() => handleCompaniesPageChange(0)}
+                                                >
+                                                    1
+                                                </button>
+                                                {companiesCurrentPage > 3 && <span className="pagination-ellipsis">...</span>}
+                                            </>
+                                        )}
+
+                                        {[...Array(companiesTotalPages)].map((_, index) => {
+                                            if (index >= companiesCurrentPage - 1 && index <= companiesCurrentPage + 1 && index >= 0 && index < companiesTotalPages) {
+                                                return (
+                                                    <button
+                                                        key={index}
+                                                        className={`pagination-page ${companiesCurrentPage === index ? 'active' : ''}`}
+                                                        onClick={() => handleCompaniesPageChange(index)}
+                                                    >
+                                                        {index + 1}
+                                                    </button>
+                                                );
+                                            }
+                                            return null;
+                                        })}
+
+                                        {companiesCurrentPage <= companiesTotalPages - 4 && (
+                                            <>
+                                                {companiesCurrentPage < companiesTotalPages - 4 && <span className="pagination-ellipsis">...</span>}
+                                                <button
+                                                    className="pagination-page"
+                                                    onClick={() => handleCompaniesPageChange(companiesTotalPages - 1)}
+                                                >
+                                                    {companiesTotalPages}
+                                                </button>
+                                            </>
+                                        )}
+                                    </div>
+
+                                    <button
+                                        className="pagination-btn"
+                                        onClick={() => handleCompaniesPageChange(companiesCurrentPage + 1)}
+                                        disabled={companiesCurrentPage === companiesTotalPages - 1}
+                                    >
+                                        Next →
+                                    </button>
+                                </div>
+                            )}
+                        </>
+                    )}
+                </div>
             ) : (
                 <div className="add-building-content">
                     <div className="form-header">
@@ -152,7 +280,6 @@ const ContentArea = ({
             )}
         </div>
     )
-
 }
 
 export default ContentArea;

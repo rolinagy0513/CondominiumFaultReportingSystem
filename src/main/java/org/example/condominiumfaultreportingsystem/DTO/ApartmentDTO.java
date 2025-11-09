@@ -12,6 +12,8 @@ import org.example.condominiumfaultreportingsystem.apartment.ApartmentStatus;
 @Builder
 public class ApartmentDTO {
 
+    private Long id;
+
     private Integer apartmentNumber;
     private Integer floorNumber;
     private String ownerName;

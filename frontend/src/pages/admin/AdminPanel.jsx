@@ -16,6 +16,7 @@ import TopHeader from "./components/TopHeader.jsx";
 import ContentArea from "./components/ContentArea.jsx";
 import NotificationModal from "./components/NotificationModal.jsx";
 import CompanyRequestNotification from "./components/CompanyRequestNotification.jsx";
+import RemovalModal from "./components/RemoveModal.jsx";
 
 import "./styles/AdminPanel.css";
 import ApartmentRequestnotification from "./components/ApartmentRequestnotification.jsx";
@@ -27,11 +28,14 @@ const AdminPanel = () => {
     const AUTH_API_PATH = import.meta.env.VITE_API_BASE_AUTH_URL;
     const RESIDENT_APARTMENT_API_PATH = import.meta.env.VITE_API_RESIDENT_APARTMENT_URL
 
+    const ADMIN_COMPANY_API_PATH = import.meta.env.VITE_API_ADMIN_COMPANY_URL
+
     const ADMIN_APARTMENT_REQUEST_API_PATH = import.meta.env.VITE_API_ADMIN_APARTMENT_REQUEST_URL
     const ADMIN_COMPANY_REQUEST_API_PATH = import.meta.env.VITE_API_ADMIN_COMPANY_REQUEST_URL
 
-
-const SEND_APARTMENT_RESPONSE = import.meta.env.VITE_API_ADMIN_WEBSOCKET_APARTMENT_REQUEST_DESTINATION
+    const SEND_APARTMENT_RESPONSE = import.meta.env.VITE_API_ADMIN_WEBSOCKET_APARTMENT_REQUEST_DESTINATION
+    const SEND_COMPANY_RESPONSE = import.meta.env.VITE_API_ADMIN_WEBSOCKET_COMPANY_REQUEST_DESTINATION
+    const REMOVE_RESIDENT = import.meta.env.VITE_API_ADMIN_WEBSOCKET_RESIDENT_REMOVE_DESTINATION
 
     const SOCK_URL = import.meta.env.VITE_API_WEBSOCKET_BASE_URL;
 
@@ -41,11 +45,12 @@ const SEND_APARTMENT_RESPONSE = import.meta.env.VITE_API_ADMIN_WEBSOCKET_APARTME
     const GET_APARTMENT_URL = `${RESIDENT_APARTMENT_API_PATH}/getByBuildingId`;
     const GET_PENDING_APARTMENT_REQUEST_URL = `${ADMIN_APARTMENT_REQUEST_API_PATH}/getPendingRequests`
     const GET_PENDING_COMPANY_REQUEST_URL = `${ADMIN_COMPANY_REQUEST_API_PATH}/getPendingRequests`
+    const GET_ALL_COMPANY_URL = `${ADMIN_COMPANY_API_PATH}/getAll`
 
     const navigate = useNavigate();
 
-    //Meg kell csinálni a company view-t it az admin panelban
-    //A user kidobása a rendszerből, vagy egy gomb az apartman-nál vagy az egész egy gomb de fel kell majd valami modal-t dobnia
+    //Bugos a remove resident meg van oldva mert már megkapja az id-t de valamiért nem veszi ki
+    //Company remove ugyan úgy meg kell csinálni
     //A welcome page ahol majd lehet küldeni a requesteket
     //Report rendszer
 
@@ -56,7 +61,12 @@ const SEND_APARTMENT_RESPONSE = import.meta.env.VITE_API_ADMIN_WEBSOCKET_APARTME
         apartments, setApartments,
         loadingApartments, setLoadingApartments,
         companyNotification, setCompanyNotification,
-        apartmentNotification, setApartmentNotification
+        apartmentNotification, setApartmentNotification,
+        companies, setCompanies,
+        loadingCompanies, setLoadingCompanies,
+        companiesCurrentPage, setCompaniesCurrentPage,
+        companiesTotalPages, setCompaniesTotalPages,
+        companiesTotalElements, setCompaniesTotalElements
     } = useContext(AdminPanelContext);
 
     const {
@@ -68,12 +78,13 @@ const SEND_APARTMENT_RESPONSE = import.meta.env.VITE_API_ADMIN_WEBSOCKET_APARTME
 
     const {
         isAdminModalOpen, setIsAdminModalOpen,
+        isRemovalModalOpen, setIsRemovalModalOpen,
         apartmentRequests, setApartmentRequests,
-        companyRequests, setCompanyRequests
+        companyRequests, setCompanyRequests,
+        targetApartmentId, setTargetApartmentId,
     } = useContext(AdminModalContext);
 
     const {adminGroupId, authenticatedAdminUserName} = useContext(AdminUserContext);
-
     const {addBuildingFormData, setAddBuildingFormData} = useContext(AddBuildingContext);
     const {isLoading, setIsLoading, message, setMessage} = useContext(FeedbackContext);
 
@@ -268,6 +279,12 @@ const SEND_APARTMENT_RESPONSE = import.meta.env.VITE_API_ADMIN_WEBSOCKET_APARTME
         }
     };
 
+    const handleCompaniesPageChange = (newPage) => {
+        if (newPage >= 0 && newPage < companiesTotalPages) {
+            getCompanies(newPage);
+        }
+    };
+
     const handleGetPendingApartmentRequests = async () =>{
 
         try {
@@ -331,7 +348,7 @@ const SEND_APARTMENT_RESPONSE = import.meta.env.VITE_API_ADMIN_WEBSOCKET_APARTME
         );
 
         if (success) {
-            console.log(`REJECTED apartment request ID: ${requestId}`);
+            console.log(`Rejected apartment request ID: ${requestId}`);
             setApartmentRequests(prev => prev.filter(request => request.requestId !== requestId));
             setCurrentView("buildings")
         } else {
@@ -339,6 +356,108 @@ const SEND_APARTMENT_RESPONSE = import.meta.env.VITE_API_ADMIN_WEBSOCKET_APARTME
         }
 
     };
+
+    const handleAcceptCompanyRequest = (requestId) => {
+
+        const responseData = ({
+            requestId:requestId,
+            status:'ACCEPTED'
+        })
+
+        const success = websocketServices.sendMessage(
+            SEND_COMPANY_RESPONSE,
+            responseData
+        );
+
+        if (success) {
+            console.log(`Accepted company request ID: ${requestId}`);
+            setCompanyRequests(prev => prev.filter(request => request.requestId !== requestId));
+        } else {
+            console.error('Failed to send acceptance via WebSocket');
+        }
+
+    };
+
+    const handleRejectCompanyRequest = (requestId) => {
+
+        const responseData = ({
+            requestId:requestId,
+            status:'REJECTED'
+        })
+
+        const success = websocketServices.sendMessage(
+            SEND_COMPANY_RESPONSE,
+            responseData
+        );
+
+        if (success) {
+            console.log(`Rejected company request ID: ${requestId}`);
+            setCompanyRequests(prev => prev.filter(request => request.requestId !== requestId));
+        } else {
+            console.error('Failed to send reluctance via WebSocket');
+        }
+
+    };
+
+    const getCompanies = async (page = 0) => {
+        setLoadingCompanies(true);
+        try {
+            const params = new URLSearchParams({
+                page: page.toString(),
+                size: pageSize.toString(),
+                sortBy: 'id',
+                direction: 'ASC'
+            });
+
+            const url = `${GET_ALL_COMPANY_URL}?${params.toString()}`;
+            const response = await apiServices.get(url);
+
+            if (response && response.content) {
+                setCompanies(response.content);
+                setCompaniesCurrentPage(response.number);
+                setCompaniesTotalPages(response.totalPages);
+                setCompaniesTotalElements(response.totalElements);
+            } else {
+                setCompanies([]);
+                setCompaniesCurrentPage(0);
+                setCompaniesTotalPages(0);
+                setCompaniesTotalElements(0);
+            }
+
+            setCurrentView('companies');
+        } catch (error) {
+            console.error("Error fetching companies:", error.message);
+            setCompanies([]);
+            setCompaniesCurrentPage(0);
+            setCompaniesTotalPages(0);
+            setCompaniesTotalElements(0);
+        } finally {
+            setLoadingCompanies(false);
+        }
+    }
+
+    const handleRemoveResidentFromApartment = (apartmentId) =>{
+
+        console.log(apartmentId)
+
+        const success = websocketServices.sendMessage(
+          REMOVE_RESIDENT, apartmentId
+        );
+
+        if (success) {
+            console.log(`Removal request sent for apartment ID: ${apartmentId}`);
+            if (selectedBuilding) {
+                getApartments(selectedBuilding.id, currentPage);
+            }
+
+            setTargetApartmentId(null);
+            setIsRemovalModalOpen(false);
+
+        } else {
+            console.error('Failed to send removal request via WebSocket');
+        }
+
+    }
 
     const handleLogout = async () =>{
 
@@ -372,6 +491,7 @@ const SEND_APARTMENT_RESPONSE = import.meta.env.VITE_API_ADMIN_WEBSOCKET_APARTME
                 buildings={buildings}
                 getApartments={getApartments}
                 selectedBuilding={selectedBuilding}
+                getCompanies={getCompanies}
             />
 
             <div className="main-content">
@@ -399,6 +519,15 @@ const SEND_APARTMENT_RESPONSE = import.meta.env.VITE_API_ADMIN_WEBSOCKET_APARTME
                     addBuildingFormData={addBuildingFormData}
                     isLoading={isLoading}
                     message={message}
+                    companies={companies}
+                    setCompanies={setCompanies}
+                    loadingCompanies={loadingCompanies}
+                    handleCompaniesPageChange={handleCompaniesPageChange}
+                    companiesCurrentPage={companiesCurrentPage}
+                    companiesTotalPages={companiesTotalPages}
+                    companiesTotalElements={companiesTotalElements}
+                    setIsRemovalModalOpen={setIsRemovalModalOpen}
+                    setTargetApartmentId={setTargetApartmentId}
                 />
 
             </div>
@@ -411,6 +540,8 @@ const SEND_APARTMENT_RESPONSE = import.meta.env.VITE_API_ADMIN_WEBSOCKET_APARTME
                         companyRequests={companyRequests}
                         handleAcceptApartmentRequest={handleAcceptApartmentRequest}
                         handleRejectApartmentRequest={handleRejectApartmentRequest}
+                        handleAcceptCompanyRequest={handleAcceptCompanyRequest}
+                        handleRejectCompanyRequest={handleRejectCompanyRequest}
                      />}
 
                 {companyNotification && (
@@ -424,6 +555,15 @@ const SEND_APARTMENT_RESPONSE = import.meta.env.VITE_API_ADMIN_WEBSOCKET_APARTME
                     <ApartmentRequestnotification
                     notification={apartmentNotification}
                     onClose={handleCloseApartmentNotification}
+                    />
+                )}
+
+                {isRemovalModalOpen && (
+                    <RemovalModal
+                        targetApartmentId={targetApartmentId}
+                        isRemovalModalOpen={isRemovalModalOpen}
+                        setIsRemovalModalOpen={setIsRemovalModalOpen}
+                        handleRemoveResidentFromApartment={handleRemoveResidentFromApartment}
                     />
                 )}
 

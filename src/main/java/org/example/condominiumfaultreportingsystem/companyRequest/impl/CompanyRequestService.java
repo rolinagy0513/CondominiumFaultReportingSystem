@@ -37,6 +37,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.plaf.OptionPaneUI;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -125,11 +126,17 @@ public class CompanyRequestService implements ICompanyRequestService {
     }
 
     @Transactional
-    public void sendCompanyRequestResponse(RequestResponseDTO responseDTO){
+    public void sendCompanyRequestResponse(RequestResponseDTO responseDTO, Principal principal){
 
         try{
 
-            UserWithRoleDTO currentAdmin = userService.getCurrentUserWithRole();
+            User user = userService.getUserFromPrincipal(principal);
+
+            UserWithRoleDTO currentAdmin = UserWithRoleDTO.builder()
+                    .id(user.getId())
+                    .userName(user.getEmail())
+                    .role(user.getRole())
+                    .build();
 
             if (currentAdmin.getRole() != Role.ADMIN){
                 throw new InvalidRoleException();

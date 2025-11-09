@@ -4,10 +4,11 @@ import org.example.condominiumfaultreportingsystem.DTO.CompanyRequestDTO;
 import org.example.condominiumfaultreportingsystem.DTO.CompanyRequestInfoDTO;
 import org.example.condominiumfaultreportingsystem.DTO.RequestResponseDTO;
 
+import java.security.Principal;
 import java.util.List;
 
 public interface ICompanyRequestService {
     CompanyRequestInfoDTO sendCompanyRequest(CompanyRequestDTO companyRequestDTO);
-    void sendCompanyRequestResponse(RequestResponseDTO responseDTO);
+    void sendCompanyRequestResponse(RequestResponseDTO responseDTO, Principal principal);
     List<CompanyRequestInfoDTO> getAllPendingRequests();
 }

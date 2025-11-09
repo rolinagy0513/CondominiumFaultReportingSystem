@@ -1,15 +1,15 @@
-import {FaBuilding, FaBusinessTime} from "react-icons/fa6";
-import { MdElectricBolt } from "react-icons/md";
-import { MdPlumbing } from "react-icons/md";
-import { FaBroom } from "react-icons/fa";
-import { MdSecurity } from "react-icons/md";
-import { GiElevator } from "react-icons/gi";
-import { FaLeaf } from "react-icons/fa";
-import { IoMdBuild } from "react-icons/io";
+import {FaBuilding} from "react-icons/fa6";
+
+import {getServiceIcon} from "../../../utility/GetCompanyLogoUtility.jsx";
+import {getServiceTypeDisplay} from "../../../utility/GetCompanyLogoUtility.jsx";
 
 import "./component-styles/NotificationModal.css"
 
-const NotificationModal = ({ setIsAdminModalOpen, apartmentRequests, companyRequests, handleAcceptApartmentRequest, handleRejectApartmentRequest }) => {
+const NotificationModal = ({ setIsAdminModalOpen, apartmentRequests,
+                               companyRequests, handleAcceptApartmentRequest,
+                               handleRejectApartmentRequest, handleAcceptCompanyRequest,
+                               handleRejectCompanyRequest,
+}) => {
 
     const handleBackdropClick = (e) => {
         if (e.target === e.currentTarget) {
@@ -27,55 +27,6 @@ const NotificationModal = ({ setIsAdminModalOpen, apartmentRequests, companyRequ
         }
     };
 
-    const getServiceIcon = (serviceType) => {
-        switch (serviceType?.toUpperCase()) {
-            case 'ELECTRICIAN':
-                return <MdElectricBolt className="electrician-icon" />;
-            case 'PLUMBER':
-                return <MdPlumbing className="plumber-icon" />;
-            case 'CLEANING':
-                return <FaBroom className="cleaning-icon" />;
-            case 'SECURITY':
-                return <MdSecurity className="security-icon" />;
-            case 'ELEVATOR_MAINTENANCE':
-                return <GiElevator className="elevator-icon" />;
-            case 'GARDENING':
-                return <FaLeaf className="gardening-icon" />;
-            case 'OTHER':
-                return <IoMdBuild className="other-icon" />;
-            default:
-                return <FaBusinessTime className="default-company-icon" />;
-        }
-    };
-
-    const getServiceTypeDisplay = (serviceType) => {
-        switch (serviceType?.toUpperCase()) {
-            case 'ELECTRICIAN':
-                return 'Electrician';
-            case 'PLUMBER':
-                return 'Plumber';
-            case 'CLEANING':
-                return 'Cleaning';
-            case 'SECURITY':
-                return 'Security';
-            case 'ELEVATOR_MAINTENANCE':
-                return 'Elevator Maintenance';
-            case 'GARDENING':
-                return 'Gardening';
-            case 'OTHER':
-                return 'Other Services';
-            default:
-                return serviceType || 'Unknown Service';
-        }
-    };
-
-    const handleAcceptCompany = (requestId) => {
-        console.log(`Accepted company request ID: ${requestId}`);
-    };
-
-    const handleRejectCompany = (requestId) => {
-        console.log(`Rejected company request ID: ${requestId}`);
-    };
 
     return (
         <div className="modal-backdrop" onClick={handleBackdropClick}>
@@ -195,13 +146,13 @@ const NotificationModal = ({ setIsAdminModalOpen, apartmentRequests, companyRequ
                                             <div className="notification-actions">
                                                 <button
                                                     className="accept-btn"
-                                                    onClick={() => handleAcceptCompany(request.requestId)}
+                                                    onClick={() => handleAcceptCompanyRequest(request.requestId)}
                                                 >
                                                     Accept
                                                 </button>
                                                 <button
                                                     className="reject-btn"
-                                                    onClick={() => handleRejectCompany(request.requestId)}
+                                                    onClick={() => handleRejectCompanyRequest(request.requestId)}
                                                 >
                                                     Reject
                                                 </button>

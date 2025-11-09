@@ -5,7 +5,11 @@ import BuildingsList from "./BuildingsList.jsx";
 
 import "./component-styles/SideBar.css"
 
-const SideBar = ({authenticatedAdminUserName, currentView, setCurrentView, handleAddBuilding, buildings, getApartments, selectedBuilding}) =>{
+const SideBar = ({authenticatedAdminUserName, currentView,
+                     setCurrentView, handleAddBuilding,
+                     buildings, getApartments, selectedBuilding,
+                     getCompanies
+}) =>{
 
     return(
         <div className="sidebar">
@@ -30,7 +34,7 @@ const SideBar = ({authenticatedAdminUserName, currentView, setCurrentView, handl
                     >
                         <FaBuilding/> Buildings
                     </button>
-                    <button className="nav-item"> <MdBusinessCenter/> Companies</button>
+                    <button className="nav-item" onClick={()=> getCompanies(0)}> <MdBusinessCenter/> Companies</button>
                 </div>
             </nav>
 

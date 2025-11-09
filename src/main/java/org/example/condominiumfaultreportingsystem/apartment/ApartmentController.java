@@ -6,9 +6,11 @@ import org.example.condominiumfaultreportingsystem.DTO.ApartmentDTO;
 import org.example.condominiumfaultreportingsystem.apartment.impl.ApartmentService;
 import org.springframework.data.domain.Page;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
@@ -52,11 +54,12 @@ public class ApartmentController {
         return apartmentService.getApartmentsByFloorAndBuilding(buildingId,floorNumber, page,size,sortBy,direction);
     }
 
-    @PutMapping("/admin/apartment/removeUserFromApartment/{apartmentId}")
+    @MessageMapping("/admin/apartment/removeUserFromApartment}")
     public void removeUserFromApartment(
-            @PathVariable Long apartmentId
+            @Payload Long apartmentId,
+            Principal principal
     ){
-        apartmentService.removeUserFromApartment(apartmentId);
+        apartmentService.removeUserFromApartment(apartmentId, principal);
     }
 
 }

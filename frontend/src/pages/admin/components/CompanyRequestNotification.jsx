@@ -1,81 +1,13 @@
-import { useEffect, useState } from "react";
+import {useNotificationVisibility} from "../../../hooks/useNotificationVisibility.js";
 
-import {FaBusinessTime} from "react-icons/fa6";
-import { MdElectricBolt } from "react-icons/md";
-import { MdPlumbing } from "react-icons/md";
-import { FaBroom } from "react-icons/fa";
-import { MdSecurity } from "react-icons/md";
-import { GiElevator } from "react-icons/gi";
-import { FaLeaf } from "react-icons/fa";
-import { IoMdBuild } from "react-icons/io";
 import { FaTimes } from "react-icons/fa";
+import { getServiceIcon } from "../../../utility/GetCompanyLogoUtility.jsx";
+import { getServiceTypeDisplay } from "../../../utility/GetCompanyLogoUtility.jsx";
 
 import "./component-styles/CompanyRequestNotification.css";
 
 const CompanyRequestNotification = ({ notification, onClose }) => {
-
-    const [isVisible, setIsVisible] = useState(false);
-
-    useEffect(() => {
-        if (notification) {
-            setIsVisible(true);
-
-            const timer = setTimeout(() => {
-                setIsVisible(false);
-                setTimeout(() => onClose(), 300);
-            }, 15000);
-
-            return () => clearTimeout(timer);
-        }
-    }, [notification, onClose]);
-
-    const handleClose = () => {
-        setIsVisible(false);
-        setTimeout(() => onClose(), 300);
-    };
-
-
-    const getServiceIcon = (serviceType) => {
-        switch (serviceType?.toUpperCase()) {
-            case 'ELECTRICIAN':
-                return <MdElectricBolt className="notification-service-icon electrician-icon" />;
-            case 'PLUMBER':
-                return <MdPlumbing className="notification-service-icon plumber-icon" />;
-            case 'CLEANING':
-                return <FaBroom className="notification-service-icon cleaning-icon" />;
-            case 'SECURITY':
-                return <MdSecurity className="notification-service-icon security-icon" />;
-            case 'ELEVATOR_MAINTENANCE':
-                return <GiElevator className="notification-service-icon elevator-icon" />;
-            case 'GARDENING':
-                return <FaLeaf className="notification-service-icon gardening-icon" />;
-            case 'OTHER':
-                return <IoMdBuild className="notification-service-icon other-icon" />;
-            default:
-                return <FaBusinessTime className="notification-service-icon default-company-icon" />;
-        }
-    };
-
-    const getServiceTypeDisplay = (serviceType) => {
-        switch (serviceType?.toUpperCase()) {
-            case 'ELECTRICIAN':
-                return 'Electrician';
-            case 'PLUMBER':
-                return 'Plumber';
-            case 'CLEANING':
-                return 'Cleaning';
-            case 'SECURITY':
-                return 'Security';
-            case 'ELEVATOR_MAINTENANCE':
-                return 'Elevator Maintenance';
-            case 'GARDENING':
-                return 'Gardening';
-            case 'OTHER':
-                return 'Other Services';
-            default:
-                return serviceType || 'Unknown Service';
-        }
-    };
+    const { isVisible, handleClose } = useNotificationVisibility(notification, onClose);
 
     if (!notification || !isVisible) return null;
 

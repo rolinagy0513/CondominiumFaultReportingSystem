@@ -19,14 +19,18 @@ export const AdminModalContext = createContext();
 export const AdminModalProvider = ({ children }) => {
 
     const[isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+    const[isRemovalModalOpen, setIsRemovalModalOpen] = useState(false);
+    const [targetApartmentId, setTargetApartmentId] = useState(null);
     const[apartmentRequests, setApartmentRequests] = useState([]);
     const[companyRequests, setCompanyRequests] = useState([]);
 
     return (
         <AdminModalContext.Provider value={{
             isAdminModalOpen, setIsAdminModalOpen,
+            isRemovalModalOpen,setIsRemovalModalOpen,
             apartmentRequests, setApartmentRequests,
             companyRequests, setCompanyRequests,
+            targetApartmentId, setTargetApartmentId
         }}>
             {children}
         </AdminModalContext.Provider>

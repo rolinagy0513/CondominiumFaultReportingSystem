@@ -6,8 +6,10 @@ import org.example.condominiumfaultreportingsystem.DTO.CompanyRequestInfoDTO;
 import org.example.condominiumfaultreportingsystem.DTO.RequestResponseDTO;
 import org.example.condominiumfaultreportingsystem.companyRequest.impl.CompanyRequestService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -17,7 +19,7 @@ public class CompanyRequestController {
 
     private final CompanyRequestService companyRequestService;
 
-    @MessageMapping("/companyRequest/send")
+    @PostMapping("/companyRequest/send")
     public CompanyRequestInfoDTO sendCompanyRequest(
             @RequestBody CompanyRequestDTO companyRequestDTO
             ){
@@ -26,9 +28,10 @@ public class CompanyRequestController {
 
     @MessageMapping("/admin/companyRequest/response")
     public void sendCompanyRequestResponse(
-            @RequestBody RequestResponseDTO responseDTO
+            @Payload RequestResponseDTO responseDTO,
+                    Principal principal
     ){
-        companyRequestService.sendCompanyRequestResponse(responseDTO);
+        companyRequestService.sendCompanyRequestResponse(responseDTO, principal);
     }
 
     @GetMapping("/admin/companyRequest/getPendingRequests")

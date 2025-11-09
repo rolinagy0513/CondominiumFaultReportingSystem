@@ -24,9 +24,15 @@ export const AdminPanelProvider = ({ children }) => {
     const [buildings, setBuildings] = useState([]);
     const [selectedBuilding, setSelectedBuilding] = useState(null);
     const [apartments, setApartments] = useState([]);
+    const [companies, setCompanies] = useState([]);
     const [loadingApartments, setLoadingApartments] = useState(false);
     const[companyNotification, setCompanyNotification] = useState(null);
     const[apartmentNotification, setApartmentNotification] = useState(null);
+
+    const [loadingCompanies, setLoadingCompanies] = useState(false);
+    const [companiesCurrentPage, setCompaniesCurrentPage] = useState(0);
+    const [companiesTotalPages, setCompaniesTotalPages] = useState(0);
+    const [companiesTotalElements, setCompaniesTotalElements] = useState(0);
 
     return (
         <AdminPanelContext.Provider value={{
@@ -36,7 +42,11 @@ export const AdminPanelProvider = ({ children }) => {
             apartments, setApartments,
             loadingApartments, setLoadingApartments,
             companyNotification, setCompanyNotification,
-            apartmentNotification, setApartmentNotification
+            apartmentNotification, setApartmentNotification,
+            companies, setCompanies, loadingCompanies, setLoadingCompanies,
+            companiesCurrentPage, setCompaniesCurrentPage,
+            companiesTotalPages, setCompaniesTotalPages,
+            companiesTotalElements, setCompaniesTotalElements
         }}>
             {children}
         </AdminPanelContext.Provider>
