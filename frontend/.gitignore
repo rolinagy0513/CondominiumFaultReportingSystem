@@ -15,7 +15,6 @@ dist-ssr
 *.yaml
 
 .env
-.env.*
 
 .vscode/*
 !.vscode/extensions.json
