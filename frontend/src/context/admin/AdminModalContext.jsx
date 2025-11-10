@@ -20,9 +20,13 @@ export const AdminModalProvider = ({ children }) => {
 
     const[isAdminModalOpen, setIsAdminModalOpen] = useState(false);
     const[isRemovalModalOpen, setIsRemovalModalOpen] = useState(false);
-    const [targetApartmentId, setTargetApartmentId] = useState(null);
+    const [targetId, setTargetId] = useState(null);
+    const[targetCompanyId, setTargetCompanyId] = useState(null)
     const[apartmentRequests, setApartmentRequests] = useState([]);
     const[companyRequests, setCompanyRequests] = useState([]);
+    const[modalText, setModalText] = useState("");
+    const[removalType, setRemovalType] = useState("");
+
 
     return (
         <AdminModalContext.Provider value={{
@@ -30,7 +34,10 @@ export const AdminModalProvider = ({ children }) => {
             isRemovalModalOpen,setIsRemovalModalOpen,
             apartmentRequests, setApartmentRequests,
             companyRequests, setCompanyRequests,
-            targetApartmentId, setTargetApartmentId
+            targetId, setTargetId,
+            targetCompanyId, setTargetCompanyId,
+            modalText, setModalText,
+            removalType, setRemovalType
         }}>
             {children}
         </AdminModalContext.Provider>

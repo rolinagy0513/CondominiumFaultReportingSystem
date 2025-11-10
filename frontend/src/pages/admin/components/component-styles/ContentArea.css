@@ -198,7 +198,7 @@
 }
 
 /* Remove Resident Button */
-.apartment-resident-remove {
+.remove-button {
     background: #fed7d7;
     color: #742a2a;
     border: 1px solid #feb2b2;
@@ -213,7 +213,7 @@
     letter-spacing: 0.5px;
 }
 
-.apartment-resident-remove:hover {
+.remove-button:hover {
     background: #feb2b2;
     color: #63171b;
     border-color: #fc8181;
@@ -221,11 +221,11 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.apartment-resident-remove:active {
+.remove-button:active {
     transform: translateY(0);
 }
 
-.apartment-resident-remove:disabled {
+.remove-button:disabled {
     background: #e2e8f0;
     color: #a0aec0;
     border-color: #cbd5e0;
@@ -235,7 +235,7 @@
 }
 
 /* Only show remove button for occupied apartments */
-.apartment-card:not(:has(.status.occupied)) .apartment-resident-remove {
+.apartment-card:not(:has(.status.occupied)) .remove-button {
     display: none;
 }
 
@@ -548,7 +548,7 @@
         gap: 8px;
     }
 
-    .apartment-resident-remove {
+    .remove-button {
         padding: 10px 12px;
         font-size: 11px;
     }

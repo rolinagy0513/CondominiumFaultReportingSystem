@@ -1,15 +1,17 @@
 import "./component-styles/RemoveModal.css"
 
 const RemovalModal = ({
-                          targetApartmentId,
+                          targetId,
                           isRemovalModalOpen,
                           setIsRemovalModalOpen,
-                          handleRemoveResidentFromApartment
+                          handleRemoveFunction,
+                          text
                       }) => {
 
     if (!isRemovalModalOpen) return null;
 
-    console.log(targetApartmentId);
+    console.log("THERE IS THE ID INSIDE REMOVE MODAL")
+    console.log(targetId);
 
     const handleBackdropClick = (e) => {
         if (e.target === e.currentTarget) {
@@ -38,10 +40,10 @@ const RemovalModal = ({
                     <div className="warning-icon">⚠️</div>
 
                     <div className="removal-modal-message">
-                        <p>Are you sure you want to remove the resident from this apartment?</p>
+                        <p>{text}</p>
 
                         <p className="warning-text">
-                            This action cannot be undone. The resident will lose access to the apartment.
+                            This action cannot be undone. The user will lose access to their privileges.
                         </p>
                     </div>
                 </div>
@@ -55,7 +57,7 @@ const RemovalModal = ({
                     </button>
                     <button
                         className="remove-btn"
-                        onClick={() => handleRemoveResidentFromApartment(targetApartmentId)}
+                        onClick={() => handleRemoveFunction(targetId)}
                     >
                         Remove Resident
                     </button>

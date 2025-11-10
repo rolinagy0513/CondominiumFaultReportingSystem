@@ -2,6 +2,7 @@ package org.example.condominiumfaultreportingsystem.company.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.condominiumfaultreportingsystem.DTO.CompanyDTO;
+import org.example.condominiumfaultreportingsystem.DTO.RemovalDTO;
 import org.example.condominiumfaultreportingsystem.DTO.UserWithRoleDTO;
 import org.example.condominiumfaultreportingsystem.building.Building;
 import org.example.condominiumfaultreportingsystem.building.BuildingRepository;
@@ -28,6 +29,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -144,8 +146,17 @@ public class CompanyService implements ICompanyService {
     }
 
     @Transactional
-    public void removeCompany(Long companyId){
-        UserWithRoleDTO currentAdmin = userService.getCurrentUserWithRole();
+    public void removeCompany(RemovalDTO removalDTO, Principal principal){
+
+        Long companyId = removalDTO.getTargetId();
+
+        User user = userService.getUserFromPrincipal(principal);
+
+        UserWithRoleDTO currentAdmin = UserWithRoleDTO.builder()
+                .id(user.getId())
+                .userName(user.getEmail())
+                .role(user.getRole())
+                .build();
 
         if (currentAdmin.getRole() != Role.ADMIN){
             throw new InvalidRoleException();
@@ -196,6 +207,7 @@ public class CompanyService implements ICompanyService {
     private CompanyDTO mapToDto(Company company){
 
         return CompanyDTO.builder()
+                .id(company.getId())
                 .name(company.getName())
                 .email(company.getEmail())
                 .phoneNumber(company.getPhoneNumber())

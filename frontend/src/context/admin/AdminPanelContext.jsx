@@ -33,6 +33,7 @@ export const AdminPanelProvider = ({ children }) => {
     const [companiesCurrentPage, setCompaniesCurrentPage] = useState(0);
     const [companiesTotalPages, setCompaniesTotalPages] = useState(0);
     const [companiesTotalElements, setCompaniesTotalElements] = useState(0);
+    const[newNotification, setNewNotification] = useState(false);
 
     return (
         <AdminPanelContext.Provider value={{
@@ -46,7 +47,8 @@ export const AdminPanelProvider = ({ children }) => {
             companies, setCompanies, loadingCompanies, setLoadingCompanies,
             companiesCurrentPage, setCompaniesCurrentPage,
             companiesTotalPages, setCompaniesTotalPages,
-            companiesTotalElements, setCompaniesTotalElements
+            companiesTotalElements, setCompaniesTotalElements,
+            newNotification, setNewNotification
         }}>
             {children}
         </AdminPanelContext.Provider>

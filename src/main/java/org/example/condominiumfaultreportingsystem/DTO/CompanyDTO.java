@@ -14,6 +14,8 @@ import org.example.condominiumfaultreportingsystem.company.ServiceType;
 @Builder
 public class CompanyDTO {
 
+    private Long id;
+
     private String name;
     private String email;
     private String phoneNumber;

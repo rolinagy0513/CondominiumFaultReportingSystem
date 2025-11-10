@@ -3,6 +3,7 @@ package org.example.condominiumfaultreportingsystem.apartment.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.condominiumfaultreportingsystem.DTO.ApartmentDTO;
+import org.example.condominiumfaultreportingsystem.DTO.RemovalDTO;
 import org.example.condominiumfaultreportingsystem.DTO.UserWithRoleDTO;
 import org.example.condominiumfaultreportingsystem.apartment.Apartment;
 import org.example.condominiumfaultreportingsystem.apartment.ApartmentRepository;
@@ -14,10 +15,8 @@ import org.example.condominiumfaultreportingsystem.exception.*;
 import org.example.condominiumfaultreportingsystem.group.impl.GroupService;
 import org.example.condominiumfaultreportingsystem.security.user.Role;
 import org.example.condominiumfaultreportingsystem.security.user.User;
-import org.example.condominiumfaultreportingsystem.security.user.UserRepository;
 import org.example.condominiumfaultreportingsystem.security.user.UserService;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -119,7 +118,9 @@ public class ApartmentService implements IApartmentService {
     }
 
     @Transactional
-    public void removeUserFromApartment(Long apartmentId, Principal principal){
+    public void removeUserFromApartment(RemovalDTO removalDTO, Principal principal){
+
+        Long apartmentId = removalDTO.getTargetId();
 
         try{
 
@@ -160,6 +161,8 @@ public class ApartmentService implements IApartmentService {
 
             cacheService.evictAAllApartmentsByBuildingCache();
             cacheService.evictAllApartmentByFloorAndBuildingCache();
+
+            log.info("The user was successfully removed from the apartment and made a USER");
 
         }catch (ObjectOptimisticLockingFailureException ex){
 

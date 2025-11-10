@@ -36,6 +36,7 @@ const AdminPanel = () => {
     const SEND_APARTMENT_RESPONSE = import.meta.env.VITE_API_ADMIN_WEBSOCKET_APARTMENT_REQUEST_DESTINATION
     const SEND_COMPANY_RESPONSE = import.meta.env.VITE_API_ADMIN_WEBSOCKET_COMPANY_REQUEST_DESTINATION
     const REMOVE_RESIDENT = import.meta.env.VITE_API_ADMIN_WEBSOCKET_RESIDENT_REMOVE_DESTINATION
+    const REMOVE_COMPANY = import.meta.env.VITE_ADMIN_WEBSOCKET_COMPANY_REMOVE_DESTINATION
 
     const SOCK_URL = import.meta.env.VITE_API_WEBSOCKET_BASE_URL;
 
@@ -49,8 +50,9 @@ const AdminPanel = () => {
 
     const navigate = useNavigate();
 
-    //Bugos a remove resident meg van oldva mert már megkapja az id-t de valamiért nem veszi ki
-    //Company remove ugyan úgy meg kell csinálni
+    //Le kell tesztelni, hogy az apartment az újra AVAILABLE e ha nem akkor el kell menteni §
+    //Meg kell nézni, hogy jó e a red dot a TopHeader-ben
+    //Kicsit majd optimalizálni a componenteket főleg a ContentArea-t és a contexteket is.
     //A welcome page ahol majd lehet küldeni a requesteket
     //Report rendszer
 
@@ -66,7 +68,8 @@ const AdminPanel = () => {
         loadingCompanies, setLoadingCompanies,
         companiesCurrentPage, setCompaniesCurrentPage,
         companiesTotalPages, setCompaniesTotalPages,
-        companiesTotalElements, setCompaniesTotalElements
+        companiesTotalElements, setCompaniesTotalElements,
+        newNotification, setNewNotification
     } = useContext(AdminPanelContext);
 
     const {
@@ -81,7 +84,9 @@ const AdminPanel = () => {
         isRemovalModalOpen, setIsRemovalModalOpen,
         apartmentRequests, setApartmentRequests,
         companyRequests, setCompanyRequests,
-        targetApartmentId, setTargetApartmentId,
+        targetId, setTargetId,
+        modalText, setModalText,
+        removalType, setRemovalType
     } = useContext(AdminModalContext);
 
     const {adminGroupId, authenticatedAdminUserName} = useContext(AdminUserContext);
@@ -154,10 +159,12 @@ const AdminPanel = () => {
     const handleNotification = (notification) => {
         if (notification.type === 'COMPANY_REQUEST') {
             setCompanyNotification(notification);
+            setNewNotification(true)
         }
 
         if (notification.type === 'APARTMENT_REQUEST'){
             setApartmentNotification(notification);
+            setNewNotification(true)
         }
     };
 
@@ -372,6 +379,7 @@ const AdminPanel = () => {
         if (success) {
             console.log(`Accepted company request ID: ${requestId}`);
             setCompanyRequests(prev => prev.filter(request => request.requestId !== requestId));
+            setCurrentView("buildings")
         } else {
             console.error('Failed to send acceptance via WebSocket');
         }
@@ -393,6 +401,7 @@ const AdminPanel = () => {
         if (success) {
             console.log(`Rejected company request ID: ${requestId}`);
             setCompanyRequests(prev => prev.filter(request => request.requestId !== requestId));
+            setCurrentView("buildings")
         } else {
             console.error('Failed to send reluctance via WebSocket');
         }
@@ -436,27 +445,69 @@ const AdminPanel = () => {
         }
     }
 
-    const handleRemoveResidentFromApartment = (apartmentId) =>{
+    const handleRemoveCompanyFromSystem = (companyId) =>{
 
-        console.log(apartmentId)
+        setModalText("Are you sure you want to remove the company from the system ? ")
+
+        const responseData = ({
+            targetId: companyId
+        })
 
         const success = websocketServices.sendMessage(
-          REMOVE_RESIDENT, apartmentId
+            REMOVE_COMPANY,responseData
+        )
+
+        if (success){
+            console.log(`Removed company with the id of: ${companyId}`)
+
+            setTargetId(null);
+            setIsRemovalModalOpen(false);
+            setModalText("")
+
+        }else {
+            console.error("Failed to remove company")
+        }
+
+    }
+
+    const handleRemoveResidentFromApartment = (apartmentId) =>{
+
+        setModalText("Are you sure you want to remove the resident rom the apartment ? ")
+
+        const responseData = ({
+            targetId: apartmentId
+        })
+
+        const success = websocketServices.sendMessage(
+          REMOVE_RESIDENT,responseData
         );
 
         if (success) {
-            console.log(`Removal request sent for apartment ID: ${apartmentId}`);
+            console.log(`The resident has benn successfully removed from the apartment with the id of: ${apartmentId}`);
+
             if (selectedBuilding) {
                 getApartments(selectedBuilding.id, currentPage);
             }
 
-            setTargetApartmentId(null);
+            setTargetId(null);
             setIsRemovalModalOpen(false);
+            setModalText("")
+
+            console.log("AFTER THE REMOVAL SUCCESS HAPPENED")
+            console.log(targetId)
 
         } else {
-            console.error('Failed to send removal request via WebSocket');
+            console.error('Failed to remove the user');
         }
 
+    }
+
+    const handleRemoval = (targetId) =>{
+        if (removalType === "apartment"){
+            handleRemoveResidentFromApartment(targetId)
+        }if (removalType === "company"){
+            handleRemoveCompanyFromSystem(targetId)
+        }
     }
 
     const handleLogout = async () =>{
@@ -501,6 +552,8 @@ const AdminPanel = () => {
                     selectedBuilding={selectedBuilding}
                     handleLogout={handleLogout}
                     setIsAdminModalOpen={setIsAdminModalOpen}
+                    newNotification={newNotification}
+                    setNewNotification={setNewNotification}
                 />
 
                 <ContentArea
@@ -527,7 +580,8 @@ const AdminPanel = () => {
                     companiesTotalPages={companiesTotalPages}
                     companiesTotalElements={companiesTotalElements}
                     setIsRemovalModalOpen={setIsRemovalModalOpen}
-                    setTargetApartmentId={setTargetApartmentId}
+                    setTargetId={setTargetId}
+                    setRemovalType={setRemovalType}
                 />
 
             </div>
@@ -560,10 +614,11 @@ const AdminPanel = () => {
 
                 {isRemovalModalOpen && (
                     <RemovalModal
-                        targetApartmentId={targetApartmentId}
+                        targetId={targetId}
                         isRemovalModalOpen={isRemovalModalOpen}
                         setIsRemovalModalOpen={setIsRemovalModalOpen}
-                        handleRemoveResidentFromApartment={handleRemoveResidentFromApartment}
+                        handleRemoveFunction={handleRemoval}
+                        text={modalText}
                     />
                 )}
 

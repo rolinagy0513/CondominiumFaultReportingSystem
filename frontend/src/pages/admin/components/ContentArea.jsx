@@ -16,17 +16,27 @@ const ContentArea = ({
                          message, companies,
                          loadingCompanies, handleCompaniesPageChange,
                          companiesCurrentPage, companiesTotalPages,
-                         companiesTotalElements, setTargetApartmentId,
-                         setIsRemovalModalOpen,
+                         companiesTotalElements, setTargetId,
+                         setIsRemovalModalOpen,setRemovalType
                      }) =>{
 
     const removeResidentAction = (apartmentId) =>{
 
-        setTargetApartmentId(apartmentId);
+        setRemovalType("apartment")
+        setTargetId(apartmentId);
         console.log("IN THE CONTENT AREA AT THE FUNCTION WHICH SETS THE APARTMENT ID AND OPENS THE MODAL")
         console.log(apartmentId)
         setIsRemovalModalOpen(true);
 
+    }
+
+    const removeCompanyAction = (companyId) =>{
+
+        setRemovalType("company")
+        setTargetId(companyId);
+        console.log("IN THE CONTENT AREA AT THE FUNCTION WHICH SETS THE COMPANY ID AND OPENS THE MODAL")
+        console.log(companyId)
+        setIsRemovalModalOpen(true);
     }
 
     return(
@@ -72,7 +82,7 @@ const ContentArea = ({
                                                 <p><strong>Floor:</strong> {apartment.floorNumber}</p>
                                                 <p><strong>Owner:</strong> {apartment.ownerName || 'Not assigned'}</p>
                                             </div>
-                                            <button className="apartment-resident-remove" onClick={()=>removeResidentAction(apartment.id)}>Remove Resident</button>
+                                            <button className="remove-button" onClick={()=>removeResidentAction(apartment.id)}>Remove Resident</button>
                                         </div>
                                     ))
                                 ) : (
@@ -184,6 +194,8 @@ const ContentArea = ({
                                                 <p><strong>Phone:</strong> {company.phoneNumber}</p>
                                                 <p><strong>Address:</strong> {company.address}</p>
                                             </div>
+                                            {console.log(company)}
+                                            <button className="remove-button" onClick={()=>removeCompanyAction(company.id)}>Remove Company</button>
                                         </div>
                                     ))
                                 ) : (

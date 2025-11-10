@@ -2,12 +2,15 @@ package org.example.condominiumfaultreportingsystem.company;
 
 import lombok.RequiredArgsConstructor;
 import org.example.condominiumfaultreportingsystem.DTO.CompanyDTO;
+import org.example.condominiumfaultreportingsystem.DTO.RemovalDTO;
 import org.example.condominiumfaultreportingsystem.company.impl.CompanyService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -18,7 +21,7 @@ public class CompanyController {
 
     private final CompanyService companyService;
 
-    @GetMapping("admin/company/getAll")
+    @GetMapping("/admin/company/getAll")
     public CompletableFuture<Page<CompanyDTO>> getAllCompanies(
 
             @RequestParam(defaultValue = "0") Integer page,
@@ -44,7 +47,7 @@ public class CompanyController {
         return companyService.getCompaniesByBuildingId(buildingId);
     }
 
-    @GetMapping("admin/company/getByServiceType")
+    @GetMapping("/admin/company/getByServiceType")
     public CompletableFuture<Page<CompanyDTO>> getCompaniesByServiceType(
 
             @RequestParam ServiceType serviceType,
@@ -66,11 +69,12 @@ public class CompanyController {
         return companyService.getCompaniesByBuildingIdAndServiceType(buildingId, serviceType);
     }
 
-    @MessageMapping("admin/company/removeCompany/{companyId}")
+    @MessageMapping("/admin/company/removeCompany")
     public void removeCompany(
-            @PathVariable Long companyId
-    ){
-        companyService.removeCompany(companyId);
+            @Payload RemovalDTO removalDTO,
+            Principal principal
+            ){
+        companyService.removeCompany(removalDTO, principal);
     }
 
 }

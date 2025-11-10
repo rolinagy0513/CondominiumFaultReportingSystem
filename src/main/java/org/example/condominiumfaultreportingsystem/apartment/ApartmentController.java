@@ -1,8 +1,8 @@
 package org.example.condominiumfaultreportingsystem.apartment;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.example.condominiumfaultreportingsystem.DTO.ApartmentDTO;
+import org.example.condominiumfaultreportingsystem.DTO.RemovalDTO;
 import org.example.condominiumfaultreportingsystem.apartment.impl.ApartmentService;
 import org.springframework.data.domain.Page;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -54,12 +54,12 @@ public class ApartmentController {
         return apartmentService.getApartmentsByFloorAndBuilding(buildingId,floorNumber, page,size,sortBy,direction);
     }
 
-    @MessageMapping("/admin/apartment/removeUserFromApartment}")
+    @MessageMapping("/admin/apartment/removeUserFromApartment")
     public void removeUserFromApartment(
-            @Payload Long apartmentId,
+            @Payload RemovalDTO removalDTO,
             Principal principal
     ){
-        apartmentService.removeUserFromApartment(apartmentId, principal);
+        apartmentService.removeUserFromApartment(removalDTO, principal);
     }
 
 }

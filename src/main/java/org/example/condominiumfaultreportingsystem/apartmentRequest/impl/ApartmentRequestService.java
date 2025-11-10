@@ -230,6 +230,8 @@ public class ApartmentRequestService implements IApartmentRequestService {
         apartmentRequest.setStatus(ApartmentRequestStatus.REJECTED);
         apartmentRequestRepository.save(apartmentRequest);
 
+        apartment.setStatus(ApartmentStatus.AVAILABLE);
+
         eventPublisher.publishEvent(
                 new ApartmentRequestRejectedEvent(apartmentRequest,apartment)
         );
