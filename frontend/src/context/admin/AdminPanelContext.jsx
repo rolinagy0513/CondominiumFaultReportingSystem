@@ -11,8 +11,12 @@
  * - Manages the selectedBuilding state to which decides that which building is being displayed.
  * - Manages the apartments state that stores the list of apartments for a building that is selected.
  * - Manages the loadingApartments if there is loading time than the user can see that something is happening
+ * - Manages the companies state that stores the list of service companies in the system
+ * - Manages loadingCompanies which indicates when company data is being fetched
+ * - Manages companyNotification and apartmentNotification which store notification messages for company and apartment operations
+ * - Manages companiesCurrentPage, companiesTotalPages, and companiesTotalElements which handle pagination for the companies list
+ * - Manages newNotification which indicates when new notifications are available for the admin
  */
-
 
 import {useState, createContext} from "react";
 

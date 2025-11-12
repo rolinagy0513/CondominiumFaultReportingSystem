@@ -5,13 +5,16 @@ const RemovalModal = ({
                           isRemovalModalOpen,
                           setIsRemovalModalOpen,
                           handleRemoveFunction,
-                          text
+                          text, buttonText,
+                          titleText
                       }) => {
 
     if (!isRemovalModalOpen) return null;
 
     console.log("THERE IS THE ID INSIDE REMOVE MODAL")
     console.log(targetId);
+
+    console.log(buttonText)
 
     const handleBackdropClick = (e) => {
         if (e.target === e.currentTarget) {
@@ -27,7 +30,7 @@ const RemovalModal = ({
         <div className="removal-modal-backdrop" onClick={handleBackdropClick}>
             <div className="removal-modal">
                 <div className="removal-modal-header">
-                    <h3>Remove Resident</h3>
+                    <h3>{titleText}</h3>
                     <button
                         className="removal-modal-close"
                         onClick={onClose}
@@ -59,7 +62,7 @@ const RemovalModal = ({
                         className="remove-btn"
                         onClick={() => handleRemoveFunction(targetId)}
                     >
-                        Remove Resident
+                        {buttonText}
                     </button>
                 </div>
             </div>

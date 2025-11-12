@@ -1,0 +1,35 @@
+.buildings-content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.content-placeholder {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    color: #4a5568;
+}
+
+.content-placeholder h2 {
+    margin-bottom: 15px;
+    color: #2d3748;
+}
+
+.content-placeholder p {
+    margin-bottom: 25px;
+    opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+    .content-placeholder {
+        padding: 20px;
+    }
+
+    .content-placeholder h2 {
+        font-size: 1.5rem;
+    }
+}

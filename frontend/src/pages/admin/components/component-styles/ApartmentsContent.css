@@ -1,0 +1,150 @@
+/* ApartmentsContent.css */
+.apartments-content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.apartments-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+    padding: 30px;
+}
+
+.apartment-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: relative;
+}
+
+.apartment-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #cbd5e0;
+}
+
+.apartment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.apartment-header h4 {
+    margin: 0;
+    color: #2d3748;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.status {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status.available,
+.status.active {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.status.occupied,
+.status.inactive {
+    background: #fed7d7;
+    color: #742a2a;
+}
+
+.status.pending,
+.status.maintenance {
+    background: #feebcb;
+    color: #744210;
+}
+
+.status.reserved {
+    background: #c3ddfd;
+    color: #1e429f;
+}
+
+.apartment-details {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.apartment-details p {
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f7fafc;
+}
+
+.apartment-details p:last-child {
+    border-bottom: none;
+}
+
+.apartment-details strong {
+    color: #4a5568;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.apartment-details span {
+    color: #2d3748;
+    font-size: 14px;
+}
+
+/* Only show remove button for occupied apartments */
+.apartment-card:not(:has(.status.occupied)) .remove-button {
+    display: none;
+}
+
+.no-apartments {
+    text-align: center;
+    padding: 60px 30px;
+    color: #718096;
+    grid-column: 1 / -1;
+}
+
+.no-apartments::before {
+    content: '🏢';
+    font-size: 48px;
+    display: block;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+.apartment-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.apartment-card:focus-within {
+    outline: 2px solid #2c5282;
+    outline-offset: 2px;
+}
+
+/* Responsive Design for ApartmentsContent */
+@media (max-width: 768px) {
+    .apartments-list {
+        grid-template-columns: 1fr;
+        padding: 20px;
+        gap: 15px;
+    }
+
+    .apartment-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+}

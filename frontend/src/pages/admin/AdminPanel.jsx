@@ -16,10 +16,10 @@ import TopHeader from "./components/TopHeader.jsx";
 import ContentArea from "./components/ContentArea.jsx";
 import NotificationModal from "./components/NotificationModal.jsx";
 import CompanyRequestNotification from "./components/CompanyRequestNotification.jsx";
+import ApartmentRequestNotification from "./components/ApartmentRequestNotification.jsx";
 import RemovalModal from "./components/RemoveModal.jsx";
 
 import "./styles/AdminPanel.css";
-import ApartmentRequestnotification from "./components/ApartmentRequestnotification.jsx";
 
 const AdminPanel = () => {
     const ADMIN_BUILDING_API_PATH = import.meta.env.VITE_API_ADMIN_BUILDING_URL;
@@ -50,9 +50,6 @@ const AdminPanel = () => {
 
     const navigate = useNavigate();
 
-    //Le kell tesztelni, hogy az apartment az újra AVAILABLE e ha nem akkor el kell menteni §
-    //Meg kell nézni, hogy jó e a red dot a TopHeader-ben
-    //Kicsit majd optimalizálni a componenteket főleg a ContentArea-t és a contexteket is.
     //A welcome page ahol majd lehet küldeni a requesteket
     //Report rendszer
 
@@ -86,7 +83,9 @@ const AdminPanel = () => {
         companyRequests, setCompanyRequests,
         targetId, setTargetId,
         modalText, setModalText,
-        removalType, setRemovalType
+        removalType, setRemovalType,
+        modalButtonText, setModalButtonText,
+        modalTitleText, setModalTitleText
     } = useContext(AdminModalContext);
 
     const {adminGroupId, authenticatedAdminUserName} = useContext(AdminUserContext);
@@ -447,8 +446,6 @@ const AdminPanel = () => {
 
     const handleRemoveCompanyFromSystem = (companyId) =>{
 
-        setModalText("Are you sure you want to remove the company from the system ? ")
-
         const responseData = ({
             targetId: companyId
         })
@@ -462,7 +459,10 @@ const AdminPanel = () => {
 
             setTargetId(null);
             setIsRemovalModalOpen(false);
+            setModalTitleText("")
             setModalText("")
+            setModalButtonText("")
+            setCurrentView("buildings")
 
         }else {
             console.error("Failed to remove company")
@@ -472,7 +472,8 @@ const AdminPanel = () => {
 
     const handleRemoveResidentFromApartment = (apartmentId) =>{
 
-        setModalText("Are you sure you want to remove the resident rom the apartment ? ")
+        console.log("|||||||")
+        console.log(modalButtonText)
 
         const responseData = ({
             targetId: apartmentId
@@ -491,7 +492,10 @@ const AdminPanel = () => {
 
             setTargetId(null);
             setIsRemovalModalOpen(false);
-            setModalText("")
+            setModalText("");
+            setModalButtonText("")
+            setModalTitleText("")
+            setCurrentView("buildings");
 
             console.log("AFTER THE REMOVAL SUCCESS HAPPENED")
             console.log(targetId)
@@ -582,6 +586,9 @@ const AdminPanel = () => {
                     setIsRemovalModalOpen={setIsRemovalModalOpen}
                     setTargetId={setTargetId}
                     setRemovalType={setRemovalType}
+                    setModalButtonText={setModalButtonText}
+                    setModalText={setModalText}
+                    setModalTitleText={setModalTitleText}
                 />
 
             </div>
@@ -606,7 +613,7 @@ const AdminPanel = () => {
                 )}
 
                 {apartmentNotification && (
-                    <ApartmentRequestnotification
+                    <ApartmentRequestNotification
                     notification={apartmentNotification}
                     onClose={handleCloseApartmentNotification}
                     />
@@ -619,6 +626,8 @@ const AdminPanel = () => {
                         setIsRemovalModalOpen={setIsRemovalModalOpen}
                         handleRemoveFunction={handleRemoval}
                         text={modalText}
+                        buttonText={modalButtonText}
+                        titleText={modalTitleText}
                     />
                 )}
 
