@@ -8,6 +8,10 @@ import {AdminPanelProvider} from "./context/admin/AdminPanelContext.jsx";
 import {PaginationProvider} from "./context/general/PaginationContext.jsx";
 import {AdminModalProvider} from "./context/admin/AdminModalContext.jsx";
 import {AdminUserProvider} from "./context/admin/AdminUserContext.jsx";
+import {BuildingProvider} from "./context/admin/BuildingContext.jsx";
+import {ApartmentProvider} from "./context/admin/ApartmentContext.jsx";
+import {NotificationProvider} from "./context/admin/NotificationContext.jsx";
+import {CompanyProvider} from "./context/admin/CompanyContext.jsx";
 
 function App() {
 
@@ -21,9 +25,17 @@ function App() {
                           <PaginationProvider>
                               <AdminModalProvider>
                                   <AdminUserProvider>
-                                      <AuthRoutes/>
-                                      <MainRoutes/>
-                                      <AdminRoutes/>
+                                      <BuildingProvider>
+                                          <ApartmentProvider>
+                                              <NotificationProvider>
+                                                  <CompanyProvider>
+                                                      <AuthRoutes/>
+                                                      <MainRoutes/>
+                                                      <AdminRoutes/>
+                                                  </CompanyProvider>
+                                              </NotificationProvider>
+                                          </ApartmentProvider>
+                                      </BuildingProvider>
                                   </AdminUserProvider>
                               </AdminModalProvider>
                           </PaginationProvider>

@@ -19,9 +19,20 @@ import CompanyRequestNotification from "./components/CompanyRequestNotification.
 import ApartmentRequestNotification from "./components/ApartmentRequestNotification.jsx";
 import RemovalModal from "./components/RemoveModal.jsx";
 
+import {BuildingContext} from "../../context/admin/BuildingContext.jsx";
+import {ApartmentContext} from "../../context/admin/ApartmentContext.jsx";
+import {NotificationContext} from "../../context/admin/NotificationContext.jsx";
+import {CompanyContext} from "../../context/admin/CompanyContext.jsx";
+
+import {useBuildings} from "../../hooks/admin/useBuildings.js";
+
 import "./styles/AdminPanel.css";
+import {useApartments} from "../../hooks/admin/useApartments.js";
+import {useCompanies} from "../../hooks/admin/useCompanies.js";
+import {useNotifications} from "../../hooks/admin/useNotifications.js";
 
 const AdminPanel = () => {
+
     const ADMIN_BUILDING_API_PATH = import.meta.env.VITE_API_ADMIN_BUILDING_URL;
     const BUILDING_API_PATH = import.meta.env.VITE_API_BASE_BUILDING_URL
 
@@ -53,20 +64,32 @@ const AdminPanel = () => {
     //A welcome page ahol majd lehet küldeni a requesteket
     //Report rendszer
 
-    const {
-        currentView, setCurrentView,
+    const{
         buildings, setBuildings,
-        selectedBuilding, setSelectedBuilding,
+        selectedBuilding, setSelectedBuilding
+    } = useContext(BuildingContext);
+
+    const{
         apartments, setApartments,
-        loadingApartments, setLoadingApartments,
-        companyNotification, setCompanyNotification,
-        apartmentNotification, setApartmentNotification,
+        loadingApartments, setLoadingApartments
+    } = useContext(ApartmentContext);
+
+    const{
         companies, setCompanies,
         loadingCompanies, setLoadingCompanies,
         companiesCurrentPage, setCompaniesCurrentPage,
         companiesTotalPages, setCompaniesTotalPages,
-        companiesTotalElements, setCompaniesTotalElements,
+        companiesTotalElements, setCompaniesTotalElements
+    } = useContext(CompanyContext);
+
+    const{
+        companyNotification, setCompanyNotification,
+        apartmentNotification, setApartmentNotification,
         newNotification, setNewNotification
+    } = useContext(NotificationContext);
+
+    const {
+        currentView, setCurrentView,
     } = useContext(AdminPanelContext);
 
     const {
@@ -91,6 +114,42 @@ const AdminPanel = () => {
     const {adminGroupId, authenticatedAdminUserName} = useContext(AdminUserContext);
     const {addBuildingFormData, setAddBuildingFormData} = useContext(AddBuildingContext);
     const {isLoading, setIsLoading, message, setMessage} = useContext(FeedbackContext);
+
+    const { getAllBuildings, addBuilding } = useBuildings(
+        GET_ALL_BUILDING_URL, ADD_BUILDING_URL,
+        setBuildings, setIsLoading,
+        addBuildingFormData, setAddBuildingFormData,
+        setMessage, setCurrentView
+    );
+
+    const {
+        getApartments, handleGetPendingApartmentRequests,
+        handleAcceptApartmentRequest, handleRejectApartmentRequest,
+        handleRemoveResidentFromApartment
+    } = useApartments(
+        GET_APARTMENT_URL, GET_PENDING_APARTMENT_REQUEST_URL, SEND_APARTMENT_RESPONSE, REMOVE_RESIDENT,
+        pageSize, currentPage, setLoadingApartments, setApartments, setCurrentPage, setTotalPages,
+        setTotalElements, buildings, setSelectedBuilding, setCurrentView, setApartmentRequests,
+        selectedBuilding, setTargetId, setIsRemovalModalOpen, setModalText, setModalButtonText, setModalTitleText
+    );
+
+    const {
+        getCompanies, handleGetPendingCompanyRequests,
+        handleAcceptCompanyRequest, handleRejectCompanyRequest,
+        handleRemoveCompanyFromSystem
+    } = useCompanies(
+        GET_ALL_COMPANY_URL, GET_PENDING_COMPANY_REQUEST_URL, SEND_COMPANY_RESPONSE, REMOVE_COMPANY,
+        pageSize, setCompanies, setCompaniesCurrentPage, setCompaniesTotalPages, setCompaniesTotalElements,
+        setCompanyRequests, setCurrentView, setLoadingCompanies, setTargetId, setIsRemovalModalOpen,
+        setModalTitleText, setModalText, setModalButtonText
+    );
+
+    const {
+        handleCloseApartmentNotification, handleCloseCompanyNotification
+    } = useNotifications(
+        SOCK_URL, adminGroupId, setCompanyNotification,
+        setApartmentNotification, setNewNotification
+    );
 
     const subscriptionRef = useRef(null);
 
@@ -167,14 +226,6 @@ const AdminPanel = () => {
         }
     };
 
-    const handleCloseApartmentNotification = () =>{
-        setApartmentNotification(null)
-    }
-
-    const handleCloseCompanyNotification = () => {
-        setCompanyNotification(null);
-    };
-
     const handleAddBuilding = () => {
         setCurrentView('add-building');
     };
@@ -201,82 +252,9 @@ const AdminPanel = () => {
         setTotalPages(0);
     };
 
-    const getAllBuildings = async() => {
-        try {
-            const response = await apiServices.get(GET_ALL_BUILDING_URL);
-            setBuildings(response);
-        } catch (error) {
-            console.error(error.message);
-        }
-    }
-
-    const getApartments = async(buildingId, page = 0) => {
-        setLoadingApartments(true);
-        try {
-            const params = new URLSearchParams({
-                page: page.toString(),
-                size: pageSize.toString(),
-                sortBy: 'id',
-                direction: 'ASC'
-            });
-
-            const url = `${GET_APARTMENT_URL}/${buildingId}?${params.toString()}`;
-            const response = await apiServices.get(url);
-
-            if (response && response.content) {
-                setApartments(response.content);
-                setCurrentPage(response.number);
-                setTotalPages(response.totalPages);
-                setTotalElements(response.totalElements);
-            } else {
-                setApartments([]);
-                setCurrentPage(0);
-                setTotalPages(0);
-                setTotalElements(0);
-            }
-
-            const building = buildings.find(b => b.id === buildingId);
-            setSelectedBuilding(building);
-            setCurrentView('apartments');
-
-        } catch (error) {
-            console.error("Error fetching apartments:", error.message);
-            setApartments([]);
-            setCurrentPage(0);
-            setTotalPages(0);
-        } finally {
-            setLoadingApartments(false);
-        }
-    }
-
-    const addBuilding = async(e) =>{
-
+    const handleAddBuildingsEvent = (e) =>{
         e.preventDefault();
-
-        try {
-            setIsLoading(true);
-            const response = await apiServices.post(`${ADD_BUILDING_URL}`,addBuildingFormData);
-
-            setAddBuildingFormData({
-                numberOfFloors: 0,
-                numberOfApartmentsInOneFloor: 0,
-                buildingNumber: 0,
-                address: '',
-                overrides: [],
-            });
-
-            await getAllBuildings();
-
-            setCurrentView('buildings');
-
-        }catch (error){
-            console.error(error.message);
-            setMessage(error.message)
-            setIsLoading(false);
-        }finally{
-            setIsLoading(false);
-        }
-
+        addBuilding();
     }
 
     const handlePageChange = (newPage) => {
@@ -291,220 +269,6 @@ const AdminPanel = () => {
         }
     };
 
-    const handleGetPendingApartmentRequests = async () =>{
-
-        try {
-
-            const response = await apiServices.get(GET_PENDING_APARTMENT_REQUEST_URL)
-
-            setApartmentRequests(response || []);
-
-        }catch (error){
-            console.error(error.message)
-        }
-
-    }
-
-    const handleGetPendingCompanyRequests = async() =>{
-
-        try {
-
-            const response = await apiServices.get(GET_PENDING_COMPANY_REQUEST_URL)
-
-            setCompanyRequests(response || [])
-
-        }catch (error){
-            console.error(error.message)
-        }
-
-    }
-
-    const handleAcceptApartmentRequest = (requestId) => {
-
-        const responseData = ({
-            requestId:requestId,
-            status:'ACCEPTED'
-        })
-
-        const success = websocketServices.sendMessage(
-            SEND_APARTMENT_RESPONSE,
-            responseData
-        );
-
-        if (success) {
-            console.log(`Accepted apartment request ID: ${requestId}`);
-            setApartmentRequests(prev => prev.filter(request => request.requestId !== requestId));
-            setCurrentView("buildings")
-        } else {
-            console.error('Failed to send acceptance via WebSocket');
-        }
-
-    };
-
-    const handleRejectApartmentRequest = (requestId) => {
-
-        const responseData = ({
-            requestId:requestId,
-            status:'REJECTED'
-        })
-
-        const success = websocketServices.sendMessage(
-            SEND_APARTMENT_RESPONSE,
-            responseData
-        );
-
-        if (success) {
-            console.log(`Rejected apartment request ID: ${requestId}`);
-            setApartmentRequests(prev => prev.filter(request => request.requestId !== requestId));
-            setCurrentView("buildings")
-        } else {
-            console.error('Failed to send reluctance via WebSocket');
-        }
-
-    };
-
-    const handleAcceptCompanyRequest = (requestId) => {
-
-        const responseData = ({
-            requestId:requestId,
-            status:'ACCEPTED'
-        })
-
-        const success = websocketServices.sendMessage(
-            SEND_COMPANY_RESPONSE,
-            responseData
-        );
-
-        if (success) {
-            console.log(`Accepted company request ID: ${requestId}`);
-            setCompanyRequests(prev => prev.filter(request => request.requestId !== requestId));
-            setCurrentView("buildings")
-        } else {
-            console.error('Failed to send acceptance via WebSocket');
-        }
-
-    };
-
-    const handleRejectCompanyRequest = (requestId) => {
-
-        const responseData = ({
-            requestId:requestId,
-            status:'REJECTED'
-        })
-
-        const success = websocketServices.sendMessage(
-            SEND_COMPANY_RESPONSE,
-            responseData
-        );
-
-        if (success) {
-            console.log(`Rejected company request ID: ${requestId}`);
-            setCompanyRequests(prev => prev.filter(request => request.requestId !== requestId));
-            setCurrentView("buildings")
-        } else {
-            console.error('Failed to send reluctance via WebSocket');
-        }
-
-    };
-
-    const getCompanies = async (page = 0) => {
-        setLoadingCompanies(true);
-        try {
-            const params = new URLSearchParams({
-                page: page.toString(),
-                size: pageSize.toString(),
-                sortBy: 'id',
-                direction: 'ASC'
-            });
-
-            const url = `${GET_ALL_COMPANY_URL}?${params.toString()}`;
-            const response = await apiServices.get(url);
-
-            if (response && response.content) {
-                setCompanies(response.content);
-                setCompaniesCurrentPage(response.number);
-                setCompaniesTotalPages(response.totalPages);
-                setCompaniesTotalElements(response.totalElements);
-            } else {
-                setCompanies([]);
-                setCompaniesCurrentPage(0);
-                setCompaniesTotalPages(0);
-                setCompaniesTotalElements(0);
-            }
-
-            setCurrentView('companies');
-        } catch (error) {
-            console.error("Error fetching companies:", error.message);
-            setCompanies([]);
-            setCompaniesCurrentPage(0);
-            setCompaniesTotalPages(0);
-            setCompaniesTotalElements(0);
-        } finally {
-            setLoadingCompanies(false);
-        }
-    }
-
-    const handleRemoveCompanyFromSystem = (companyId) =>{
-
-        const responseData = ({
-            targetId: companyId
-        })
-
-        const success = websocketServices.sendMessage(
-            REMOVE_COMPANY,responseData
-        )
-
-        if (success){
-            console.log(`Removed company with the id of: ${companyId}`)
-
-            setTargetId(null);
-            setIsRemovalModalOpen(false);
-            setModalTitleText("")
-            setModalText("")
-            setModalButtonText("")
-            setCurrentView("buildings")
-
-        }else {
-            console.error("Failed to remove company")
-        }
-
-    }
-
-    const handleRemoveResidentFromApartment = (apartmentId) =>{
-
-        console.log("|||||||")
-        console.log(modalButtonText)
-
-        const responseData = ({
-            targetId: apartmentId
-        })
-
-        const success = websocketServices.sendMessage(
-          REMOVE_RESIDENT,responseData
-        );
-
-        if (success) {
-            console.log(`The resident has benn successfully removed from the apartment with the id of: ${apartmentId}`);
-
-            if (selectedBuilding) {
-                getApartments(selectedBuilding.id, currentPage);
-            }
-
-            setTargetId(null);
-            setIsRemovalModalOpen(false);
-            setModalText("");
-            setModalButtonText("")
-            setModalTitleText("")
-            setCurrentView("buildings");
-
-            console.log("AFTER THE REMOVAL SUCCESS HAPPENED")
-            console.log(targetId)
-
-        } else {
-            console.error('Failed to remove the user');
-        }
-
-    }
 
     const handleRemoval = (targetId) =>{
         if (removalType === "apartment"){
@@ -572,7 +336,7 @@ const AdminPanel = () => {
                     handlePageChange={handlePageChange}
                     totalPages={totalPages}
                     handleInputChange={handleInputChange}
-                    addBuilding={addBuilding}
+                    addBuilding={handleAddBuildingsEvent}
                     addBuildingFormData={addBuildingFormData}
                     isLoading={isLoading}
                     message={message}

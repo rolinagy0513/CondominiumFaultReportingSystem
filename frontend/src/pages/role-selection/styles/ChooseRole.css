@@ -1,0 +1,256 @@
+.role-selection-container {
+    min-height: 100vh;
+    background: linear-gradient(90deg, #1a365d 0%, #2c5282 50%, #2b6cb0 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.center-title {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.center-title h1 {
+    color: white;
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.title-decoration {
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, #4facfe, #00a2ff, #1a365d);
+    margin: 0 auto;
+    border-radius: 2px;
+}
+
+.roles-wrapper {
+    display: flex;
+    gap: 2rem;
+    max-width: 1200px;
+    width: 100%;
+    align-items: stretch;
+    justify-content: center;
+}
+
+.role-card {
+    flex: 1;
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    max-width: 400px;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+.role-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #4facfe, #00a2ff);
+}
+
+.role-card.hovered {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+}
+
+.resident-side {
+    border-left: 4px solid #4facfe;
+}
+
+.company-side {
+    border-left: 4px solid #1a365d;
+}
+
+.card-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, transparent 30%, rgba(255,255,255,0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.role-card.hovered .card-glow {
+    opacity: 1;
+}
+
+.role-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.icon-wrapper {
+    margin-bottom: 1.5rem;
+}
+
+.resident-icon, .company-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    color: #2c5282;
+}
+
+.role-card h2 {
+    color: #2c5282;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.role-card p {
+    color: #4a5568;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    flex-grow: 1;
+}
+
+.role-btn {
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 0 auto;
+    min-width: 200px;
+    margin-top: auto;
+    color: white;
+}
+
+.resident-btn {
+    background: linear-gradient(135deg, #4facfe, #00a2ff);
+    box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+}
+
+.company-btn {
+    background: linear-gradient(135deg, #2c5282, #1a365d);
+    box-shadow: 0 4px 15px rgba(42, 67, 111, 0.3);
+}
+
+.role-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.resident-btn:hover {
+    box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
+}
+
+.company-btn:hover {
+    box-shadow: 0 8px 25px rgba(42, 67, 111, 0.4);
+}
+
+.btn-arrow {
+    transition: transform 0.3s ease;
+}
+
+.role-btn:hover .btn-arrow {
+    transform: translateX(4px);
+}
+
+.vertical-divider {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    color: white;
+    font-weight: bold;
+    margin: 0 1rem;
+}
+
+.divider-line {
+    width: 2px;
+    height: 80px;
+    background: linear-gradient(to bottom, transparent, #4facfe, #00a2ff, transparent);
+    border-radius: 1px;
+}
+
+.divider-text {
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(79, 172, 254, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .roles-wrapper {
+        flex-direction: column;
+    }
+
+    .vertical-divider {
+        flex-direction: row;
+        margin: 1rem 0;
+    }
+
+    .divider-line {
+        width: 80px;
+        height: 2px;
+        background: linear-gradient(to right, transparent, #4facfe, #00a2ff, transparent);
+    }
+
+    .center-title h1 {
+        font-size: 2rem;
+    }
+
+    .role-card {
+        min-height: auto;
+        padding: 2rem;
+    }
+
+    .role-btn {
+        margin-top: 2rem;
+    }
+}
+
+/* Animation for page load */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.role-card {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.resident-side {
+    animation-delay: 0.1s;
+}
+
+.company-side {
+    animation-delay: 0.2s;
+}
