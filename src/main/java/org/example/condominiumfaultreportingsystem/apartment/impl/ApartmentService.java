@@ -74,6 +74,37 @@ public class ApartmentService implements IApartmentService {
 
     }
 
+    @Async("asyncExecutor")
+    @Cacheable(value = "availableApartmentsByBuilding")
+    public CompletableFuture<Page<ApartmentDTO>> getAvailableApartmentsInBuilding(
+            Long buildingId,
+            Integer page,
+            Integer size,
+            String sortBy,
+            String direction
+    ){
+        Sort sort;
+
+        if (direction.equalsIgnoreCase("ASC")) {
+            sort = Sort.by(sortBy).ascending();
+        } else {
+            sort = Sort.by(sortBy).descending();
+        }
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Optional<Page<Apartment>> apartmentsPageOpt = apartmentRepository.findAllAvailableByBuildingId(buildingId,ApartmentStatus.AVAILABLE, pageable);
+
+        if (apartmentsPageOpt.isEmpty()){
+            throw new ApartmentNotFoundInBuildingException(buildingId);
+        }
+
+        Page<Apartment> apartmentsPage = apartmentsPageOpt.get();
+
+        Page<ApartmentDTO> dtoPage = apartmentsPage.map(this::mapToDto);
+        return CompletableFuture.completedFuture(dtoPage);
+    }
+
     public ApartmentDTO getApartmentById(Long apartmentId){
 
         Apartment apartment = apartmentRepository.findById(apartmentId)
@@ -161,6 +192,7 @@ public class ApartmentService implements IApartmentService {
 
             cacheService.evictAAllApartmentsByBuildingCache();
             cacheService.evictAllApartmentByFloorAndBuildingCache();
+            cacheService.evictAvailableApartmentsInBuildingCache();
 
             log.info("The user was successfully removed from the apartment and made a USER");
 

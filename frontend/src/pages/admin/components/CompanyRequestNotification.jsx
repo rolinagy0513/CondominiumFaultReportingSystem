@@ -1,4 +1,4 @@
-import {useNotificationVisibility} from "../../../hooks/general/useNotificationVisibility.js";
+import {useNotificationVisibility} from "../../../hooks/useNotificationVisibility.js";
 
 import { FaTimes } from "react-icons/fa";
 import { getServiceIcon } from "../../../utility/GetCompanyLogoUtility.jsx";

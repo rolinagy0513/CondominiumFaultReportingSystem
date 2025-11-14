@@ -34,6 +34,18 @@ public class ApartmentController {
         return apartmentService.getApartmentsInBuilding(buildingId, page, size, sortBy, direction);
     }
 
+    @GetMapping("/apartment/getAvailableByBuildingId/{buildingId}")
+    public CompletableFuture<Page<ApartmentDTO>> getAvailableByBuildingId(
+            @PathVariable Long buildingId,
+
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "ASC") String direction
+    ){
+        return apartmentService.getAvailableApartmentsInBuilding(buildingId, page, size, sortBy, direction);
+    }
+
     @GetMapping("/resident/apartment/getById/{apartmentId}")
     public ApartmentDTO getApartmentById(
             @PathVariable Long apartmentId

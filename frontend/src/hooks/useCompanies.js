@@ -1,5 +1,5 @@
-import apiServices from "../../services/ApiServices.js";
-import websocketServices from "../../services/WebsocketServices.js";
+import apiServices from "../services/ApiServices.js";
+import websocketServices from "../services/WebsocketServices.js";
 
 export const useCompanies = (
     GET_ALL_COMPANY_URL, GET_PENDING_COMPANY_REQUEST_URL, SEND_COMPANY_RESPONSE, REMOVE_COMPANY,

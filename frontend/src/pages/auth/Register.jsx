@@ -55,6 +55,9 @@ const Register = () =>{
 
             resetForm()
 
+            localStorage.setItem("authenticatedUserId", response.user.id);
+            localStorage.setItem("authenticatedUserName", response.user.userName);
+
             navigate("/choose-role");
 
         }catch(error){

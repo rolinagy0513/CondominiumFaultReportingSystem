@@ -24,12 +24,12 @@ import {ApartmentContext} from "../../context/admin/ApartmentContext.jsx";
 import {NotificationContext} from "../../context/admin/NotificationContext.jsx";
 import {CompanyContext} from "../../context/admin/CompanyContext.jsx";
 
-import {useBuildings} from "../../hooks/admin/useBuildings.js";
+import {useBuildings} from "../../hooks/useBuildings.js";
 
 import "./styles/AdminPanel.css";
-import {useApartments} from "../../hooks/admin/useApartments.js";
-import {useCompanies} from "../../hooks/admin/useCompanies.js";
-import {useNotifications} from "../../hooks/admin/useNotifications.js";
+import {useApartments} from "../../hooks/useApartments.js";
+import {useCompanies} from "../../hooks/useCompanies.js";
+import {useNotifications} from "../../hooks/useNotifications.js";
 
 const AdminPanel = () => {
 
@@ -44,8 +44,8 @@ const AdminPanel = () => {
     const ADMIN_APARTMENT_REQUEST_API_PATH = import.meta.env.VITE_API_ADMIN_APARTMENT_REQUEST_URL
     const ADMIN_COMPANY_REQUEST_API_PATH = import.meta.env.VITE_API_ADMIN_COMPANY_REQUEST_URL
 
-    const SEND_APARTMENT_RESPONSE = import.meta.env.VITE_API_ADMIN_WEBSOCKET_APARTMENT_REQUEST_DESTINATION
-    const SEND_COMPANY_RESPONSE = import.meta.env.VITE_API_ADMIN_WEBSOCKET_COMPANY_REQUEST_DESTINATION
+    const SEND_APARTMENT_RESPONSE = import.meta.env.VITE_API_ADMIN_WEBSOCKET_APARTMENT_REQUEST_RESPONSE_DESTINATION
+    const SEND_COMPANY_RESPONSE = import.meta.env.VITE_API_ADMIN_WEBSOCKET_COMPANY_REQUEST_RESPONSE_DESTINATION
     const REMOVE_RESIDENT = import.meta.env.VITE_API_ADMIN_WEBSOCKET_RESIDENT_REMOVE_DESTINATION
     const REMOVE_COMPANY = import.meta.env.VITE_ADMIN_WEBSOCKET_COMPANY_REMOVE_DESTINATION
 
@@ -60,9 +60,6 @@ const AdminPanel = () => {
     const GET_ALL_COMPANY_URL = `${ADMIN_COMPANY_API_PATH}/getAll`
 
     const navigate = useNavigate();
-
-    //A welcome page ahol majd lehet küldeni a requesteket
-    //Report rendszer
 
     const{
         buildings, setBuildings,

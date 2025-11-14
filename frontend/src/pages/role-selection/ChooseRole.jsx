@@ -1,12 +1,18 @@
 import { useState } from 'react';
+import {useNavigate} from 'react-router-dom';
 
 import {FaBuilding} from "react-icons/fa6";
 import {MdBusinessCenter} from "react-icons/md";
 
 import "./styles/ChooseRole.css"
 
+//Ezt folytatni
+//Report rendszer
+
 const ChooseRole = () => {
+
     const [hoveredSide, setHoveredSide] = useState(null);
+    const navigate = useNavigate();
 
     return (
         <div className="role-selection-container">
@@ -26,8 +32,8 @@ const ChooseRole = () => {
                             <div className="resident-icon"><FaBuilding/></div>
                         </div>
                         <h2>Are you a new resident?</h2>
-                        <p>Join our community and discover amazing local services tailored just for you!</p>
-                        <button className="role-btn resident-btn">
+                        <p>Choose your apartment and wait for the admins approval, after that enjoy our services.</p>
+                        <button className="role-btn resident-btn" onClick={() => navigate("/resident-request")}>
                             Join as Resident
                             <span className="btn-arrow">→</span>
                         </button>
@@ -52,7 +58,7 @@ const ChooseRole = () => {
                         </div>
                         <h2>Request to be a company</h2>
                         <p>Expand your business reach and connect with potential customers in our platform!</p>
-                        <button className="role-btn company-btn">
+                        <button className="role-btn company-btn" onClick={() => navigate("/company-request")}>
                             Register Company
                             <span className="btn-arrow">→</span>
                         </button>

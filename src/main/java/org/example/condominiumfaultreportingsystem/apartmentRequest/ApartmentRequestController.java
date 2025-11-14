@@ -22,11 +22,12 @@ public class ApartmentRequestController {
 
     private final ApartmentRequestService apartmentRequestService;
 
-    @PostMapping("/apartmentRequest/send")
+    @MessageMapping("/apartmentRequest/send")
     public ApartmentRequestInfoDTO sendApartmentRequest(
-            @RequestBody ApartmentRequestDTO apartmentRequestDTO
+            @Payload ApartmentRequestDTO apartmentRequestDTO,
+            Principal principal
     ){
-        return apartmentRequestService.sendApartmentRequest(apartmentRequestDTO);
+        return apartmentRequestService.sendApartmentRequest(apartmentRequestDTO, principal);
     }
 
     @MessageMapping("/admin/apartmentRequest/response")

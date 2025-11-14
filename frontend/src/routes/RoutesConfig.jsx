@@ -5,6 +5,8 @@ import Login from "../pages/auth/Login.jsx";
 import Register from "../pages/auth/Register.jsx"
 import ChooseRole from "../pages/role-selection/ChooseRole.jsx";
 import AdminPanel from "../pages/admin/AdminPanel.jsx";
+import ResidentRequest from "../pages/role-selection/ResidentRequest.jsx"
+import CompanyRequest from "../pages/role-selection/CompanyRequest.jsx"
 
 export const AuthRoutes = () =>{
     return(
@@ -19,6 +21,8 @@ export const MainRoutes = () => {
     return (
         <Routes>
             <Route path="/choose-role" element={<ChooseRole/>}/>
+            <Route path="/resident-request" element={<ResidentRequest/>}/>
+            <Route path="/company-request" element={<CompanyRequest/>}/>
         </Routes>
     )
 }

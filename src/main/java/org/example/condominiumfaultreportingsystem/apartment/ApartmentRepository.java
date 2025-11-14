@@ -1,5 +1,6 @@
 package org.example.condominiumfaultreportingsystem.apartment;
 
+import jakarta.persistence.NamedEntityGraphs;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -21,6 +22,10 @@ public interface ApartmentRepository extends JpaRepository<Apartment,Long> {
     @EntityGraph(attributePaths = {"owner", "building"})
     @Query("SELECT a FROM Apartment a WHERE a.id = :apartmentId")
     Optional<Apartment> findUserAndBuildingWithApartmentId(@Param("apartmentId") Long apartmentId);
+
+    @EntityGraph(attributePaths = "building")
+    @Query("SELECT a FROM Apartment a WHERE a.building.id = :buildingId AND a.status = :status")
+    Optional<Page<Apartment>> findAllAvailableByBuildingId(@Param("buildingId") Long buildingId, @Param("status") ApartmentStatus status, Pageable pageable);
 
     @EntityGraph(attributePaths = "owner")
     @Query("SELECT a FROM Apartment a WHERE a.building.id = :buildingId AND a.floor = :floorNumber")

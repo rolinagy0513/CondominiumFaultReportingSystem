@@ -1,0 +1,328 @@
+/* ResidentRequest.css */
+.resident-request-container {
+    display: flex;
+    min-height: 80vh;
+    gap: 2rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #333;
+}
+
+.resident-request-container .left-section {
+    flex: 0 0 350px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.resident-request-container .left-section-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e3f2fd;
+}
+
+.resident-request-container .section-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1976d2;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.resident-request-container .section-subtitle {
+    color: #546e7a;
+    font-size: 0.95rem;
+    margin: 0;
+    text-align: center;
+    font-weight: 500;
+}
+
+.resident-request-container .no-buildings-message {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #78909c;
+    font-style: italic;
+    background: rgba(236, 239, 241, 0.7);
+    border-radius: 8px;
+    border: 2px dashed #b0bec5;
+}
+
+.resident-request-container .middle-section {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.resident-request-container .building-details {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.resident-request-container .building-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1976d2;
+    margin-bottom: 1rem;
+    text-align: center;
+    padding-bottom: 1rem;
+    border-bottom: 3px solid #e3f2fd;
+}
+
+.resident-request-container .building-info {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: #e3f2fd;
+    border-radius: 8px;
+    border-left: 4px solid #1976d2;
+}
+
+.resident-request-container .building-info p {
+    margin: 0.5rem 0;
+    color: #37474f;
+    font-size: 1rem;
+}
+
+.resident-request-container .building-info strong {
+    color: #1976d2;
+}
+
+.resident-request-container .apartments-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.resident-request-container .apartments-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e3f2fd;
+}
+
+.resident-request-container .apartments-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #1976d2;
+    margin: 0;
+}
+
+.resident-request-container .pagination-info {
+    color: #546e7a;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.resident-request-container .apartments-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.resident-request-container .apartment-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 10px;
+    border: 2px solid #e3f2fd;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.1);
+}
+
+.resident-request-container .apartment-item:hover {
+    border-color: #1976d2;
+    box-shadow: 0 4px 16px rgba(25, 118, 210, 0.2);
+    transform: translateY(-2px);
+}
+
+.resident-request-container .apartment-info h4 {
+    margin: 0 0 0.75rem 0;
+    color: #1976d2;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.resident-request-container .apartment-info p {
+    margin: 0.4rem 0;
+    color: #546e7a;
+    font-size: 0.95rem;
+}
+
+.resident-request-container .apartment-info strong {
+    color: #37474f;
+}
+
+.resident-request-container .select-apartment-btn {
+    background: linear-gradient(135deg, #1976d2, #1565c0);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+}
+
+.resident-request-container .select-apartment-btn:hover {
+    background: linear-gradient(135deg, #1565c0, #0d47a1);
+    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.4);
+    transform: translateY(-1px);
+}
+
+.resident-request-container .select-apartment-btn:active {
+    transform: translateY(0);
+}
+
+/* Pagination Styles */
+.resident-request-container .pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 0;
+    border-top: 2px solid #e3f2fd;
+    margin-top: auto;
+}
+
+.resident-request-container .pagination-btn {
+    background: #1976d2;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    min-width: 100px;
+}
+
+.resident-request-container .pagination-btn:hover:not(:disabled) {
+    background: #1565c0;
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+}
+
+.resident-request-container .pagination-btn:disabled {
+    background: #b0bec5;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.resident-request-container .pagination-pages {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.resident-request-container .pagination-page {
+    background: white;
+    color: #1976d2;
+    border: 2px solid #e3f2fd;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    min-width: 40px;
+}
+
+.resident-request-container .pagination-page:hover {
+    border-color: #1976d2;
+    background: #e3f2fd;
+}
+
+.resident-request-container .pagination-page.active {
+    background: #1976d2;
+    color: white;
+    border-color: #1976d2;
+}
+
+.resident-request-container .pagination-ellipsis {
+    color: #78909c;
+    font-weight: 600;
+    padding: 0 0.25rem;
+}
+
+/* Loading and Message States */
+.resident-request-container .loading-message,
+.resident-request-container .no-apartments-message,
+.resident-request-container .no-selection-message {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #78909c;
+    font-style: italic;
+    background: rgba(236, 239, 241, 0.7);
+    border-radius: 8px;
+    border: 2px dashed #b0bec5;
+    font-size: 1.1rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .resident-request-container {
+        flex-direction: column;
+        padding: 0.5rem;
+        gap: 1rem;
+    }
+
+    .resident-request-container .left-section {
+        flex: none;
+        width: 100%;
+    }
+
+    .resident-request-container .apartments-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .resident-request-container .apartment-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .resident-request-container .select-apartment-btn {
+        align-self: stretch;
+        text-align: center;
+    }
+
+    .resident-request-container .pagination {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .resident-request-container .pagination-pages {
+        order: -1;
+    }
+}
+
+/* Animation for apartment items */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.resident-request-container .apartment-item {
+    animation: slideIn 0.3s ease-out;
+}

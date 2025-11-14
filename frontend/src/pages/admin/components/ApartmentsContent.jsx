@@ -5,7 +5,7 @@ const ApartmentsContent = ({
                                currentPage, pageSize,
                                totalElements, loadingApartments, apartments,
                                removeResidentAction, totalPages,
-                                handlePageChange,
+                               handlePageChange,
 }) =>{
 
     return(

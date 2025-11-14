@@ -1,8 +1,8 @@
-import apiServices from "../../services/ApiServices.js";
-import websocketServices from "../../services/WebsocketServices.js";
+import apiServices from "../services/ApiServices.js";
+import websocketServices from "../services/WebsocketServices.js";
 
 export const useApartments = (
-    GET_APARTMENT_URL, GET_PENDING_APARTMENT_REQUEST_URL, SEND_APARTMENT_RESPONSE, REMOVE_RESIDENT,
+    GET_APARTMENT_URL, GET_PENDING_APARTMENT_REQUEST_URL, GET_AVAILABLE_APARTMENTS_URL, SEND_APARTMENT_RESPONSE, REMOVE_RESIDENT,
     pageSize, currentPage, setLoadingApartments, setApartments, setCurrentPage, setTotalPages,
     setTotalElements, buildings, setSelectedBuilding, setCurrentView, setApartmentRequests,
     selectedBuilding, setTargetId, setIsRemovalModalOpen, setModalText, setModalButtonText, setModalTitleText
@@ -133,6 +133,48 @@ export const useApartments = (
 
     }
 
-    return{getApartments, handleGetPendingApartmentRequests, handleAcceptApartmentRequest, handleRejectApartmentRequest, handleRemoveResidentFromApartment}
+    const getAvailableApartmentsInBuilding = async(buildingId, page = 0) => {
+        setLoadingApartments(true);
+        try {
+            const params = new URLSearchParams({
+                page: page.toString(),
+                size: pageSize.toString(),
+                sortBy: 'id',
+                direction: 'ASC'
+            });
+
+            const url = `${GET_AVAILABLE_APARTMENTS_URL}/${buildingId}?${params.toString()}`;
+            const response = await apiServices.get(url);
+
+            if (response && response.content) {
+                setApartments(response.content);
+                setCurrentPage(response.number);
+                setTotalPages(response.totalPages);
+                setTotalElements(response.totalElements);
+            } else {
+                setApartments([]);
+                setCurrentPage(0);
+                setTotalPages(0);
+                setTotalElements(0);
+            }
+
+            const building = buildings.find(b => b.id === buildingId);
+            setSelectedBuilding(building);
+
+        } catch (error) {
+            console.error("Error fetching apartments:", error.message);
+            setApartments([]);
+            setCurrentPage(0);
+            setTotalPages(0);
+        } finally {
+            setLoadingApartments(false);
+        }
+    }
+
+    return{
+        getApartments, handleGetPendingApartmentRequests,
+        handleAcceptApartmentRequest, handleRejectApartmentRequest,
+        handleRemoveResidentFromApartment, getAvailableApartmentsInBuilding
+    }
 
 }

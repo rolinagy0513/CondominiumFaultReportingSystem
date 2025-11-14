@@ -1,4 +1,4 @@
-import apiServices from "../../services/ApiServices.js";
+import apiServices from "../services/ApiServices.js";
 
 export const useBuildings = (
     GET_ALL_BUILDING_URL, ADD_BUILDING_URL,
