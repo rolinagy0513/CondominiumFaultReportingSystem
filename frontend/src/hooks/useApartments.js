@@ -2,11 +2,14 @@ import apiServices from "../services/ApiServices.js";
 import websocketServices from "../services/WebsocketServices.js";
 
 export const useApartments = (
-    GET_APARTMENT_URL, GET_PENDING_APARTMENT_REQUEST_URL, GET_AVAILABLE_APARTMENTS_URL, SEND_APARTMENT_RESPONSE, REMOVE_RESIDENT,
+    GET_APARTMENT_URL, GET_PENDING_APARTMENT_REQUEST_URL, SEND_APARTMENT_RESPONSE, REMOVE_RESIDENT,
     pageSize, currentPage, setLoadingApartments, setApartments, setCurrentPage, setTotalPages,
     setTotalElements, buildings, setSelectedBuilding, setCurrentView, setApartmentRequests,
-    selectedBuilding, setTargetId, setIsRemovalModalOpen, setModalText, setModalButtonText, setModalTitleText
+    selectedBuilding, setTargetId, setIsRemovalModalOpen, setModalText, setModalButtonText, setModalTitleText,
+    GET_AVAILABLE_APARTMENTS_URL
 ) =>{
+
+    console.log(`This is the page size: ${pageSize}`)
 
     const getApartments = async(buildingId, page = 0) => {
         setLoadingApartments(true);

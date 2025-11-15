@@ -119,6 +119,7 @@ const AdminPanel = () => {
         setMessage, setCurrentView
     );
 
+
     const {
         getApartments, handleGetPendingApartmentRequests,
         handleAcceptApartmentRequest, handleRejectApartmentRequest,

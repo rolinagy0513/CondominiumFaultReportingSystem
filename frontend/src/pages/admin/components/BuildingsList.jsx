@@ -1,6 +1,7 @@
 import "./component-styles/BuildingsList.css"
 
 const BuildingsList = ({ buildings, getApartments, selectedBuilding }) => {
+
     return(
         <div className="buildings-list">
             {buildings.map(building => (

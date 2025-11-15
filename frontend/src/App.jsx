@@ -12,6 +12,7 @@ import {BuildingProvider} from "./context/admin/BuildingContext.jsx";
 import {ApartmentProvider} from "./context/admin/ApartmentContext.jsx";
 import {NotificationProvider} from "./context/admin/NotificationContext.jsx";
 import {CompanyProvider} from "./context/admin/CompanyContext.jsx";
+import {RoleSelectionProvider} from "./context/role-selection/RoleSelectionContext.jsx";
 
 function App() {
 
@@ -28,11 +29,13 @@ function App() {
                                       <BuildingProvider>
                                           <ApartmentProvider>
                                               <NotificationProvider>
-                                                  <CompanyProvider>
-                                                      <AuthRoutes/>
-                                                      <MainRoutes/>
-                                                      <AdminRoutes/>
-                                                  </CompanyProvider>
+                                                   <CompanyProvider>
+                                                       <RoleSelectionProvider>
+                                                           <AuthRoutes/>
+                                                           <MainRoutes/>
+                                                           <AdminRoutes/>
+                                                       </RoleSelectionProvider>
+                                                   </CompanyProvider>
                                               </NotificationProvider>
                                           </ApartmentProvider>
                                       </BuildingProvider>
