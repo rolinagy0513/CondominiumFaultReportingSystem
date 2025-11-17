@@ -1,7 +1,5 @@
 import BuildingsList from "../admin/components/BuildingsList.jsx";
-import {useContext, useEffect, useState} from "react";
-import {useBuildings} from "../../hooks/useBuildings.js";
-import {useApartments} from "../../hooks/useApartments.js";
+import {useContext, useEffect} from "react";
 import "./styles/ResidentRequest.css"
 import {RoleSelectionContext} from "../../context/role-selection/RoleSelectionContext.jsx";
 import apiServices from "../../services/ApiServices.js";

@@ -245,6 +245,23 @@ public class ApartmentRequestService implements IApartmentRequestService {
 
     }
 
+    public ActiveApartmentRequest getActiveRequest(Long userId) {
+
+        Optional<ApartmentRequest> apartmentRequestOpt = apartmentRequestRepository.findByRequesterIdAndStatus(userId, ApartmentRequestStatus.PENDING);
+
+        if (apartmentRequestOpt.isEmpty()) {
+            return ActiveApartmentRequest.NONE;
+        }
+
+        ApartmentRequest apartmentRequest = apartmentRequestOpt.get();
+
+        if (apartmentRequest.getStatus() != ApartmentRequestStatus.PENDING) {
+            throw new InvalidRequestStatusException();
+        }
+
+        return ActiveApartmentRequest.ACTIVE;
+    }
+
     private void validateRequests(Long userId){
 
         Optional<ApartmentRequest> apartmentRequestOpt = apartmentRequestRepository.findByRequesterIdAndStatus(userId, ApartmentRequestStatus.PENDING);

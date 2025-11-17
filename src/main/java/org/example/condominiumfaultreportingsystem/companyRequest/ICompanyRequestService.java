@@ -11,4 +11,5 @@ public interface ICompanyRequestService {
     CompanyRequestInfoDTO sendCompanyRequest(CompanyRequestDTO companyRequestDTO);
     void sendCompanyRequestResponse(RequestResponseDTO responseDTO, Principal principal);
     List<CompanyRequestInfoDTO> getAllPendingRequests();
+    ActiveCompanyRequest getActiveRequest(Long userId);
 }

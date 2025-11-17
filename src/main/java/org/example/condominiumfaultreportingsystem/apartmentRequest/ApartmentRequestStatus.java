@@ -3,5 +3,6 @@ package org.example.condominiumfaultreportingsystem.apartmentRequest;
 public enum ApartmentRequestStatus {
     PENDING,
     ACCEPTED,
-    REJECTED
+    REJECTED,
+    NO_REQUEST
 }

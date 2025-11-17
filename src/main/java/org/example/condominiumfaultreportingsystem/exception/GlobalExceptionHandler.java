@@ -374,6 +374,23 @@ public class GlobalExceptionHandler {
         );
     }
 
+    /**
+     * Handles InvalidRequestStatusException.
+     * Returns HTTP 409 when somehow the method returns a not PENDING apartmentRequest even taught it is prevented
+     *
+     * @param ex the InvalidRequestStatusException thrown
+     * @return ResponseEntity with ApiError and HTTP 409 status
+     */
+    @ExceptionHandler(InvalidRequestStatusException.class)
+    public ResponseEntity<ApiError> handleUserAlreadyHasRequestException(InvalidRequestStatusException ex) {
+        return new ResponseEntity<>(
+                new ApiError(ex.getMessage(),
+                        "The method returned requests that are not PENDING",
+                        LocalDateTime.now()),
+                HttpStatus.CONFLICT
+        );
+    }
+
 
     /**
      * Handles DataAccessException from Spring Data.

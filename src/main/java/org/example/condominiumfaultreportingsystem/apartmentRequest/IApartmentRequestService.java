@@ -13,4 +13,5 @@ public interface IApartmentRequestService {
     ApartmentRequestInfoDTO sendApartmentRequest(ApartmentRequestDTO apartmentRequestDTO, Principal principal);
     void sendApartmentRequestResponse(RequestResponseDTO responseDTO, Principal principal);
     List<ApartmentRequestDetailedInfoDTO> getAllPendingRequests();
+    ActiveApartmentRequest getActiveRequest(Long userId);
 }

@@ -5,6 +5,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.example.condominiumfaultreportingsystem.DTO.UserResponseDTO;
+import org.example.condominiumfaultreportingsystem.apartmentRequest.ActiveApartmentRequest;
+import org.example.condominiumfaultreportingsystem.apartmentRequest.ApartmentRequest;
+import org.example.condominiumfaultreportingsystem.apartmentRequest.ApartmentRequestRepository;
+import org.example.condominiumfaultreportingsystem.apartmentRequest.impl.ApartmentRequestService;
+import org.example.condominiumfaultreportingsystem.companyRequest.ActiveCompanyRequest;
+import org.example.condominiumfaultreportingsystem.companyRequest.CompanyRequest;
+import org.example.condominiumfaultreportingsystem.companyRequest.impl.CompanyRequestService;
 import org.example.condominiumfaultreportingsystem.exception.GroupNotFoundException;
 import org.example.condominiumfaultreportingsystem.exception.InvalidPasswordException;
 import org.example.condominiumfaultreportingsystem.exception.UserNotFoundException;
@@ -54,6 +61,8 @@ public class AuthenticationService {
 
   private final JwtService jwtService;
   private final GroupService groupService;
+  private final ApartmentRequestService apartmentRequestService;
+  private final CompanyRequestService companyRequestService;
 
   private final AuthenticationManager authenticationManager;
 
@@ -154,11 +163,16 @@ public class AuthenticationService {
 
     }
 
+    ActiveApartmentRequest activeApartmentRequest =  apartmentRequestService.getActiveRequest(user.getId());
+    ActiveCompanyRequest activeCompanyRequest = companyRequestService.getActiveRequest(user.getId());
+
     return AuthenticationResponse.builder()
             .message("Login complete")
             .user(mapToUserResponseDto(user))
             .role(user.getRole())
             .groupId(groupId)
+            .activeApartmentRequest(activeApartmentRequest)
+            .activeCompanyRequest(activeCompanyRequest)
             .build();
   }
 

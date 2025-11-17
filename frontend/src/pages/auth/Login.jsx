@@ -61,7 +61,7 @@ const Login = () =>{
             console.log(response.role)
             console.log(response.groupId)
 
-            if (  response.role === ADMIN_ROLE && response.groupId){
+            if (response.role === ADMIN_ROLE && response.groupId){
                 localStorage.setItem("adminGroupId",response.groupId);
                 localStorage.setItem("authenticatedAdminId",response.user.id);
                 localStorage.setItem("authenticatedAdminUserName",response.user.userName);
@@ -86,13 +86,25 @@ const Login = () =>{
                 localStorage.setItem("authenticatedCompanyUserName",response.user.userName);
             }
 
-            if (response.role === USER_ROLE){
+            if (response.role === USER_ROLE) {
 
-                localStorage.setItem("authenticatedUserId", response.user.id);
-                localStorage.setItem("authenticatedUserName", response.user.userName);
+                    localStorage.setItem("authenticatedUserId", response.user.id);
+                    localStorage.setItem("authenticatedUserName", response.user.userName);
 
-                navigate("/choose-role")
+                const hasActiveRequest =
+                    response.activeApartmentRequest === "ACTIVE" ||
+                    response.activeCompanyRequest === "ACTIVE";
+
+                if (hasActiveRequest) {
+                    navigate("/pending-request");
+                    return;
+                }
+
+                navigate("/choose-role");
+
+                return;
             }
+
 
         }catch(error){
 

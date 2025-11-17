@@ -12,10 +12,7 @@ import org.example.condominiumfaultreportingsystem.cache.CacheService;
 import org.example.condominiumfaultreportingsystem.company.Company;
 import org.example.condominiumfaultreportingsystem.company.CompanyRepository;
 import org.example.condominiumfaultreportingsystem.company.ServiceType;
-import org.example.condominiumfaultreportingsystem.companyRequest.CompanyRequest;
-import org.example.condominiumfaultreportingsystem.companyRequest.CompanyRequestRepository;
-import org.example.condominiumfaultreportingsystem.companyRequest.CompanyRequestStatus;
-import org.example.condominiumfaultreportingsystem.companyRequest.ICompanyRequestService;
+import org.example.condominiumfaultreportingsystem.companyRequest.*;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyRequestAcceptedEvent;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyRequestRejectedEvent;
 import org.example.condominiumfaultreportingsystem.exception.*;
@@ -244,6 +241,23 @@ public class CompanyRequestService implements ICompanyRequestService {
         );
 
 
+    }
+
+    public ActiveCompanyRequest getActiveRequest(Long userId){
+
+        Optional<CompanyRequest> companyRequestOpt = companyRequestRepository.findByRequesterIdAndStatus(userId, CompanyRequestStatus.PENDING);
+
+        if (companyRequestOpt.isEmpty()){
+            return ActiveCompanyRequest.NONE;
+        }
+
+        CompanyRequest companyRequest = companyRequestOpt.get();
+
+        if (companyRequest.getStatus() != CompanyRequestStatus.PENDING){
+            throw new InvalidRequestStatusException();
+        }
+
+        return ActiveCompanyRequest.ACTIVE;
     }
 
     private void validateUserCanCreateRequest(Long userId) {

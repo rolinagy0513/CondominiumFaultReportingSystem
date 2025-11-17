@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.condominiumfaultreportingsystem.DTO.UserResponseDTO;
+import org.example.condominiumfaultreportingsystem.apartmentRequest.ActiveApartmentRequest;
+import org.example.condominiumfaultreportingsystem.companyRequest.ActiveCompanyRequest;
 import org.example.condominiumfaultreportingsystem.security.user.Role;
 
 /**
@@ -31,5 +33,7 @@ public class AuthenticationResponse {
   private UserResponseDTO user;
   private Long groupId;
   private Role role;
+  private ActiveApartmentRequest activeApartmentRequest;
+  private ActiveCompanyRequest activeCompanyRequest;
 
 }

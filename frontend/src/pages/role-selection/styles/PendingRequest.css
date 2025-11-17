@@ -1,0 +1,94 @@
+.pending-page {
+    min-height: 100vh;
+    background-color: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.pending-container {
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+}
+
+.pending-content {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+}
+
+.pending-title {
+    color: #1e40af;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.pending-text {
+    color: #4a5568;
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.pending-text strong {
+    color: #1e40af;
+    font-weight: 600;
+}
+
+.pending-loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.loader-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #1e40af;
+    animation: dot-pulse 1.4s ease-in-out infinite both;
+}
+
+.loader-dot:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.loader-dot:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+.loader-dot:nth-child(3) {
+    animation-delay: 0s;
+}
+
+@keyframes dot-pulse {
+    0%, 80%, 100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+    .pending-content {
+        padding: 30px 20px;
+    }
+
+    .pending-title {
+        font-size: 24px;
+    }
+
+    .pending-text {
+        font-size: 15px;
+    }
+}
