@@ -1,6 +1,7 @@
 package org.example.condominiumfaultreportingsystem.apartment;
 
 import lombok.RequiredArgsConstructor;
+import org.example.condominiumfaultreportingsystem.DTO.AddUserDTO;
 import org.example.condominiumfaultreportingsystem.DTO.ApartmentDTO;
 import org.example.condominiumfaultreportingsystem.DTO.RemovalDTO;
 import org.example.condominiumfaultreportingsystem.apartment.impl.ApartmentService;
@@ -64,6 +65,13 @@ public class ApartmentController {
             @RequestParam(defaultValue = "ASC") String direction
     ){
         return apartmentService.getApartmentsByFloorAndBuilding(buildingId,floorNumber, page,size,sortBy,direction);
+    }
+
+    @PutMapping("/admin/apartment/addUserToApartment")
+    public void addUserToApartment(
+            @RequestBody AddUserDTO addUserDTO
+    ){
+        apartmentService.addUserToApartment(addUserDTO.getUserEmail(), addUserDTO.getApartmentId());
     }
 
     @MessageMapping("/admin/apartment/removeUserFromApartment")

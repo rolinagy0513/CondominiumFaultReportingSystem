@@ -83,6 +83,7 @@
     font-size: 18px;
     color: #78909c;
     text-align: center;
+    flex-direction: column;
 }
 
 /* Building Details */
@@ -132,6 +133,8 @@
     margin-bottom: 25px;
     padding-bottom: 15px;
     border-bottom: 1px solid #e0e0e0;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 .apartments-title-resident {
@@ -313,6 +316,290 @@
     background: #a8a8a8;
 }
 
+/* Disabled Left Section */
+.left-section-disabled-resident {
+    opacity: 0.7;
+    pointer-events: none;
+    position: relative;
+}
+
+.left-section-disabled-resident::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(25, 118, 210, 0.1);
+    z-index: 1;
+}
+
+/* Waiting Messages */
+.resident-request-waiting-message-left {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    text-align: center;
+    color: white;
+}
+
+.resident-request-waiting-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Disabled Apartments Section */
+.resident-request-apartments-disabled {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+.resident-request-disabled-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.6;
+}
+
+.resident-request-apartments-disabled h4 {
+    color: #6c757d;
+    margin-bottom: 1rem;
+}
+
+.resident-request-apartments-disabled p {
+    color: #6c757d;
+    line-height: 1.5;
+}
+
+/* Apartment Selection States */
+.apartment-disabled-resident {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.apartment-selected-resident {
+    border: 2px solid #28a745 !important;
+    background: #f8fff9 !important;
+    transform: scale(1.02);
+}
+
+.apartment-selected-resident:hover {
+    background: #f8fff9 !important;
+    transform: scale(1.02) !important;
+}
+
+.select-apartment-disabled-resident {
+    background: #6c757d !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.select-apartment-disabled-resident:hover {
+    background: #6c757d !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Selection Badge */
+.resident-request-selected-badge {
+    background: #28a745;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+    margin-top: 0.5rem;
+}
+
+/* Notification Styles */
+.resident-request-notification-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.resident-request-notification-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 2px solid #1976d2;
+}
+
+.resident-request-notification-content h3 {
+    margin-top: 0;
+    color: #1976d2;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.resident-request-notification-content p {
+    margin: 0.75rem 0;
+    color: #333;
+    line-height: 1.6;
+}
+
+.resident-request-notification-content strong {
+    color: #28a745;
+}
+
+.resident-request-notification-content button {
+    background: #1976d2;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.resident-request-notification-content button:hover {
+    background: #1565c0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+}
+
+/* Pending Page Styles */
+.pending-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.pending-container {
+    background: white;
+    border-radius: 16px;
+    padding: 50px 40px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+    position: relative;
+    overflow: hidden;
+}
+
+.pending-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #1976d2, #42a5f5, #1976d2);
+}
+
+.pending-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+}
+
+.pending-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1976d2;
+    margin: 0;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.pending-text {
+    font-size: 1.2rem;
+    color: #546e7a;
+    line-height: 1.6;
+    margin: 0;
+    text-align: center;
+    max-width: 500px;
+}
+
+.pending-text strong {
+    color: #1976d2;
+    font-weight: 600;
+}
+
+/* Pending Loader Animation */
+.pending-loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 10px 0;
+}
+
+.loader-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #1976d2;
+    animation: pending-bounce 1.4s infinite ease-in-out;
+}
+
+.loader-dot:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.loader-dot:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes pending-bounce {
+    0%, 80%, 100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.pending-hint {
+    font-size: 1rem;
+    color: #78909c;
+    line-height: 1.5;
+    margin: 0;
+    text-align: center;
+    font-style: italic;
+    max-width: 500px;
+}
+
+/* Animation for apartment items */
+@keyframes fadeInUp-resident {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
     .resident-request-container-resident {
@@ -381,6 +668,18 @@
         justify-content: center;
         margin-bottom: 10px;
     }
+
+    .pending-container {
+        padding: 40px 25px;
+    }
+
+    .pending-title {
+        font-size: 2rem;
+    }
+
+    .pending-text {
+        font-size: 1.1rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -415,15 +714,20 @@
         padding: 8px 12px;
         font-size: 12px;
     }
-}
 
-@keyframes fadeInUp-resident {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
+    .pending-container {
+        padding: 30px 20px;
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+
+    .pending-title {
+        font-size: 1.8rem;
+    }
+
+    .pending-text {
+        font-size: 1rem;
+    }
+
+    .pending-hint {
+        font-size: 0.9rem;
     }
 }

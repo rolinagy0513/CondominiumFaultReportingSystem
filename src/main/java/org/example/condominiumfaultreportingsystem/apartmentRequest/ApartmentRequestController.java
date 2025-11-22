@@ -1,6 +1,7 @@
 package org.example.condominiumfaultreportingsystem.apartmentRequest;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.condominiumfaultreportingsystem.DTO.ApartmentRequestDTO;
 import org.example.condominiumfaultreportingsystem.DTO.ApartmentRequestDetailedInfoDTO;
 import org.example.condominiumfaultreportingsystem.DTO.ApartmentRequestInfoDTO;
@@ -18,6 +19,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("api/")
+@Slf4j
 public class ApartmentRequestController {
 
     private final ApartmentRequestService apartmentRequestService;
@@ -27,9 +29,13 @@ public class ApartmentRequestController {
             @Payload ApartmentRequestDTO apartmentRequestDTO,
             Principal principal
     ){
+        log.info("Received apartment request from user: {}", principal.getName());
+        log.info("Request data: buildingId={}, apartmentId={}",
+                apartmentRequestDTO.getBuildingId(),
+                apartmentRequestDTO.getRequestedApartmentId());
+
         return apartmentRequestService.sendApartmentRequest(apartmentRequestDTO, principal);
     }
-
     @MessageMapping("/admin/apartmentRequest/response")
     public void sendApartmentRequestResponse(
         @Payload RequestResponseDTO responseDTO,

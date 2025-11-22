@@ -1,6 +1,7 @@
 package org.example.condominiumfaultreportingsystem.notificationHandler;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.condominiumfaultreportingsystem.DTO.GroupDTO;
 import org.example.condominiumfaultreportingsystem.apartment.Apartment;
 import org.example.condominiumfaultreportingsystem.apartmentRequest.ApartmentRequest;
@@ -9,11 +10,13 @@ import org.example.condominiumfaultreportingsystem.companyRequest.CompanyRequest
 import org.example.condominiumfaultreportingsystem.group.Group;
 import org.example.condominiumfaultreportingsystem.notificationHandler.notifications.*;
 import org.example.condominiumfaultreportingsystem.security.user.User;
+import org.slf4j.Logger;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
@@ -106,6 +109,7 @@ public class NotificationService {
 
         String userIdString = request.getRequesterId().toString();
         messagingTemplate.convertAndSendToUser(userIdString, "/queue/request-response", notificationForUser);
+        log.info("SENT");
 
         WelcomeUserNotification welcomeNotification = WelcomeUserNotification.builder()
                 .senderName(request.getRequesterName())

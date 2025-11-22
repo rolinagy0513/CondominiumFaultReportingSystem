@@ -5,6 +5,7 @@ import apiServices from "../../services/ApiServices.js";
 
 import {FeedbackContext} from "../../context/general/FeedbackContext.jsx";
 import {AuthContext} from "../../context/auth/AuthContext.jsx";
+import {UserContext} from "../../context/general/UserContext.jsx";
 
 import AuthForm from "./components/AuthForm.jsx";
 import loginImage from "../../assets/building.png";
@@ -25,6 +26,7 @@ const Login = () =>{
 
     const { message, setMessage, isLoading, setIsLoading } = useContext(FeedbackContext);
     const { loginFormData, setLoginFormData} = useContext(AuthContext);
+    const { setAuthenticatedUserId, setAuthenticatedUserName } = useContext(UserContext);
 
     const resetForm = () =>{
         setLoginFormData({
@@ -33,8 +35,37 @@ const Login = () =>{
         })
     }
 
+    const clearAllUserData = () => {
+        console.log('🧹 [LOGIN] Clearing all user data from localStorage and context');
+
+        // Clear localStorage
+        localStorage.removeItem("authenticatedUserId");
+        localStorage.removeItem("authenticatedUserName");
+        localStorage.removeItem("adminGroupId");
+        localStorage.removeItem("authenticatedAdminId");
+        localStorage.removeItem("authenticatedAdminUserName");
+        localStorage.removeItem("residentGroupId");
+        localStorage.removeItem("authenticatedResidentId");
+        localStorage.removeItem("authenticatedResidentUserName");
+        localStorage.removeItem("companyGroupId");
+        localStorage.removeItem("authenticatedCompanyUserId");
+        localStorage.removeItem("authenticatedCompanyUserName");
+
+        if (setAuthenticatedUserId) {
+            setAuthenticatedUserId(null);
+        }
+        if (setAuthenticatedUserName) {
+            setAuthenticatedUserName(null);
+        }
+
+        console.log('✅ [LOGIN] All user data cleared');
+    };
+
     useEffect(() => {
+        console.log('🔄 [LOGIN] Login component mounted');
+        clearAllUserData();
         resetForm();
+        console.log('🔌 [LOGIN] Forcing WebSocket disconnect on login page');
     }, []);
 
     const handleInputChange = (e) => {
@@ -53,23 +84,26 @@ const Login = () =>{
         setIsLoading(true)
 
         try{
+            console.log('🔐 [LOGIN] Attempting login...');
 
             const response = await apiServices.post(LOGIN_URL,loginFormData);
 
-            resetForm()
+            console.log('✅ [LOGIN] Login response received:', response);
+            console.log('✅ [LOGIN] User role:', response.role);
+            console.log('✅ [LOGIN] User ID:', response.user.id);
+            console.log('✅ [LOGIN] Group ID:', response.groupId);
 
-            console.log(response.role)
-            console.log(response.groupId)
+            resetForm()
 
             if (response.role === ADMIN_ROLE && response.groupId){
                 localStorage.setItem("adminGroupId",response.groupId);
                 localStorage.setItem("authenticatedAdminId",response.user.id);
                 localStorage.setItem("authenticatedAdminUserName",response.user.userName);
 
-                console.log("In the Login")
-                console.log(localStorage.getItem("adminGroupId"))
-                console.log(localStorage.getItem("authenticatedAdminId"))
-                console.log(localStorage.getItem("authenticatedAdminUserName"))
+                console.log("📊 [LOGIN] Admin login - stored data:");
+                console.log("  - adminGroupId:", localStorage.getItem("adminGroupId"));
+                console.log("  - authenticatedAdminId:", localStorage.getItem("authenticatedAdminId"));
+                console.log("  - authenticatedAdminUserName:", localStorage.getItem("authenticatedAdminUserName"));
 
                 navigate("/admin-panel")
             }
@@ -78,28 +112,58 @@ const Login = () =>{
                 localStorage.setItem("residentGroupId",response.groupId);
                 localStorage.setItem("authenticatedResidentId",response.user.id);
                 localStorage.setItem("authenticatedResidentUserName",response.user.userName);
+
+                console.log("📊 [LOGIN] Resident login - stored data:");
+                console.log("  - residentGroupId:", localStorage.getItem("residentGroupId"));
+                console.log("  - authenticatedResidentId:", localStorage.getItem("authenticatedResidentId"));
+                console.log("  - authenticatedResidentUserName:", localStorage.getItem("authenticatedResidentUserName"));
             }
 
             if(response.role === COMPANY_ROLE){
                 localStorage.setItem("companyGroupId",response.groupId);
                 localStorage.setItem("authenticatedCompanyUserId",response.user.id);
                 localStorage.setItem("authenticatedCompanyUserName",response.user.userName);
+
+                console.log("📊 [LOGIN] Company login - stored data:");
+                console.log("  - companyGroupId:", localStorage.getItem("companyGroupId"));
+                console.log("  - authenticatedCompanyUserId:", localStorage.getItem("authenticatedCompanyUserId"));
+                console.log("  - authenticatedCompanyUserName:", localStorage.getItem("authenticatedCompanyUserName"));
             }
 
             if (response.role === USER_ROLE) {
+                console.log("📊 [LOGIN] USER role login - setting user data");
+                console.log("📊 [LOGIN] User ID to set:", response.user.id);
+                console.log("📊 [LOGIN] User name to set:", response.user.userName);
 
-                    localStorage.setItem("authenticatedUserId", response.user.id);
-                    localStorage.setItem("authenticatedUserName", response.user.userName);
+                // CRITICAL: Set in localStorage first
+                localStorage.setItem("authenticatedUserId", response.user.id);
+                localStorage.setItem("authenticatedUserName", response.user.userName);
+
+                // CRITICAL: Update context to trigger re-renders
+                setAuthenticatedUserId(response.user.id);
+                setAuthenticatedUserName(response.user.userName);
+
+                console.log("📊 [LOGIN] After setting - localStorage check:");
+                console.log("  - authenticatedUserId:", localStorage.getItem("authenticatedUserId"));
+                console.log("  - authenticatedUserName:", localStorage.getItem("authenticatedUserName"));
 
                 const hasActiveRequest =
                     response.activeApartmentRequest === "ACTIVE" ||
                     response.activeCompanyRequest === "ACTIVE";
 
+                console.log("📊 [LOGIN] Active requests:", {
+                    activeApartmentRequest: response.activeApartmentRequest,
+                    activeCompanyRequest: response.activeCompanyRequest,
+                    hasActiveRequest: hasActiveRequest
+                });
+
                 if (hasActiveRequest) {
+                    console.log("🔄 [LOGIN] User has active request - navigating to pending-request");
                     navigate("/pending-request");
                     return;
                 }
 
+                console.log("🔄 [LOGIN] No active request - navigating to choose-role");
                 navigate("/choose-role");
 
                 return;
@@ -109,7 +173,7 @@ const Login = () =>{
         }catch(error){
 
             setMessage(error.message);
-            console.error('Log in has failed:', error.message);
+            console.error('❌ [LOGIN] Log in has failed:', error.message);
 
             resetForm()
 

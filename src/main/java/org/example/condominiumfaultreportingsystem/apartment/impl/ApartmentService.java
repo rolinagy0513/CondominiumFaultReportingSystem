@@ -3,6 +3,7 @@ package org.example.condominiumfaultreportingsystem.apartment.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.condominiumfaultreportingsystem.DTO.ApartmentDTO;
+import org.example.condominiumfaultreportingsystem.DTO.GroupDTO;
 import org.example.condominiumfaultreportingsystem.DTO.RemovalDTO;
 import org.example.condominiumfaultreportingsystem.DTO.UserWithRoleDTO;
 import org.example.condominiumfaultreportingsystem.apartment.Apartment;
@@ -15,6 +16,7 @@ import org.example.condominiumfaultreportingsystem.exception.*;
 import org.example.condominiumfaultreportingsystem.group.impl.GroupService;
 import org.example.condominiumfaultreportingsystem.security.user.Role;
 import org.example.condominiumfaultreportingsystem.security.user.User;
+import org.example.condominiumfaultreportingsystem.security.user.UserRepository;
 import org.example.condominiumfaultreportingsystem.security.user.UserService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -40,6 +42,7 @@ public class ApartmentService implements IApartmentService {
     private final UserService userService;
     private final GroupService groupService;
     private final CacheService cacheService;
+    private final UserRepository userRepository;
 
     @Async("asyncExecutor")
     @Cacheable(value = "apartmentsByBuilding")
@@ -146,6 +149,56 @@ public class ApartmentService implements IApartmentService {
         Page<ApartmentDTO> dtoPage = apartmentsPage.map(this::mapToDto);
         return CompletableFuture.completedFuture(dtoPage);
 
+    }
+
+    @Transactional
+    public void addUserToApartment(String userEmail, Long apartmentId){
+
+        UserWithRoleDTO currentUser = userService.getCurrentUserWithRole();
+
+        if (currentUser.getRole() != Role.ADMIN){
+            throw new InvalidRoleException();
+        }
+
+        Optional<User> userOpt = userRepository.findByEmail(userEmail);
+
+        if (userOpt.isEmpty()){
+            throw new UserNotFoundException(userEmail);
+        }
+
+        User userToAdd = userOpt.get();
+
+        Optional<Apartment> apartmentOpt = apartmentRepository.findByIdWithBuilding(apartmentId);
+
+        if (apartmentOpt.isEmpty()){
+            throw new ApartmentNotFoundException(apartmentId);
+        }
+
+        Apartment apartmentToAdd = apartmentOpt.get();
+
+        if (
+                apartmentToAdd.getStatus() == ApartmentStatus.OCCUPIED ||
+                apartmentToAdd.getStatus() == ApartmentStatus.UNAVAILABLE ||
+                apartmentToAdd.getStatus() == ApartmentStatus.PENDING
+        ){
+            throw new ApartmentIsUnavailableException();
+        }
+
+        Integer buildingNumber = apartmentToAdd.getBuilding().getBuildingNumber();
+        String buildingAddress = apartmentToAdd.getBuilding().getAddress();
+
+        groupService.addUserToGroup(buildingNumber,buildingAddress, userToAdd);
+
+        userService.promoteUserToResident(currentUser.getId(), userToAdd.getId());
+
+        apartmentToAdd.setOwner(userToAdd);
+        apartmentToAdd.setStatus(ApartmentStatus.OCCUPIED);
+
+        cacheService.evictAAllApartmentsByBuildingCache();
+        cacheService.evictAllApartmentByFloorAndBuildingCache();
+        cacheService.evictAvailableApartmentsInBuildingCache();
+
+        apartmentRepository.save(apartmentToAdd);
     }
 
     @Transactional

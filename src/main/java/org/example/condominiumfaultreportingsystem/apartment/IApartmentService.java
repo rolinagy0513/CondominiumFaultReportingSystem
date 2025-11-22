@@ -11,8 +11,8 @@ public interface IApartmentService {
 
     CompletableFuture<Page<ApartmentDTO>> getApartmentsInBuilding(Long buildingId, Integer page, Integer size, String sortBy, String direction);
     ApartmentDTO getApartmentById(Long apartmentId);
-    CompletableFuture<Page<ApartmentDTO>> getAvailableApartmentsInBuilding(Long buildingId, Integer page, Integer size, String sortBy, String direction);
-    CompletableFuture<Page<ApartmentDTO>> getApartmentsByFloorAndBuilding(Long buildingId, Integer floorNumber, Integer page, Integer size, String sortBy, String direction);
+    CompletableFuture<Page<ApartmentDTO>> getAvailableApartmentsInBuilding(Long buildingId, Integer page, Integer size, String sortBy, String direction);CompletableFuture<Page<ApartmentDTO>> getApartmentsByFloorAndBuilding(Long buildingId, Integer floorNumber, Integer page, Integer size, String sortBy, String direction);
+    void addUserToApartment(String userEmail, Long apartmentId);
     void removeUserFromApartment(RemovalDTO removalDTO, Principal principal);
 
 }

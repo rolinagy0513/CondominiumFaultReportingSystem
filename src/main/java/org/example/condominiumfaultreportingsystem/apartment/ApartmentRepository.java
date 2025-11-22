@@ -27,6 +27,10 @@ public interface ApartmentRepository extends JpaRepository<Apartment,Long> {
     @Query("SELECT a FROM Apartment a WHERE a.building.id = :buildingId AND a.status = :status")
     Optional<Page<Apartment>> findAllAvailableByBuildingId(@Param("buildingId") Long buildingId, @Param("status") ApartmentStatus status, Pageable pageable);
 
+    @EntityGraph(attributePaths = "building")
+    @Query("SELECT a FROM Apartment a WHERE a.id = :apartmentId")
+    Optional<Apartment> findByIdWithBuilding(@Param("apartmentId") Long apartmentId);
+
     @EntityGraph(attributePaths = "owner")
     @Query("SELECT a FROM Apartment a WHERE a.building.id = :buildingId AND a.floor = :floorNumber")
     Optional<Page<Apartment>> findAllByFloorAndBuilding(@Param("buildingId") Long buildingId,

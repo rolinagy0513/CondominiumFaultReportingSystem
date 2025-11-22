@@ -7,7 +7,7 @@ import ChooseRole from "../pages/role-selection/ChooseRole.jsx";
 import AdminPanel from "../pages/admin/AdminPanel.jsx";
 import ResidentRequest from "../pages/role-selection/ResidentRequest.jsx"
 import CompanyRequest from "../pages/role-selection/CompanyRequest.jsx"
-import PendingRequests from "../pages/role-selection/PendingRequest.jsx";
+import ResidentPage from "../pages/resident/ResidentPage.jsx";
 
 export const AuthRoutes = () =>{
     return(
@@ -24,7 +24,7 @@ export const MainRoutes = () => {
             <Route path="/choose-role" element={<ChooseRole/>}/>
             <Route path="/resident-request" element={<ResidentRequest/>}/>
             <Route path="/company-request" element={<CompanyRequest/>}/>
-            <Route path="/pending-request" element={<PendingRequests/>}/>
+            <Route path="/resident-page" element={<ResidentPage/>}/>
         </Routes>
     )
 }

@@ -19,6 +19,9 @@ public class ApartmentNotificationEventListener {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleRequestAccepted(ApartmentRequestAcceptedEvent event) {
+
+        log.info("Event received: {}", event.getApartmentRequest().getId());
+
         try {
             notificationService.sendApartmentRequestAcceptedNotification(event.getApartmentRequest(),event.getApartment(), event.getGroup());
         } catch (Exception e) {

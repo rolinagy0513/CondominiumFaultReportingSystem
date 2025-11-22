@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 
 import {FaBuilding} from "react-icons/fa6";
@@ -6,10 +6,8 @@ import {MdBusinessCenter} from "react-icons/md";
 
 import "./styles/ChooseRole.css"
 
-//Ezt folytatni
-//Report rendszer
-
 const ChooseRole = () => {
+
 
     const [hoveredSide, setHoveredSide] = useState(null);
     const navigate = useNavigate();

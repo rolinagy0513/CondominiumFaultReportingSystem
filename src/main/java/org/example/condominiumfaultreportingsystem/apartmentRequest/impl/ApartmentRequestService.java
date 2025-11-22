@@ -17,6 +17,7 @@ import org.example.condominiumfaultreportingsystem.exception.*;
 import org.example.condominiumfaultreportingsystem.group.Group;
 import org.example.condominiumfaultreportingsystem.group.GroupRepository;
 import org.example.condominiumfaultreportingsystem.group.impl.GroupService;
+import org.example.condominiumfaultreportingsystem.notificationHandler.NotificationService;
 import org.example.condominiumfaultreportingsystem.notificationHandler.NotificationType;
 import org.example.condominiumfaultreportingsystem.notificationHandler.notifications.ApartmentNotification;
 import org.example.condominiumfaultreportingsystem.security.user.Role;
@@ -53,6 +54,7 @@ public class ApartmentRequestService implements IApartmentRequestService {
 
     private final SimpMessagingTemplate messagingTemplate;
     private final ApplicationEventPublisher eventPublisher;
+    private final NotificationService notificationService;
 
 
     @Value("${admin.group.name}")
@@ -223,6 +225,8 @@ public class ApartmentRequestService implements IApartmentRequestService {
         GroupDTO usersGroup = groupService.addUserToGroup(buildingNumber,buildingAddress, userToAdd);
 
         userService.promoteUserToResident(currentAdmin.getId(),userToAdd.getId());
+
+        log.info("The  method run");
 
         eventPublisher.publishEvent(
                 new ApartmentRequestAcceptedEvent(apartmentRequest,apartment,usersGroup)

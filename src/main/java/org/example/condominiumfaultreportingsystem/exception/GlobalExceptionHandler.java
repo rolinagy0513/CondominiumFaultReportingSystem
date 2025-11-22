@@ -391,6 +391,22 @@ public class GlobalExceptionHandler {
         );
     }
 
+    /**
+     * Handles ApartmentIsUnavailableException.
+     * Returns HTTP 409 when the apartment where the admin wanted to add a resident manually is unavailable
+     *
+     * @param ex the ApartmentIsUnavailableException thrown
+     * @return ResponseEntity with ApiError and HTTP 409 status
+     */
+    @ExceptionHandler(ApartmentIsUnavailableException.class)
+    public ResponseEntity<ApiError> handleApartmentIsUnavailableException(ApartmentIsUnavailableException ex) {
+        return new ResponseEntity<>(
+                new ApiError(ex.getMessage(),
+                        "The apartment either has a PENDING or UNAVAILABLE or OCCUPIED status",
+                        LocalDateTime.now()),
+                HttpStatus.CONFLICT
+        );
+    }
 
     /**
      * Handles DataAccessException from Spring Data.
