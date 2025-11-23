@@ -1,6 +1,6 @@
 import BuildingsList from "../admin/components/BuildingsList.jsx";
 import {useContext, useEffect, useRef, useState} from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {RoleSelectionContext} from "../../context/role-selection/RoleSelectionContext.jsx";
 import apiServices from "../../services/ApiServices.js";
 import websocketServices from "../../services/WebsocketServices.js";
@@ -10,8 +10,6 @@ import "./styles/ResidentRequest.css"
 
 //Meg kell oldani a company-request-et is
 //El kell majd kezdeni csinálni a ticket report rendszert
-//Hozzá kell majd adni az addUserMethod-ot a többihez az AdminPanel-ban
-
 
 const ResidentRequest = () => {
     const AUTH_API_PATH = import.meta.env.VITE_API_BASE_AUTH_URL;
@@ -26,6 +24,7 @@ const ResidentRequest = () => {
 
     const {authenticatedUserId} = useContext(UserContext);
     const navigate = useNavigate();
+    const location = useLocation();
 
     const{
         buildings, setBuildings,
@@ -35,36 +34,36 @@ const ResidentRequest = () => {
         currentPage, setCurrentPage,
         totalPages, setTotalPages,
         totalElements, setTotalElements,
-        pageSize
+        pageSize,
+        showPendingView, setShowPendingView,
     } = useContext(RoleSelectionContext);
 
     const [notification, setNotification] = useState(null);
     const [requestSent, setRequestSent] = useState(false);
     const [selectedApartmentId, setSelectedApartmentId] = useState(null);
-    const [showPendingView, setShowPendingView] = useState(false);
+    // const [showPendingView, setShowPendingView] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
     const subscriptionRef = useRef(null);
     const currentUserIdRef = useRef(null);
 
-    // Fetch buildings on mount
     useEffect(() => {
         getAllBuildings();
     }, []);
 
-    // Setup WebSocket when user ID changes
     useEffect(() => {
-        // Detect user change and reset state
         if (currentUserIdRef.current !== authenticatedUserId) {
             if (subscriptionRef.current) {
                 subscriptionRef.current.unsubscribe();
                 subscriptionRef.current = null;
             }
 
+            const hasActiveRequest = location.state?.hasActiveRequest;
+            setShowPendingView(hasActiveRequest || false);
+
             currentUserIdRef.current = authenticatedUserId;
             setNotification(null);
             setRequestSent(false);
             setSelectedApartmentId(null);
-            setShowPendingView(false);
             setIsConnected(false);
         }
 
@@ -73,7 +72,7 @@ const ResidentRequest = () => {
         }
 
         return () => cleanupWebSocket();
-    }, [authenticatedUserId]);
+    }, [authenticatedUserId, location.state]);
 
     const setupWebSocket = () => {
         if (subscriptionRef.current) {
@@ -121,7 +120,6 @@ const ResidentRequest = () => {
     };
 
     const handleRequestResponse = (response) => {
-        // Verify message is for current user
         if (currentUserIdRef.current !== authenticatedUserId) {
             return;
         }
@@ -131,7 +129,7 @@ const ResidentRequest = () => {
         if (response.apartmentNumber !== undefined) {
             if (response.message && response.message.includes("accepted")) {
                 setTimeout(() => {
-                    navigate("/resident-dashboard");
+                    navigate("/resident-page");
                 }, 3000);
             } else if (response.message && response.message.includes("rejected")) {
                 setTimeout(() => {

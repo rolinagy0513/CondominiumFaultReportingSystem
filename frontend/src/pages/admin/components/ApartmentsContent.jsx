@@ -1,3 +1,7 @@
+import { useState } from "react";
+
+import { IoMdAdd } from "react-icons/io";
+
 import "./component-styles/ApartmentsContent.css"
 
 const ApartmentsContent = ({
@@ -5,8 +9,36 @@ const ApartmentsContent = ({
                                currentPage, pageSize,
                                totalElements, loadingApartments, apartments,
                                removeResidentAction, totalPages,
-                               handlePageChange,
-}) =>{
+                               handlePageChange, handleAssignOwner
+                           }) =>{
+
+    const [emailInputs, setEmailInputs] = useState({});
+
+    const handleEmailChange = (apartmentId, value) => {
+        setEmailInputs(prev => ({
+            ...prev,
+            [apartmentId]: value
+        }));
+    };
+
+    const handleAssignOwnerClick = async (apartmentId) => {
+        const userEmail = emailInputs[apartmentId];
+
+        if (!userEmail) {
+            alert("Please enter an email address");
+            return;
+        }
+
+        try {
+            await handleAssignOwner(apartmentId, userEmail);
+            setEmailInputs(prev => ({
+                ...prev,
+                [apartmentId]: ''
+            }));
+        } catch (error) {
+            alert("Failed to assign owner. Please try again.");
+        }
+    };
 
     return(
         <div className="apartments-content">
@@ -34,14 +66,38 @@ const ApartmentsContent = ({
                                     <div className="apartment-header">
                                         <h4>Apartment {apartment.apartmentNumber}</h4>
                                         <span className={`status ${apartment.status?.toLowerCase() || 'available'}`}>
-                                                    {apartment.status || 'Available'}
-                                                </span>
+                                            {apartment.status || 'Available'}
+                                        </span>
                                     </div>
                                     <div className="apartment-details">
                                         <p><strong>Floor:</strong> {apartment.floorNumber}</p>
                                         <p><strong>Owner:</strong> {apartment.ownerName || 'Not assigned'}</p>
+                                        {apartment.status === "AVAILABLE" && (
+                                            <div className="assign-owner-section">
+                                                <input
+                                                    type="email"
+                                                    placeholder="Enter user email"
+                                                    value={emailInputs[apartment.id] || ''}
+                                                    onChange={(e) => handleEmailChange(apartment.id, e.target.value)}
+                                                    className="email-input"
+                                                />
+                                                <button
+                                                    className="assign-owner-button"
+                                                    onClick={() => handleAssignOwnerClick(apartment.id)}
+                                                >
+                                                    <IoMdAdd/>
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
-                                    <button className="remove-button" onClick={()=>removeResidentAction(apartment.id)}>Remove Resident</button>
+                                    {apartment.ownerName && (
+                                        <button
+                                            className="remove-button"
+                                            onClick={() => removeResidentAction(apartment.id)}
+                                        >
+                                            Remove Resident
+                                        </button>
+                                    )}
                                 </div>
                             ))
                         ) : (
@@ -115,8 +171,6 @@ const ApartmentsContent = ({
             )}
         </div>
     )
-
-
 }
 
 export default ApartmentsContent;

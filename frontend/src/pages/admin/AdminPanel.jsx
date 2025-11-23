@@ -37,7 +37,10 @@ const AdminPanel = () => {
     const BUILDING_API_PATH = import.meta.env.VITE_API_BASE_BUILDING_URL
 
     const AUTH_API_PATH = import.meta.env.VITE_API_BASE_AUTH_URL;
+
+    const APARTMENT_BASE_API_PATH =import.meta.env.VITE_API_BASE_APARTMENT_URL;
     const RESIDENT_APARTMENT_API_PATH = import.meta.env.VITE_API_RESIDENT_APARTMENT_URL
+    const ADMIN_APARTMENT_API_PATH = import.meta.env.VITE_API_ADMIN_APARTMENT_URL
 
     const ADMIN_COMPANY_API_PATH = import.meta.env.VITE_API_ADMIN_COMPANY_URL
 
@@ -53,11 +56,13 @@ const AdminPanel = () => {
 
     const LOGOUT_URL = `${AUTH_API_PATH}/logout`
     const ADD_BUILDING_URL = `${ADMIN_BUILDING_API_PATH}/addNew`;
+    const ASSIGN_OWNER_URL = `${ADMIN_APARTMENT_API_PATH}/addUserToApartment`;
     const GET_ALL_BUILDING_URL = `${BUILDING_API_PATH}/getAll`;
     const GET_APARTMENT_URL = `${RESIDENT_APARTMENT_API_PATH}/getByBuildingId`;
     const GET_PENDING_APARTMENT_REQUEST_URL = `${ADMIN_APARTMENT_REQUEST_API_PATH}/getPendingRequests`
     const GET_PENDING_COMPANY_REQUEST_URL = `${ADMIN_COMPANY_REQUEST_API_PATH}/getPendingRequests`
     const GET_ALL_COMPANY_URL = `${ADMIN_COMPANY_API_PATH}/getAll`
+    const GET_AVAILABLE_APARTMENTS_URL = `${APARTMENT_BASE_API_PATH}/getAvailableByBuildingId`;
 
     const navigate = useNavigate();
 
@@ -68,7 +73,7 @@ const AdminPanel = () => {
 
     const{
         apartments, setApartments,
-        loadingApartments, setLoadingApartments
+        loadingApartments, setLoadingApartments,
     } = useContext(ApartmentContext);
 
     const{
@@ -123,12 +128,13 @@ const AdminPanel = () => {
     const {
         getApartments, handleGetPendingApartmentRequests,
         handleAcceptApartmentRequest, handleRejectApartmentRequest,
-        handleRemoveResidentFromApartment
+        handleRemoveResidentFromApartment, handleAssignOwner
     } = useApartments(
         GET_APARTMENT_URL, GET_PENDING_APARTMENT_REQUEST_URL, SEND_APARTMENT_RESPONSE, REMOVE_RESIDENT,
         pageSize, currentPage, setLoadingApartments, setApartments, setCurrentPage, setTotalPages,
         setTotalElements, buildings, setSelectedBuilding, setCurrentView, setApartmentRequests,
-        selectedBuilding, setTargetId, setIsRemovalModalOpen, setModalText, setModalButtonText, setModalTitleText
+        selectedBuilding, setTargetId, setIsRemovalModalOpen, setModalText, setModalButtonText, setModalTitleText,
+        GET_AVAILABLE_APARTMENTS_URL, ASSIGN_OWNER_URL
     );
 
     const {
@@ -351,6 +357,7 @@ const AdminPanel = () => {
                     setModalButtonText={setModalButtonText}
                     setModalText={setModalText}
                     setModalTitleText={setModalTitleText}
+                    handleAssignOwner={handleAssignOwner}
                 />
 
             </div>

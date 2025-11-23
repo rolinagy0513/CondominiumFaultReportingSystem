@@ -6,7 +6,7 @@ export const useApartments = (
     pageSize, currentPage, setLoadingApartments, setApartments, setCurrentPage, setTotalPages,
     setTotalElements, buildings, setSelectedBuilding, setCurrentView, setApartmentRequests,
     selectedBuilding, setTargetId, setIsRemovalModalOpen, setModalText, setModalButtonText, setModalTitleText,
-    GET_AVAILABLE_APARTMENTS_URL
+    GET_AVAILABLE_APARTMENTS_URL,ASSIGN_OWNER_URL
 ) =>{
 
     console.log(`This is the page size: ${pageSize}`)
@@ -174,10 +174,29 @@ export const useApartments = (
         }
     }
 
+    const handleAssignOwner = async (apartmentId, userEmail) => {
+        try {
+            const requestData = {
+                apartmentId: apartmentId,
+                userEmail: userEmail
+            };
+
+            await apiServices.post(ASSIGN_OWNER_URL, requestData);
+            setCurrentView("buildings");
+            console.log(`Successfully assigned owner to apartment ${apartmentId}`);
+
+        } catch (error) {
+            console.error("Error assigning owner:", error.message);
+            alert(error.message);
+            return false;
+        }
+    }
+
     return{
         getApartments, handleGetPendingApartmentRequests,
         handleAcceptApartmentRequest, handleRejectApartmentRequest,
-        handleRemoveResidentFromApartment, getAvailableApartmentsInBuilding
+        handleRemoveResidentFromApartment, getAvailableApartmentsInBuilding,
+        handleAssignOwner,
     }
 
 }

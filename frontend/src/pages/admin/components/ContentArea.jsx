@@ -19,7 +19,8 @@ const ContentArea = ({
                          companiesCurrentPage, companiesTotalPages,
                          companiesTotalElements, setTargetId,
                          setIsRemovalModalOpen,setRemovalType,
-                         setModalText, setModalButtonText, setModalTitleText
+                         setModalText, setModalButtonText, setModalTitleText,
+                         handleAssignOwner
                      }) =>{
 
     const removeResidentAction = (apartmentId) =>{
@@ -64,6 +65,7 @@ const ContentArea = ({
                 removeResidentAction={removeResidentAction}
                 totalPages={totalPages}
                 handlePageChange={handlePageChange}
+                handleAssignOwner={handleAssignOwner}
 
                 />
             ) : currentView === 'companies' ? (

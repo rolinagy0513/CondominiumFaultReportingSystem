@@ -11,6 +11,7 @@ import AuthForm from "./components/AuthForm.jsx";
 import loginImage from "../../assets/building.png";
 
 import "./styles/Login.css"
+import {RoleSelectionContext} from "../../context/role-selection/RoleSelectionContext.jsx";
 
 const Login = () =>{
 
@@ -27,6 +28,7 @@ const Login = () =>{
     const { message, setMessage, isLoading, setIsLoading } = useContext(FeedbackContext);
     const { loginFormData, setLoginFormData} = useContext(AuthContext);
     const { setAuthenticatedUserId, setAuthenticatedUserName } = useContext(UserContext);
+    const {setShowPendingView} = useContext(RoleSelectionContext);
 
     const resetForm = () =>{
         setLoginFormData({
@@ -38,7 +40,6 @@ const Login = () =>{
     const clearAllUserData = () => {
         console.log('🧹 [LOGIN] Clearing all user data from localStorage and context');
 
-        // Clear localStorage
         localStorage.removeItem("authenticatedUserId");
         localStorage.removeItem("authenticatedUserName");
         localStorage.removeItem("adminGroupId");
@@ -135,11 +136,9 @@ const Login = () =>{
                 console.log("📊 [LOGIN] User ID to set:", response.user.id);
                 console.log("📊 [LOGIN] User name to set:", response.user.userName);
 
-                // CRITICAL: Set in localStorage first
                 localStorage.setItem("authenticatedUserId", response.user.id);
                 localStorage.setItem("authenticatedUserName", response.user.userName);
 
-                // CRITICAL: Update context to trigger re-renders
                 setAuthenticatedUserId(response.user.id);
                 setAuthenticatedUserName(response.user.userName);
 
@@ -159,7 +158,8 @@ const Login = () =>{
 
                 if (hasActiveRequest) {
                     console.log("🔄 [LOGIN] User has active request - navigating to pending-request");
-                    navigate("/pending-request");
+                    setShowPendingView(true)
+                    navigate("/resident-request", { state: { hasActiveRequest: true } });
                     return;
                 }
 

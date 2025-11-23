@@ -12,6 +12,7 @@ export const RoleSelectionProvider = ({ children }) => {
     const [totalPages, setTotalPages] = useState(0);
     const [totalElements, setTotalElements] = useState(0);
     const pageSize = 10;
+    const [showPendingView, setShowPendingView] = useState(false);
 
     return (
         <RoleSelectionContext.Provider value={{
@@ -22,7 +23,8 @@ export const RoleSelectionProvider = ({ children }) => {
             currentPage, setCurrentPage,
             totalPages, setTotalPages,
             totalElements, setTotalElements,
-            pageSize
+            pageSize,
+            showPendingView, setShowPendingView,
         }}>
             {children}
         </RoleSelectionContext.Provider>

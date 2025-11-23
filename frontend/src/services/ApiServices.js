@@ -105,6 +105,48 @@ const apiServices = {
         }
     },
 
+    put: async (url, data = null) => {
+        try {
+            const headers = {
+                "Content-Type": "application/json"
+            };
+
+            const body = JSON.stringify(data);
+
+            const response = await fetch(url, {
+                method: "PUT",
+                headers: headers,
+                credentials: "include",
+                body: body
+            });
+
+            if (!response.ok) {
+                let errorData;
+                try {
+                    errorData = await response.json();
+                } catch {
+                    errorData = await response.text();
+                }
+                throw new Error(errorData?.message || errorData || "Request failed");
+            }
+
+            const text = await response.text();
+            if (!text || text.trim().length === 0) {
+                return null;
+            }
+
+            try {
+                return JSON.parse(text);
+            } catch {
+                return text;
+            }
+
+        } catch (error) {
+            console.error("Api error: " + error.message);
+            throw error;
+        }
+    },
+
     /**
      * Sends a DELETE request to the provided URL.
      *

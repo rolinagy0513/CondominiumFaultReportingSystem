@@ -67,7 +67,7 @@ public class ApartmentController {
         return apartmentService.getApartmentsByFloorAndBuilding(buildingId,floorNumber, page,size,sortBy,direction);
     }
 
-    @PutMapping("/admin/apartment/addUserToApartment")
+    @PostMapping("/admin/apartment/addUserToApartment")
     public void addUserToApartment(
             @RequestBody AddUserDTO addUserDTO
     ){

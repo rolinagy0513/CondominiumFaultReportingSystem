@@ -6,6 +6,57 @@
     overflow: hidden;
 }
 
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 30px 20px;
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+
+.back-button {
+    background: #4a5568;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.back-button:hover {
+    background: #2d3748;
+    transform: translateY(-1px);
+}
+
+.content-header h3 {
+    margin: 0;
+    color: #2d3748;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.pagination-info {
+    margin: 0;
+    color: #718096;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.loading {
+    text-align: center;
+    padding: 60px 30px;
+    color: #718096;
+    font-size: 16px;
+    font-weight: 500;
+}
+
 .apartments-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -21,6 +72,8 @@
     transition: all 0.3s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .apartment-card:hover {
@@ -79,6 +132,7 @@
     display: grid;
     gap: 8px;
     margin-bottom: 15px;
+    flex: 1;
 }
 
 .apartment-details p {
@@ -105,7 +159,85 @@
     font-size: 14px;
 }
 
-/* Only show remove button for occupied apartments */
+.assign-owner-section {
+    margin-top: 15px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 12px;
+    background: #f7fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.email-input {
+    padding: 8px 12px;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    font-size: 14px;
+    flex: 1;
+    min-width: 0;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.email-input:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+.email-input::placeholder {
+    color: #a0aec0;
+}
+
+.assign-owner-button {
+    background: #48bb78;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    min-width: 100px;
+}
+
+.assign-owner-button:hover {
+    background: #38a169;
+    transform: translateY(-1px);
+}
+
+.assign-owner-button:active {
+    transform: translateY(0);
+}
+
+.remove-button {
+    background: #e53e3e;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    width: 100%;
+    transition: all 0.2s ease;
+    margin-top: 10px;
+}
+
+.remove-button:hover {
+    background: #c53030;
+    transform: translateY(-1px);
+}
+
+.remove-button:active {
+    transform: translateY(0);
+}
+
+/* Only show remove button when there's an owner */
 .apartment-card:not(:has(.status.occupied)) .remove-button {
     display: none;
 }
@@ -134,8 +266,87 @@
     outline-offset: 2px;
 }
 
+/* Pagination Styles */
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 30px;
+    border-top: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+
+.pagination-btn {
+    background: #4a5568;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: #2d3748;
+    transform: translateY(-1px);
+}
+
+.pagination-btn:disabled {
+    background: #a0aec0;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.pagination-pages {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pagination-page {
+    background: white;
+    border: 1px solid #cbd5e0;
+    color: #4a5568;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    min-width: 40px;
+    transition: all 0.2s ease;
+}
+
+.pagination-page:hover {
+    background: #edf2f7;
+    border-color: #a0aec0;
+}
+
+.pagination-page.active {
+    background: #4299e1;
+    border-color: #4299e1;
+    color: white;
+}
+
+.pagination-ellipsis {
+    color: #718096;
+    padding: 8px 4px;
+    font-size: 14px;
+}
+
 /* Responsive Design for ApartmentsContent */
 @media (max-width: 768px) {
+    .content-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+        padding: 20px;
+    }
+
     .apartments-list {
         grid-template-columns: 1fr;
         padding: 20px;
@@ -146,5 +357,86 @@
         flex-direction: column;
         gap: 10px;
         align-items: flex-start;
+    }
+
+    .assign-owner-section {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .assign-owner-button {
+        width: 100%;
+        min-width: auto;
+    }
+
+    .pagination {
+        flex-direction: column;
+        gap: 15px;
+        padding: 20px;
+    }
+
+    .pagination-pages {
+        order: -1;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .pagination-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .content-header {
+        padding: 15px;
+    }
+
+    .content-header h3 {
+        font-size: 20px;
+    }
+
+    .apartments-list {
+        padding: 15px;
+        gap: 12px;
+        grid-template-columns: 1fr;
+    }
+
+    .apartment-card {
+        padding: 15px;
+    }
+
+    .apartment-header h4 {
+        font-size: 16px;
+    }
+
+    .status {
+        font-size: 11px;
+        padding: 5px 10px;
+    }
+
+    .assign-owner-section {
+        padding: 10px;
+        gap: 8px;
+    }
+
+    .email-input {
+        font-size: 13px;
+        padding: 7px 10px;
+    }
+
+    .assign-owner-button {
+        font-size: 11px;
+        padding: 7px 12px;
+    }
+
+    .pagination-pages {
+        gap: 4px;
+    }
+
+    .pagination-page {
+        min-width: 36px;
+        padding: 6px 8px;
+        font-size: 13px;
     }
 }
