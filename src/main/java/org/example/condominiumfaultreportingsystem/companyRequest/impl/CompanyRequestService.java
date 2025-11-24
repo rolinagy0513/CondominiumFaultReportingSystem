@@ -62,11 +62,17 @@ public class CompanyRequestService implements ICompanyRequestService {
     private String adminGroupName;
 
     @Transactional
-    public CompanyRequestInfoDTO sendCompanyRequest(CompanyRequestDTO companyRequestDTO){
+    public CompanyRequestInfoDTO sendCompanyRequest(CompanyRequestDTO companyRequestDTO, Principal principal){
+
+        User user = userService.getUserFromPrincipal(principal);
+
+        UserWithRoleDTO currentUser = UserWithRoleDTO.builder()
+                .id(user.getId())
+                .userName(user.getEmail())
+                .role(user.getRole())
+                .build();
 
         try{
-
-            UserWithRoleDTO currentUser = userService.getCurrentUserWithRole();
 
             if (currentUser.getRole() == Role.COMPANY || currentUser.getRole() == Role.RESIDENT){
                 throw new InvalidRoleException();
@@ -84,6 +90,7 @@ public class CompanyRequestService implements ICompanyRequestService {
                     .companyEmail(companyRequestDTO.getCompanyEmail())
                     .companyPhoneNumber(companyRequestDTO.getCompanyPhoneNumber())
                     .companyAddress(companyRequestDTO.getCompanyAddress())
+                    .companyIntroduction(companyRequestDTO.getCompanyIntroduction())
                     .serviceType(companyRequestDTO.getServiceType())
                     .status(CompanyRequestStatus.PENDING)
                     .createdAt(LocalDateTime.now())
@@ -202,6 +209,7 @@ public class CompanyRequestService implements ICompanyRequestService {
                 .email(companyRequest.getCompanyEmail())
                 .phoneNumber(companyRequest.getCompanyPhoneNumber())
                 .address(companyRequest.getCompanyAddress())
+                .companyIntroduction(companyRequest.getCompanyIntroduction())
                 .serviceType(companyRequest.getServiceType())
                 .buildings(new ArrayList<>())
                 .user(user)

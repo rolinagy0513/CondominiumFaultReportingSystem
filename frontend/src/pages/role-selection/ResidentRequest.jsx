@@ -41,7 +41,6 @@ const ResidentRequest = () => {
     const [notification, setNotification] = useState(null);
     const [requestSent, setRequestSent] = useState(false);
     const [selectedApartmentId, setSelectedApartmentId] = useState(null);
-    // const [showPendingView, setShowPendingView] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
     const subscriptionRef = useRef(null);
     const currentUserIdRef = useRef(null);
@@ -272,18 +271,6 @@ const ResidentRequest = () => {
                     </button>
                 </>
             );
-        } else if (notification.companyName) {
-            return (
-                <>
-                    <h3>Company Request Update!</h3>
-                    <p>{notification.message}</p>
-                    <p><strong>Company:</strong> {notification.companyName}</p>
-                    <p><strong>Service Type:</strong> {notification.serviceType}</p>
-                    <button onClick={handleCloseNotification}>
-                        {notification.message.includes("accepted") ? "Go to Company Dashboard" : "Back to Role Selection"}
-                    </button>
-                </>
-            );
         }
 
         return null;
@@ -339,6 +326,7 @@ const ResidentRequest = () => {
             </div>
         );
     }
+
 
     // Apartment selection view
     return (

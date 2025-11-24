@@ -118,6 +118,8 @@ const Login = () =>{
                 console.log("  - residentGroupId:", localStorage.getItem("residentGroupId"));
                 console.log("  - authenticatedResidentId:", localStorage.getItem("authenticatedResidentId"));
                 console.log("  - authenticatedResidentUserName:", localStorage.getItem("authenticatedResidentUserName"));
+
+                navigate("/resident-page")
             }
 
             if(response.role === COMPANY_ROLE){

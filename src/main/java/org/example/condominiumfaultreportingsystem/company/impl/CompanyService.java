@@ -212,6 +212,7 @@ public class CompanyService implements ICompanyService {
                 .email(company.getEmail())
                 .phoneNumber(company.getPhoneNumber())
                 .address(company.getAddress())
+                .companyIntroduction(company.getCompanyIntroduction())
                 .serviceType(company.getServiceType())
                 .build();
 

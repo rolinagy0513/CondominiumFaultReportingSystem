@@ -34,6 +34,8 @@ public class CompanyRequest {
     private String companyPhoneNumber;
     private String companyAddress;
 
+    private String companyIntroduction;
+
     @Enumerated(EnumType.STRING)
     private ServiceType serviceType;
 

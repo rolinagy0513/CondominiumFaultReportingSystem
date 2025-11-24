@@ -38,6 +38,8 @@ public class Company {
     private String phoneNumber;
     private String address;
 
+    private String companyIntroduction;
+
     @Enumerated(EnumType.STRING)
     private ServiceType serviceType;
 

@@ -8,7 +8,7 @@ import java.security.Principal;
 import java.util.List;
 
 public interface ICompanyRequestService {
-    CompanyRequestInfoDTO sendCompanyRequest(CompanyRequestDTO companyRequestDTO);
+    CompanyRequestInfoDTO sendCompanyRequest(CompanyRequestDTO companyRequestDTO, Principal principal);
     void sendCompanyRequestResponse(RequestResponseDTO responseDTO, Principal principal);
     List<CompanyRequestInfoDTO> getAllPendingRequests();
     ActiveCompanyRequest getActiveRequest(Long userId);

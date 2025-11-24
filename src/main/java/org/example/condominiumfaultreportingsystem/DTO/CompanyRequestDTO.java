@@ -21,6 +21,8 @@ public class CompanyRequestDTO {
     private String companyPhoneNumber;
     private String companyAddress;
 
+    private String companyIntroduction;
+
     private ServiceType serviceType;
 
 }

@@ -19,11 +19,12 @@ public class CompanyRequestController {
 
     private final CompanyRequestService companyRequestService;
 
-    @PostMapping("/companyRequest/send")
+    @MessageMapping("/companyRequest/send")
     public CompanyRequestInfoDTO sendCompanyRequest(
-            @RequestBody CompanyRequestDTO companyRequestDTO
+            @Payload CompanyRequestDTO companyRequestDTO,
+            Principal principal
             ){
-        return companyRequestService.sendCompanyRequest(companyRequestDTO);
+        return companyRequestService.sendCompanyRequest(companyRequestDTO, principal);
     }
 
     @MessageMapping("/admin/companyRequest/response")
