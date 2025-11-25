@@ -13,6 +13,8 @@ import {ApartmentProvider} from "./context/admin/ApartmentContext.jsx";
 import {NotificationProvider} from "./context/admin/NotificationContext.jsx";
 import {CompanyProvider} from "./context/admin/CompanyContext.jsx";
 import {RoleSelectionProvider} from "./context/role-selection/RoleSelectionContext.jsx";
+import {ResidentRequestProvider} from "./context/role-selection/ResidentRequestContext.jsx";
+import {CompanyRequestProvider} from "./context/role-selection/CompanyRequestContext.jsx";
 
 function App() {
 
@@ -31,9 +33,13 @@ function App() {
                                               <NotificationProvider>
                                                    <CompanyProvider>
                                                        <RoleSelectionProvider>
-                                                           <AuthRoutes/>
-                                                           <MainRoutes/>
-                                                           <AdminRoutes/>
+                                                           <ResidentRequestProvider>
+                                                               <CompanyRequestProvider>
+                                                                       <AuthRoutes/>
+                                                                       <MainRoutes/>
+                                                                       <AdminRoutes/>
+                                                               </CompanyRequestProvider>
+                                                           </ResidentRequestProvider>
                                                        </RoleSelectionProvider>
                                                    </CompanyProvider>
                                               </NotificationProvider>

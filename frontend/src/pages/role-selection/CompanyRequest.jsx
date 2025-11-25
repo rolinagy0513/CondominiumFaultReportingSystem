@@ -2,7 +2,7 @@ import {useContext, useEffect, useState, useRef} from "react";
 import {UserContext} from "../../context/general/UserContext.jsx";
 import {useLocation, useNavigate} from "react-router-dom";
 import BuildingsList from "../admin/components/BuildingsList.jsx";
-import {RoleSelectionContext} from "../../context/role-selection/RoleSelectionContext.jsx";
+import {CompanyRequestContext} from "../../context/role-selection/CompanyRequestContext.jsx";
 import apiServices from "../../services/ApiServices.js";
 import websocketServices from "../../services/WebsocketServices.js";
 
@@ -25,34 +25,45 @@ const CompanyRequest = () => {
         buildings, setBuildings,
         selectedBuilding, setSelectedBuilding,
         showPendingView, setShowPendingView,
-    } = useContext(RoleSelectionContext);
+        formData, setFormData,
+        notification, setNotification,
+        requestSent, setRequestSent,
+        isConnected, setIsConnected,
+        serviceTypeOptions
+    } = useContext(CompanyRequestContext);
 
-    // Form state
-    const [formData, setFormData] = useState({
-        companyName: '',
-        companyEmail: '',
-        companyPhoneNumber: '',
-        companyAddress: '',
-        companyIntroduction: '',
-        serviceType: ''
-    });
+    // const {
+    //     buildings, setBuildings,
+    //     selectedBuilding, setSelectedBuilding,
+    // } = useContext(RoleSelectionContext);
 
-    const [notification, setNotification] = useState(null);
-    const [requestSent, setRequestSent] = useState(false);
-    const [isConnected, setIsConnected] = useState(false);
+    // const [showPendingView, setShowPendingView] = useState(false);
+
+    // const [formData, setFormData] = useState({
+    //     companyName: '',
+    //     companyEmail: '',
+    //     companyPhoneNumber: '',
+    //     companyAddress: '',
+    //     companyIntroduction: '',
+    //     serviceType: ''
+    // });
+
+    // const [notification, setNotification] = useState(null);
+    // const [requestSent, setRequestSent] = useState(false);
+    // const [isConnected, setIsConnected] = useState(false);
     const subscriptionRef = useRef(null);
     const currentUserIdRef = useRef(null);
 
-    const serviceTypeOptions = [
-        { value: '', label: 'Select Service Type' },
-        { value: 'ELECTRICIAN', label: 'Electrician' },
-        { value: 'PLUMBER', label: 'Plumber' },
-        { value: 'CLEANING', label: 'Cleaning' },
-        { value: 'SECURITY', label: 'Security' },
-        { value: 'ELEVATOR_MAINTENANCE', label: 'Elevator Maintenance' },
-        { value: 'GARDENING', label: 'Gardening' },
-        { value: 'OTHER', label: 'Other' }
-    ];
+    // const serviceTypeOptions = [
+    //     { value: '', label: 'Select Service Type' },
+    //     { value: 'ELECTRICIAN', label: 'Electrician' },
+    //     { value: 'PLUMBER', label: 'Plumber' },
+    //     { value: 'CLEANING', label: 'Cleaning' },
+    //     { value: 'SECURITY', label: 'Security' },
+    //     { value: 'ELEVATOR_MAINTENANCE', label: 'Elevator Maintenance' },
+    //     { value: 'GARDENING', label: 'Gardening' },
+    //     { value: 'OTHER', label: 'Other' }
+    // ];
 
     useEffect(() => {
         getAllBuildings();
@@ -65,8 +76,8 @@ const CompanyRequest = () => {
                 subscriptionRef.current = null;
             }
 
-            const hasActiveRequest = location.state?.hasActiveRequest;
-            setShowPendingView(hasActiveRequest || false);
+            const hasActiveCompanyRequest = location.state?.hasActiveCompanyRequest;
+            setShowPendingView(hasActiveCompanyRequest || false);
 
             currentUserIdRef.current = authenticatedUserId;
             setNotification(null);
@@ -136,7 +147,7 @@ const CompanyRequest = () => {
         if (response.companyName) {
             if (response.message && response.message.includes("accepted")) {
                 setTimeout(() => {
-                    navigate("/company-dashboard");
+                    navigate("/company-page");
                 }, 3000);
             } else if (response.message && response.message.includes("rejected")) {
                 setTimeout(() => {
@@ -168,7 +179,7 @@ const CompanyRequest = () => {
         setNotification(null);
 
         if (notification?.message?.includes("accepted")) {
-            navigate("/company-dashboard");
+            navigate("/company-page");
         } else {
             navigate("/choose-role");
         }

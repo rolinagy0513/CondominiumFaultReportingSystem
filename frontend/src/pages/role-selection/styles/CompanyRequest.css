@@ -6,7 +6,6 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Left Section - Buildings */
 .company-request-left-section {
     width: 400px;
     background: linear-gradient(135deg, #2c5282 0%, #1a365d 100%);
@@ -313,13 +312,12 @@
     box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
 }
 
-/* Pending Page Styles */
 .company-request-pending-page {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+    background: linear-gradient(135deg, #2c5282 0%, #1a365d 100%);
     padding: 20px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -344,7 +342,7 @@
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, #1976d2, #42a5f5, #1976d2);
+    background: linear-gradient(135deg, #2c5282 0%, #1a365d 100%);
 }
 
 .company-request-pending-content {
@@ -357,7 +355,7 @@
 .company-request-pending-title {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #1976d2;
+    color: #1a365d;
     margin: 0;
     text-align: center;
     line-height: 1.2;
@@ -373,7 +371,7 @@
 }
 
 .company-request-pending-text strong {
-    color: #1976d2;
+    color: #1a365d;
     font-weight: 600;
 }
 
@@ -390,7 +388,7 @@
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: #1976d2;
+    background: #1a365d;
     animation: company-request-pending-bounce 1.4s infinite ease-in-out;
 }
 

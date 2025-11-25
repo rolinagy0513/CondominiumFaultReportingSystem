@@ -11,6 +11,8 @@ const CompaniesContent = ({
                               handleCompaniesPageChange,
 }) =>{
 
+    console.log(companies);
+
     return(
         <div className="companies-content">
             <div className="content-header">
@@ -49,6 +51,7 @@ const CompaniesContent = ({
                                         <p><strong>Email:</strong> {company.email}</p>
                                         <p><strong>Phone:</strong> {company.phoneNumber}</p>
                                         <p><strong>Address:</strong> {company.address}</p>
+                                        <p><strong>Introduction:</strong>{company.companyIntroduction}</p>
                                     </div>
                                     <button className="remove-button" onClick={()=>removeCompanyAction(company.id)}>Remove Company</button>
                                 </div>

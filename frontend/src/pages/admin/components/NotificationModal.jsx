@@ -117,7 +117,7 @@ const NotificationModal = ({ setIsAdminModalOpen, apartmentRequests,
                                         <div className="notification-text">
                                             <div className="notification-header">
                                                 <p className="notification-title">
-                                                    {getServiceTypeDisplay(request.serviceType)} Request #{request.requestId}
+                                                    New company request #{request.requestId}
                                                 </p>
                                                 <span className="status-badge">
                           {request.status || "PENDING"}

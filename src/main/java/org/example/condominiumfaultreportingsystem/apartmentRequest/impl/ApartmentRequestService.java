@@ -179,6 +179,10 @@ public class ApartmentRequestService implements IApartmentRequestService {
 
             rejectRequest(apartmentRequest);
 
+            cacheService.evictAAllApartmentsByBuildingCache();
+            cacheService.evictAllApartmentByFloorAndBuildingCache();
+            cacheService.evictAvailableApartmentsInBuildingCache();
+
         } else{
             throw new RequestStatusNotValidException("The apartmentRequest needs to have a status");
         }

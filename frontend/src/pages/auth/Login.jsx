@@ -131,6 +131,8 @@ const Login = () =>{
                 console.log("  - companyGroupId:", localStorage.getItem("companyGroupId"));
                 console.log("  - authenticatedCompanyUserId:", localStorage.getItem("authenticatedCompanyUserId"));
                 console.log("  - authenticatedCompanyUserName:", localStorage.getItem("authenticatedCompanyUserName"));
+
+                navigate("/company-page")
             }
 
             if (response.role === USER_ROLE) {
@@ -148,20 +150,28 @@ const Login = () =>{
                 console.log("  - authenticatedUserId:", localStorage.getItem("authenticatedUserId"));
                 console.log("  - authenticatedUserName:", localStorage.getItem("authenticatedUserName"));
 
-                const hasActiveRequest =
-                    response.activeApartmentRequest === "ACTIVE" ||
+                const hasActiveResidentRequest =
+                    response.activeApartmentRequest === "ACTIVE";
+
+                const hasActiveCompanyRequest =
                     response.activeCompanyRequest === "ACTIVE";
 
                 console.log("📊 [LOGIN] Active requests:", {
                     activeApartmentRequest: response.activeApartmentRequest,
                     activeCompanyRequest: response.activeCompanyRequest,
-                    hasActiveRequest: hasActiveRequest
+                    hasActiveResidentRequest: hasActiveResidentRequest,
+                    hasActiveCompanyRequest: hasActiveCompanyRequest
                 });
 
-                if (hasActiveRequest) {
-                    console.log("🔄 [LOGIN] User has active request - navigating to pending-request");
-                    setShowPendingView(true)
-                    navigate("/resident-request", { state: { hasActiveRequest: true } });
+                if (hasActiveResidentRequest) {
+                    console.log("🔄 [LOGIN] User has active resident request - navigating to the pending view of the residentRequest");
+                    navigate("/resident-request", { state: { hasActiveResidentRequest: true }});
+                    return;
+                }
+
+                if (hasActiveCompanyRequest){
+                    console.log("🔄 [LOGIN] User has active company request - navigating to the pending view of the companyRequest");
+                    navigate("/company-request", {state: { hasActiveCompanyRequest: true}});
                     return;
                 }
 

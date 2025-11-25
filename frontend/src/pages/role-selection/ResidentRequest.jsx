@@ -7,8 +7,8 @@ import websocketServices from "../../services/WebsocketServices.js";
 import {UserContext} from "../../context/general/UserContext.jsx";
 
 import "./styles/ResidentRequest.css"
+import {ResidentRequestContext} from "../../context/role-selection/ResidentRequestContext.jsx";
 
-//Meg kell oldani a company-request-et is
 //El kell majd kezdeni csinálni a ticket report rendszert
 
 const ResidentRequest = () => {
@@ -26,9 +26,9 @@ const ResidentRequest = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const{
+    const {
         buildings, setBuildings,
-        selectedBuilding, setSelectedBuilding,
+        selectedBuilding,setSelectedBuilding,
         apartments, setApartments,
         loadingApartments, setLoadingApartments,
         currentPage, setCurrentPage,
@@ -36,12 +36,29 @@ const ResidentRequest = () => {
         totalElements, setTotalElements,
         pageSize,
         showPendingView, setShowPendingView,
-    } = useContext(RoleSelectionContext);
+        notification, setNotification,
+        requestSent, setRequestSent,
+        selectedApartmentId, setSelectedApartmentId,
+        isConnected, setIsConnected
+    } = useContext(ResidentRequestContext);
 
-    const [notification, setNotification] = useState(null);
-    const [requestSent, setRequestSent] = useState(false);
-    const [selectedApartmentId, setSelectedApartmentId] = useState(null);
-    const [isConnected, setIsConnected] = useState(false);
+    // const{
+    //     buildings, setBuildings,
+    //     selectedBuilding, setSelectedBuilding,
+    //     apartments, setApartments,
+    //     loadingApartments, setLoadingApartments,
+    //     currentPage, setCurrentPage,
+    //     totalPages, setTotalPages,
+    //     totalElements, setTotalElements,
+    //     pageSize,
+    //     showPendingView, setShowPendingView,
+    // } = useContext(RoleSelectionContext);
+
+    // const [notification, setNotification] = useState(null);
+    // const [requestSent, setRequestSent] = useState(false);
+    // const [selectedApartmentId, setSelectedApartmentId] = useState(null);
+    // const [isConnected, setIsConnected] = useState(false);
+
     const subscriptionRef = useRef(null);
     const currentUserIdRef = useRef(null);
 
@@ -56,8 +73,8 @@ const ResidentRequest = () => {
                 subscriptionRef.current = null;
             }
 
-            const hasActiveRequest = location.state?.hasActiveRequest;
-            setShowPendingView(hasActiveRequest || false);
+            const hasActiveResidentRequest = location.state?.hasActiveResidentRequest;
+            setShowPendingView(hasActiveResidentRequest || false);
 
             currentUserIdRef.current = authenticatedUserId;
             setNotification(null);
@@ -295,8 +312,8 @@ const ResidentRequest = () => {
                     <div className="pending-content">
                         <h1 className="pending-title">Request Pending</h1>
                         <p className="pending-text">
-                            Your request is currently <strong>PENDING</strong> and is being
-                            investigated by an administrator.
+                            Your request for an apartment is currently <strong>PENDING</strong> and is being
+                            reviewed by an administrator.
                         </p>
                         <div className="pending-loader">
                             <div className="loader-dot"></div>
@@ -328,7 +345,6 @@ const ResidentRequest = () => {
     }
 
 
-    // Apartment selection view
     return (
         <div className="resident-request-container-resident">
             {notification && (

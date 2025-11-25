@@ -157,6 +157,8 @@ const AdminPanel = () => {
 
     const subscriptionRef = useRef(null);
 
+    console.log(apartments)
+
     useEffect(() => {
         getAllBuildings();
     }, []);
