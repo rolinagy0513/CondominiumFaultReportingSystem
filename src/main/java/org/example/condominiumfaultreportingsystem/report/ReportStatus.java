@@ -1,7 +1,8 @@
 package org.example.condominiumfaultreportingsystem.report;
 
 public enum ReportStatus {
-    OPEN,
+    SUBMITTED,
+    ACCEPTED,
     IN_PROGRESS,
-    RESOLVED
+    DONE
 }
