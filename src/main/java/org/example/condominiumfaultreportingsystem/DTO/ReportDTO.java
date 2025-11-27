@@ -1,13 +1,32 @@
 package org.example.condominiumfaultreportingsystem.DTO;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.condominiumfaultreportingsystem.report.ReportPrivacy;
+import org.example.condominiumfaultreportingsystem.report.ReportStatus;
+import org.example.condominiumfaultreportingsystem.report.ReportType;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class ReportDTO {
+
+    private String senderName;
+
+    private ReportPrivacy reportPrivacy;
+
+    private String name;
+    private String issueDescription;
+    private String comment;
+    private Integer roomNumber;
+    private Integer floor;
+
+    private ReportStatus reportStatus;
+    private ReportType reportType;
+
 }

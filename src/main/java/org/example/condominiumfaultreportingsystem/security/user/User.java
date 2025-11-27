@@ -5,6 +5,7 @@ import lombok.*;
 import org.example.condominiumfaultreportingsystem.apartment.Apartment;
 import org.example.condominiumfaultreportingsystem.company.Company;
 import org.example.condominiumfaultreportingsystem.group.Group;
+import org.example.condominiumfaultreportingsystem.report.Report;
 import org.example.condominiumfaultreportingsystem.security.token.Token;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -58,6 +59,9 @@ public class User implements UserDetails {
 
   @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
   private List<Apartment> ownedApartments = new ArrayList<>();
+
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  private List<Report> reports = new ArrayList<>();
 
   @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
   private List<Group> groups = new ArrayList<>();

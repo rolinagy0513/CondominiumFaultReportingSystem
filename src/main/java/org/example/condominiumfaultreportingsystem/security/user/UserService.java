@@ -47,6 +47,13 @@ public class UserService {
                 .build();
     }
 
+    public User getCurrentUserTemporary(){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(()->new UserNotFoundException(email));
+    }
+
     /**
      * Retrieves the currently authenticated user's basic information.
      * This method is used explicitly in the place where I check before an admin only method that this is truly the admin

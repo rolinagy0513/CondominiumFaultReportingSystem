@@ -409,6 +409,23 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handles UserAssignedToMultipleGroupsException.
+     * Returns HTTP 409 when the resident is assigned to multiple groups instead of one
+     *
+     * @param ex the UserAssignedToMultipleGroupsException thrown
+     * @return ResponseEntity with ApiError and HTTP 409 status
+     */
+    @ExceptionHandler(UserAssignedToMultipleGroupsException.class)
+    public ResponseEntity<ApiError> handleUserAssignedToMultipleGroupsException(UserAssignedToMultipleGroupsException ex) {
+        return new ResponseEntity<>(
+                new ApiError(ex.getMessage(),
+                        "The resident can only be in one group",
+                        LocalDateTime.now()),
+                HttpStatus.CONFLICT
+        );
+    }
+
+    /**
      * Handles DataAccessException from Spring Data.
      * Returns HTTP 500 for database operation failures with details.
      *

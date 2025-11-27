@@ -25,4 +25,7 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
     @EntityGraph(attributePaths = "users", type = EntityGraph.EntityGraphType.LOAD)
     Optional<Group> findWithUsersByGroupName(String groupName);
 
+    @EntityGraph(attributePaths = "users", type = EntityGraph.EntityGraphType.LOAD)
+    List<Group> findByUsersId(Long userId);
+
 }

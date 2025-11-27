@@ -1,4 +1,4 @@
-package org.example.condominiumfaultreportingsystem.DTO;
+package org.example.condominiumfaultreportingsystem.notificationHandler.notifications;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,17 +6,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.condominiumfaultreportingsystem.report.ReportType;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ReportRequestDTO {
+public class NewReportCameNotification {
 
-    private String name;
-    private String issueDescription;
-    private String comment;
-    private Integer roomNumber;
-    private Integer floor;
-
+    private String message;
     private ReportType reportType;
+    private String userName;
+    private LocalDateTime submittedAt;
+
 }

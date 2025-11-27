@@ -1,11 +1,27 @@
 package org.example.condominiumfaultreportingsystem.report;
 
 import lombok.RequiredArgsConstructor;
+import org.example.condominiumfaultreportingsystem.DTO.ReportDTO;
+import org.example.condominiumfaultreportingsystem.DTO.ReportRequestDTO;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("api/")
 public class ReportController {
+
+    private final ReportService reportService;
+
+    @PostMapping("/resident/report/send")
+    public ReportDTO sendReport(
+            @RequestBody ReportRequestDTO reportRequestDTO
+            )
+    {
+        return reportService.sendPublicReport(reportRequestDTO);
+    }
+
 }

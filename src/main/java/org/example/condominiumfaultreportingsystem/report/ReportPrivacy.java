@@ -1,6 +1,6 @@
 package org.example.condominiumfaultreportingsystem.report;
 
-public enum ReportDecisionStatus {
+public enum ReportPrivacy {
     PRIVATE,
     PUBLIC
 }
