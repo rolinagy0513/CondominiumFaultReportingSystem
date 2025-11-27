@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.example.condominiumfaultreportingsystem.company.Company;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -111,6 +112,12 @@ public class SecurityConfiguration {
                                 .requestMatchers(POST, "/api/resident/**").hasAnyAuthority(RESIDENT_CREATE.name(),ADMIN_CREATE.name())
                                 .requestMatchers(PUT, "/api/resident/**").hasAnyAuthority(RESIDENT_UPDATE.name(), ADMIN_UPDATE.name())
                                 .requestMatchers(DELETE, "/api/resident/**").hasAnyAuthority(RESIDENT_DELETE.name(), ADMIN_DELETE.name())
+
+                                .requestMatchers("/api/shared/**").hasAnyRole(RESIDENT.name(), COMPANY.name(), ADMIN.name())
+                                .requestMatchers(GET, "/api/shared/**").hasAnyAuthority(RESIDENT_READ.name(), COMPANY_READ.name(), ADMIN_READ.name())
+                                .requestMatchers(POST, "/api/shared/**").hasAnyAuthority(RESIDENT_CREATE.name(), COMPANY_CREATE.name(), ADMIN_CREATE.name())
+                                .requestMatchers(PUT, "/api/shared/**").hasAnyAuthority(RESIDENT_UPDATE.name(), COMPANY_UPDATE.name(), ADMIN_UPDATE.name())
+                                .requestMatchers(DELETE, "/api/shared/**").hasAnyAuthority(RESIDENT_DELETE.name(), COMPANY_DELETE.name(), ADMIN_DELETE.name())
 
                                 .anyRequest()
                                 .authenticated()

@@ -2,6 +2,7 @@ package org.example.condominiumfaultreportingsystem.group;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.condominiumfaultreportingsystem.report.Report;
 import org.example.condominiumfaultreportingsystem.security.user.User;
 
 import java.util.ArrayList;
@@ -29,6 +30,9 @@ public class Group {
 
     @Column(unique = true)
     private String groupName;
+
+    @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Report> reports = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

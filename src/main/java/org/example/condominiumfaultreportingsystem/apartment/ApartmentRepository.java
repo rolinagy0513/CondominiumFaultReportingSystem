@@ -37,4 +37,7 @@ public interface ApartmentRepository extends JpaRepository<Apartment,Long> {
                                                         @Param("floorNumber") Integer floorNumber,
                                                         Pageable pageable);
 
+    @EntityGraph(attributePaths = "owner")
+    @Query("SELECT a FROM Apartment a WHERE a.apartmentNumber = :apartmentNumber AND a.floor = :floor")
+    Optional<Apartment> findByApartmentNumberAndFloor(@Param("apartmentNumber") Integer apartmentNumber, @Param("floor") Integer floor);
 }

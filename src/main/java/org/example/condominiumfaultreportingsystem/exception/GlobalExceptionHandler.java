@@ -426,6 +426,40 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handles ReportNotFoundException.
+     * Returns HTTP 404 when the resident is assigned to multiple groups instead of one
+     *
+     * @param ex the ReportNotFoundException thrown
+     * @return ResponseEntity with ApiError and HTTP 404 status
+     */
+    @ExceptionHandler(ReportNotFoundException.class)
+    public ResponseEntity<ApiError> handleReportNotFoundException(ReportNotFoundException ex) {
+        return new ResponseEntity<>(
+                new ApiError(ex.getMessage(),
+                        "No public and submitted report has been found",
+                        LocalDateTime.now()),
+                HttpStatus.NOT_FOUND
+        );
+    }
+
+    /**
+     * Handles UnauthorizedApartmentAccessException.
+     * Returns HTTP 409 when a user tries to send a message to a group where he doesn't belong to
+     *
+     * @param ex the UnauthorizedApartmentAccessException thrown
+     * @return ResponseEntity with ApiError and HTTP 409 status
+     */
+    @ExceptionHandler(UnauthorizedApartmentAccessException.class)
+    public ResponseEntity<ApiError> handleUnauthorizedApartmentAccessExceptionException(UnauthorizedApartmentAccessException ex) {
+        return new ResponseEntity<>(
+                new ApiError(ex.getMessage(),
+                        "The user doesn't have access to this group",
+                        LocalDateTime.now()),
+                HttpStatus.CONFLICT
+        );
+    }
+
+    /**
      * Handles DataAccessException from Spring Data.
      * Returns HTTP 500 for database operation failures with details.
      *

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.condominiumfaultreportingsystem.group.Group;
 import org.example.condominiumfaultreportingsystem.security.user.User;
 
 import java.time.LocalDateTime;
@@ -15,13 +16,21 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@NamedEntityGraphs(
+        {
+                @NamedEntityGraph(
+                        name = "Report.WithGroupAndUser",
+                        attributeNodes = {
+                                @NamedAttributeNode("group"),
+                                @NamedAttributeNode("user")
+                        })
+        }
+)
 public class Report {
 
     @Id
     @GeneratedValue
     private Long id;
-
-    private Long groupId;
 
     @Enumerated(EnumType.STRING)
     private ReportPrivacy reportPrivacy;
@@ -39,6 +48,10 @@ public class Report {
     private ReportType reportType;
 
     private LocalDateTime createdAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id")
+    private Group group;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

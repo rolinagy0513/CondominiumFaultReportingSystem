@@ -46,4 +46,7 @@ public class CacheService {
     @CacheEvict(value = "availableApartmentsByBuilding", allEntries = true)
     public void evictAvailableApartmentsInBuildingCache(){}
 
+    @CacheEvict(value = "reportByStatus", allEntries = true)
+    public void evictAllReportsByStatusCache(){}
+
 }
