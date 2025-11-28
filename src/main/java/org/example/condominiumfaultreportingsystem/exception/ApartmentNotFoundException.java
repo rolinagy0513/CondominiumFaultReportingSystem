@@ -5,7 +5,7 @@ public class ApartmentNotFoundException extends RuntimeException {
         super("The apartment is not found in this building with the id of: " + apartmentId);
     }
 
-    public ApartmentNotFoundException(Integer apartmentNumber, Integer floor) {
-        super("The apartment is not found with the room number of: " + apartmentNumber + "in the floor of: " + floor);
+    public ApartmentNotFoundException(Integer apartmentNumber) {
+        super("The apartment is not found with the room number of: " + apartmentNumber);
     }
 }

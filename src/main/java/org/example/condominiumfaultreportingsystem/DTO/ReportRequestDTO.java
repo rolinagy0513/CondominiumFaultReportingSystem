@@ -15,8 +15,6 @@ public class ReportRequestDTO {
     private String name;
     private String issueDescription;
     private String comment;
-    private Integer roomNumber;
-    private Integer floor;
 
     private ReportType reportType;
 }

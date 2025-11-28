@@ -3,6 +3,7 @@ package org.example.condominiumfaultreportingsystem.report;
 import lombok.RequiredArgsConstructor;
 import org.example.condominiumfaultreportingsystem.DTO.ReportDTO;
 import org.example.condominiumfaultreportingsystem.DTO.ReportRequestDTO;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,10 +27,14 @@ public class ReportController {
     }
 
     @GetMapping("/shared/report/getAllPendingSubmitted")
-    public CompletableFuture<List<ReportDTO>> getAllPublicSubmittedReportsInGroup(
-            @RequestParam Long groupId
+    public CompletableFuture<Page<ReportDTO>> getAllPublicSubmittedReportsInGroup(
+            @RequestParam Long groupId,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "ASC") String direction
     ){
-        return reportService.getAllPublicSubmittedReportsInGroup(groupId);
+        return reportService.getAllPublicSubmittedReportsInGroup(groupId,page,size,sortBy,direction);
     }
 
 }

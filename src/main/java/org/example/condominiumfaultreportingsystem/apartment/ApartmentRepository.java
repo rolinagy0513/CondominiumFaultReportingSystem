@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
+import java.util.function.LongFunction;
 
 public interface ApartmentRepository extends JpaRepository<Apartment,Long> {
 
@@ -38,6 +39,6 @@ public interface ApartmentRepository extends JpaRepository<Apartment,Long> {
                                                         Pageable pageable);
 
     @EntityGraph(attributePaths = "owner")
-    @Query("SELECT a FROM Apartment a WHERE a.apartmentNumber = :apartmentNumber AND a.floor = :floor")
-    Optional<Apartment> findByApartmentNumberAndFloor(@Param("apartmentNumber") Integer apartmentNumber, @Param("floor") Integer floor);
+    @Query("SELECT a FROM Apartment a WHERE a.owner.id = :ownerId")
+    Optional<Apartment> findByApartmentNumberAndFloor(@Param("ownerId") Long ownerId);
 }

@@ -3,7 +3,6 @@ package org.example.condominiumfaultreportingsystem.apartment.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.condominiumfaultreportingsystem.DTO.ApartmentDTO;
-import org.example.condominiumfaultreportingsystem.DTO.GroupDTO;
 import org.example.condominiumfaultreportingsystem.DTO.RemovalDTO;
 import org.example.condominiumfaultreportingsystem.DTO.UserWithRoleDTO;
 import org.example.condominiumfaultreportingsystem.apartment.Apartment;

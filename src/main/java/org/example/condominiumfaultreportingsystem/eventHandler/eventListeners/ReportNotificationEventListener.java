@@ -2,7 +2,7 @@ package org.example.condominiumfaultreportingsystem.eventHandler.eventListeners;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.condominiumfaultreportingsystem.eventHandler.events.NewReportCameEvent;
+import org.example.condominiumfaultreportingsystem.eventHandler.events.NewPublicReportCameEvent;
 import org.example.condominiumfaultreportingsystem.notificationHandler.NotificationService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
@@ -16,7 +16,7 @@ public class ReportNotificationEventListener {
     private final NotificationService notificationService;
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void handleNewReportCame(NewReportCameEvent event) {
+    public void handleNewReportCame(NewPublicReportCameEvent event) {
 
         log.info("Event received for the report with the id of: {}", event.getReport().getId());
 

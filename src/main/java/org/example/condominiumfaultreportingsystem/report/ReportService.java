@@ -1,31 +1,29 @@
 package org.example.condominiumfaultreportingsystem.report;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.example.condominiumfaultreportingsystem.DTO.GroupDTO;
 import org.example.condominiumfaultreportingsystem.DTO.ReportDTO;
 import org.example.condominiumfaultreportingsystem.DTO.ReportRequestDTO;
-import org.example.condominiumfaultreportingsystem.DTO.UserDTO;
 import org.example.condominiumfaultreportingsystem.apartment.Apartment;
 import org.example.condominiumfaultreportingsystem.apartment.ApartmentRepository;
 import org.example.condominiumfaultreportingsystem.cache.CacheService;
-import org.example.condominiumfaultreportingsystem.eventHandler.events.NewReportCameEvent;
-import org.example.condominiumfaultreportingsystem.eventHandler.events.UserLeftEvent;
+import org.example.condominiumfaultreportingsystem.company.Company;
+import org.example.condominiumfaultreportingsystem.company.CompanyRepository;
+import org.example.condominiumfaultreportingsystem.eventHandler.events.NewPublicReportCameEvent;
 import org.example.condominiumfaultreportingsystem.exception.*;
 import org.example.condominiumfaultreportingsystem.group.Group;
 import org.example.condominiumfaultreportingsystem.group.GroupRepository;
-import org.example.condominiumfaultreportingsystem.group.impl.GroupService;
 import org.example.condominiumfaultreportingsystem.security.user.User;
 import org.example.condominiumfaultreportingsystem.security.user.UserService;
-import org.hibernate.annotations.Cache;
+import org.springframework.data.domain.Page;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -54,23 +52,20 @@ public class ReportService {
 
     private final ApplicationEventPublisher eventPublisher;
     private final CacheService cacheService;
+    private final CompanyRepository companyRepository;
 
     @Transactional
     public ReportDTO sendPublicReport(ReportRequestDTO reportRequestDTO){
 
         User user  = userService.getCurrentUserTemporary();
 
-        Optional<Apartment> apartmentOpt = apartmentRepository.findByApartmentNumberAndFloor(reportRequestDTO.getRoomNumber(), reportRequestDTO.getFloor());
+        Optional<Apartment> apartmentOpt = apartmentRepository.findByApartmentNumberAndFloor(user.getId());
 
         if (apartmentOpt.isEmpty()){
-            throw new ApartmentNotFoundException(reportRequestDTO.getRoomNumber(), reportRequestDTO.getFloor());
+            throw new UnauthorizedApartmentAccessException();
         }
 
         Apartment apartment = apartmentOpt.get();
-
-        if (!apartment.getOwner().getId().equals(user.getId())) {
-            throw new UnauthorizedApartmentAccessException();
-        }
 
         List<Group> userGroups = groupRepository.findByUsersId(user.getId());
 
@@ -84,8 +79,8 @@ public class ReportService {
                 .name(reportRequestDTO.getName())
                 .issueDescription(reportRequestDTO.getIssueDescription())
                 .comment(reportRequestDTO.getComment())
-                .roomNumber(reportRequestDTO.getRoomNumber())
-                .floor(reportRequestDTO.getFloor())
+                .roomNumber(apartment.getApartmentNumber())
+                .floor(apartment.getFloor())
                 .reportStatus(ReportStatus.SUBMITTED)
                 .reportType(reportRequestDTO.getReportType())
                 .createdAt(LocalDateTime.now())
@@ -96,7 +91,7 @@ public class ReportService {
         reportRepository.save(newReport);
 
         eventPublisher.publishEvent(
-                new NewReportCameEvent(groupDestination, user.getName(), newReport)
+                new NewPublicReportCameEvent(groupDestination, user.getName(), newReport)
         );
 
         cacheService.evictAllReportsByStatusCache();
@@ -105,21 +100,69 @@ public class ReportService {
 
     }
 
+//    public ReportDTO sendPrivateReport(Long companyId, ReportRequestDTO reportRequestDTO){
+//
+//        User user  = userService.getCurrentUserTemporary();
+//
+//        Optional<Apartment> apartmentOpt = apartmentRepository.findByApartmentNumberAndFloor(user.getId());
+//
+//        if (apartmentOpt.isEmpty()){
+//            throw new UnauthorizedApartmentAccessException();
+//        }
+//
+//        Apartment apartment = apartmentOpt.get();
+//
+//        Company company = companyRepository.findById(companyId)
+//                .orElseThrow(()-> new CompanyNotFoundException(companyId));
+//
+//        List<Group> userGroups = groupRepository.findByUsersId(user.getId());
+//
+//        validateGroup(userGroups);
+//
+//        Group group  = userGroups.getFirst();
+//
+//        Report newReport = Report.builder()
+//                .reportPrivacy(ReportPrivacy.PRIVATE)
+//                .name(reportRequestDTO.getName())
+//                .issueDescription(reportRequestDTO.getIssueDescription())
+//                .comment(reportRequestDTO.getComment())
+//                .roomNumber(apartment.getApartmentNumber())
+//                .floor(apartment.getFloor())
+//                .reportStatus(ReportStatus.SUBMITTED)
+//                .reportType(reportRequestDTO.getReportType())
+//                .createdAt(LocalDateTime.now())
+//                .group(group)
+//                .user(user)
+//                .build();
+//
+//
+//    }
+
     @Async("asyncExecutor")
     @Cacheable(value = "reportByStatus")
-    public CompletableFuture<List<ReportDTO>> getAllPublicSubmittedReportsInGroup(Long groupId){
+    public CompletableFuture<Page<ReportDTO>> getAllPublicSubmittedReportsInGroup(Long groupId, Integer page, Integer size, String sortBy, String direction){
 
-        Optional<List<Report>> availableReportsOpt = reportRepository.getAllSubmittedPublicReportsInGroup(ReportPrivacy.PUBLIC, ReportStatus.SUBMITTED, groupId);
+        Sort sort;
+
+        if (direction.equalsIgnoreCase("ASC")) {
+            sort = Sort.by(sortBy).ascending();
+        } else {
+            sort = Sort.by(sortBy).descending();
+        }
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Optional<Page<Report>> availableReportsOpt = reportRepository.getAllSubmittedPublicReportsInGroup(ReportPrivacy.PUBLIC, ReportStatus.SUBMITTED, groupId, pageable);
 
         if (availableReportsOpt.isEmpty()){
             throw new ReportNotFoundException();
         }
 
-        List<Report> availableReports = availableReportsOpt.get();
+        Page<Report> availableReports = availableReportsOpt.get();
 
-        List<ReportDTO> reportDTOS =  availableReports.stream().map(this::mapToDto).toList();
+        Page<ReportDTO> reportDTOPage =  availableReports.map(this::mapToDto);
 
-        return CompletableFuture.completedFuture(reportDTOS);
+        return CompletableFuture.completedFuture(reportDTOPage);
     }
 
     private void validateGroup(List<Group> userGroups){
