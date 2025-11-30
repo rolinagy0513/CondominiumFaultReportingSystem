@@ -1,7 +1,15 @@
 package org.example.condominiumfaultreportingsystem.eventHandler.events;
 
-//Be kell fejezni az event-et
-//Notification-t kell csinálni
-//Illetve a getAll Private request-t querry-t ami majd a company id alapján lessz.
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.example.condominiumfaultreportingsystem.report.Report;
+
+@Getter
+@AllArgsConstructor
 public class NewPrivateReportCameEvent {
+
+    private Long companyId;
+    private String userName;
+    private Report report;
+
 }

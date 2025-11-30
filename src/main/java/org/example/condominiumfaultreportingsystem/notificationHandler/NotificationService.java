@@ -169,7 +169,7 @@ public class NotificationService {
         messagingTemplate.convertAndSend("/topic/group/" + groupDestination, notificationForGroup);
     }
 
-    public void sendNewReportCameNotification(String groupName, String userName, Report report){
+    public void sendNewPublicReportCameNotification(String groupName, String userName, Report report){
 
         NewReportCameNotification newReportCameNotification = NewReportCameNotification.builder()
                 .message("New report came")
@@ -179,6 +179,21 @@ public class NotificationService {
                 .build();
 
         messagingTemplate.convertAndSend("/topic/group/" + groupName, newReportCameNotification);
+    }
+
+    public void sendNewPrivateReportCameNotification(Long companyId, String userName, Report report){
+
+        NewReportCameNotification newReportCameNotification = NewReportCameNotification.builder()
+                .message("New report came")
+                .reportType(report.getReportType())
+                .userName(userName)
+                .submittedAt(report.getCreatedAt())
+                .build();
+
+        String companyIdString = companyId.toString();
+
+        messagingTemplate.convertAndSendToUser(companyIdString, "/queue/notification", newReportCameNotification);
+
     }
 
 }

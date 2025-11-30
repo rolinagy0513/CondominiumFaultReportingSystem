@@ -8,6 +8,7 @@ import org.example.condominiumfaultreportingsystem.apartment.ApartmentRepository
 import org.example.condominiumfaultreportingsystem.cache.CacheService;
 import org.example.condominiumfaultreportingsystem.company.Company;
 import org.example.condominiumfaultreportingsystem.company.CompanyRepository;
+import org.example.condominiumfaultreportingsystem.eventHandler.events.NewPrivateReportCameEvent;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.NewPublicReportCameEvent;
 import org.example.condominiumfaultreportingsystem.exception.*;
 import org.example.condominiumfaultreportingsystem.group.Group;
@@ -100,43 +101,48 @@ public class ReportService {
 
     }
 
-//    public ReportDTO sendPrivateReport(Long companyId, ReportRequestDTO reportRequestDTO){
-//
-//        User user  = userService.getCurrentUserTemporary();
-//
-//        Optional<Apartment> apartmentOpt = apartmentRepository.findByApartmentNumberAndFloor(user.getId());
-//
-//        if (apartmentOpt.isEmpty()){
-//            throw new UnauthorizedApartmentAccessException();
-//        }
-//
-//        Apartment apartment = apartmentOpt.get();
-//
-//        Company company = companyRepository.findById(companyId)
-//                .orElseThrow(()-> new CompanyNotFoundException(companyId));
-//
-//        List<Group> userGroups = groupRepository.findByUsersId(user.getId());
-//
-//        validateGroup(userGroups);
-//
-//        Group group  = userGroups.getFirst();
-//
-//        Report newReport = Report.builder()
-//                .reportPrivacy(ReportPrivacy.PRIVATE)
-//                .name(reportRequestDTO.getName())
-//                .issueDescription(reportRequestDTO.getIssueDescription())
-//                .comment(reportRequestDTO.getComment())
-//                .roomNumber(apartment.getApartmentNumber())
-//                .floor(apartment.getFloor())
-//                .reportStatus(ReportStatus.SUBMITTED)
-//                .reportType(reportRequestDTO.getReportType())
-//                .createdAt(LocalDateTime.now())
-//                .group(group)
-//                .user(user)
-//                .build();
-//
-//
-//    }
+    public ReportDTO sendPrivateReport(Long companyId, ReportRequestDTO reportRequestDTO){
+
+        User user  = userService.getCurrentUserTemporary();
+
+        Optional<Apartment> apartmentOpt = apartmentRepository.findByApartmentNumberAndFloor(user.getId());
+
+        if (apartmentOpt.isEmpty()){
+            throw new UnauthorizedApartmentAccessException();
+        }
+
+        Apartment apartment = apartmentOpt.get();
+
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(()-> new CompanyNotFoundException(companyId));
+
+        List<Group> userGroups = groupRepository.findByUsersId(user.getId());
+
+        validateGroup(userGroups);
+
+        Group group  = userGroups.getFirst();
+
+        Report newReport = Report.builder()
+                .reportPrivacy(ReportPrivacy.PRIVATE)
+                .name(reportRequestDTO.getName())
+                .issueDescription(reportRequestDTO.getIssueDescription())
+                .comment(reportRequestDTO.getComment())
+                .roomNumber(apartment.getApartmentNumber())
+                .floor(apartment.getFloor())
+                .reportStatus(ReportStatus.SUBMITTED)
+                .reportType(reportRequestDTO.getReportType())
+                .createdAt(LocalDateTime.now())
+                .group(group)
+                .user(user)
+                .build();
+
+        eventPublisher.publishEvent(
+                new NewPrivateReportCameEvent(companyId, user.getName(), newReport)
+        );
+
+        return mapToDto(newReport);
+
+    }
 
     @Async("asyncExecutor")
     @Cacheable(value = "reportByStatus")
@@ -164,6 +170,8 @@ public class ReportService {
 
         return CompletableFuture.completedFuture(reportDTOPage);
     }
+
+    //Ide kell a getAllPrivateReportForCompany method
 
     private void validateGroup(List<Group> userGroups){
 
