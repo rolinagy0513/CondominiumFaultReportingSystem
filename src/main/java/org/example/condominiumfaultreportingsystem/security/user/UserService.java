@@ -3,6 +3,8 @@ package org.example.condominiumfaultreportingsystem.security.user;
 import lombok.RequiredArgsConstructor;
 import org.example.condominiumfaultreportingsystem.DTO.UserDTO;
 import org.example.condominiumfaultreportingsystem.DTO.UserWithRoleDTO;
+import org.example.condominiumfaultreportingsystem.company.Company;
+import org.example.condominiumfaultreportingsystem.exception.CompanyNotFoundException;
 import org.example.condominiumfaultreportingsystem.exception.InvalidRoleException;
 import org.example.condominiumfaultreportingsystem.exception.RoleValidationException;
 import org.example.condominiumfaultreportingsystem.exception.UserNotFoundException;
@@ -52,6 +54,19 @@ public class UserService {
 
         return userRepository.findByEmail(email)
                 .orElseThrow(()->new UserNotFoundException(email));
+    }
+
+    public Company geCurrentUsersCompany(){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(email));
+
+        if (currentUser.getCompany() == null) {
+            throw new CompanyNotFoundException("The current user doesn't have a company");
+        }
+
+        return currentUser.getCompany();
     }
 
     /**

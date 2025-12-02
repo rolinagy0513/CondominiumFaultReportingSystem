@@ -33,7 +33,8 @@ public class CacheConfig {
         cacheManager.setCacheNames(List.of(
                 "buildings",
                 "companiesByBuilding","companiesByServiceType","companiesByBuildingIdAndServiceType","allCompanies",
-                "apartmentsByBuilding","apartmentByFloorAndBuilding","availableApartmentsByBuilding","reportByStatus"
+                "apartmentsByBuilding","apartmentByFloorAndBuilding","availableApartmentsByBuilding",
+                "reportByPublicStatus","reportByPrivateStatus"
         ));
         return cacheManager;
     }

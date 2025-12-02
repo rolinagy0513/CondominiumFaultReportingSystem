@@ -49,6 +49,8 @@ public class Report {
 
     private LocalDateTime createdAt;
 
+    private Long companyId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
     private Group group;

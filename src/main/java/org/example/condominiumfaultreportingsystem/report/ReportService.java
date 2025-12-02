@@ -34,16 +34,7 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 public class ReportService {
 
-    //Pagination a reportnak
-
-    //Folytatni
-
-    //Add a report(Private or Public) - RESIDENT
-    //Send a report response - COMPANY
-    //Get all public reports - both
-    //Get all private reports - COMPANY
-    //Get a report by id
-    //Remove report
+    //Send report response
 
     private final ReportRepository reportRepository;
     private final GroupRepository groupRepository;
@@ -85,6 +76,7 @@ public class ReportService {
                 .reportStatus(ReportStatus.SUBMITTED)
                 .reportType(reportRequestDTO.getReportType())
                 .createdAt(LocalDateTime.now())
+                .companyId(null)
                 .group(group)
                 .user(user)
                 .build();
@@ -95,7 +87,7 @@ public class ReportService {
                 new NewPublicReportCameEvent(groupDestination, user.getName(), newReport)
         );
 
-        cacheService.evictAllReportsByStatusCache();
+        cacheService.evictAllPublicReportsByStatusCache();
 
         return mapToDto(newReport);
 
@@ -132,20 +124,25 @@ public class ReportService {
                 .reportStatus(ReportStatus.SUBMITTED)
                 .reportType(reportRequestDTO.getReportType())
                 .createdAt(LocalDateTime.now())
+                .companyId(companyId)
                 .group(group)
                 .user(user)
                 .build();
 
+        reportRepository.save(newReport);
+
         eventPublisher.publishEvent(
                 new NewPrivateReportCameEvent(companyId, user.getName(), newReport)
         );
+
+        cacheService.evictAllPrivateReportsByStatusCache();
 
         return mapToDto(newReport);
 
     }
 
     @Async("asyncExecutor")
-    @Cacheable(value = "reportByStatus")
+    @Cacheable(value = "reportByPublicStatus")
     public CompletableFuture<Page<ReportDTO>> getAllPublicSubmittedReportsInGroup(Long groupId, Integer page, Integer size, String sortBy, String direction){
 
         Sort sort;
@@ -171,7 +168,48 @@ public class ReportService {
         return CompletableFuture.completedFuture(reportDTOPage);
     }
 
-    //Ide kell a getAllPrivateReportForCompany method
+    @Async("asyncExecutor")
+    @Cacheable(value = "reportByPrivateStatus")
+    public CompletableFuture<Page<ReportDTO>> getAllPrivateSubmittedReportsForCompany(Long companyId, Integer page, Integer size, String sortBy, String direction){
+
+        Company company = userService.geCurrentUsersCompany();
+
+        if (!company.getId().equals(companyId)) {
+            throw new RoleValidationException("This report is for another company");
+        }
+
+        Sort sort;
+
+        if (direction.equalsIgnoreCase("ASC")) {
+            sort = Sort.by(sortBy).ascending();
+        } else {
+            sort = Sort.by(sortBy).descending();
+        }
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Optional<Page<Report>> availableReportsOpt = reportRepository.getAllSubmittedPrivateReportsForCompany(ReportPrivacy.PRIVATE, ReportStatus.SUBMITTED, companyId, pageable);
+
+        if (availableReportsOpt.isEmpty()){
+            throw new ReportNotFoundException();
+        }
+
+        Page<Report> availableReports = availableReportsOpt.get();
+
+        Page<ReportDTO> reportDTOPage = availableReports.map(this::mapToDto);
+
+        return CompletableFuture.completedFuture(reportDTOPage);
+
+    }
+
+    public ReportDTO getReportById(Long reportId){
+
+        Report report = reportRepository.findById(reportId)
+                .orElseThrow(ReportNotFoundException::new);
+
+        return mapToDto(report);
+
+    }
 
     private void validateGroup(List<Group> userGroups){
 
