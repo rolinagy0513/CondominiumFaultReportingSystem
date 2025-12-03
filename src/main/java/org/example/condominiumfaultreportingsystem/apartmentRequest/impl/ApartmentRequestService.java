@@ -54,7 +54,6 @@ public class ApartmentRequestService implements IApartmentRequestService {
 
     private final SimpMessagingTemplate messagingTemplate;
     private final ApplicationEventPublisher eventPublisher;
-    private final NotificationService notificationService;
 
 
     @Value("${admin.group.name}")

@@ -9,6 +9,8 @@ import org.example.condominiumfaultreportingsystem.apartmentRequest.ActiveApartm
 import org.example.condominiumfaultreportingsystem.companyRequest.ActiveCompanyRequest;
 import org.example.condominiumfaultreportingsystem.security.user.Role;
 
+import java.util.List;
+
 /**
  * Data Transfer Object (DTO) representing the authentication response payload.
  * <p>
@@ -31,7 +33,7 @@ public class AuthenticationResponse {
 
   private String message;
   private UserResponseDTO user;
-  private Long groupId;
+  private List<Long> groupIds;
   private Role role;
   private ActiveApartmentRequest activeApartmentRequest;
   private ActiveCompanyRequest activeCompanyRequest;

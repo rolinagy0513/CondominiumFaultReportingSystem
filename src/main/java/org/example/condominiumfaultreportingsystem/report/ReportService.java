@@ -34,8 +34,6 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 public class ReportService {
 
-    //Send report response
-
     private final ReportRepository reportRepository;
     private final GroupRepository groupRepository;
     private final ApartmentRepository apartmentRepository;
@@ -138,6 +136,29 @@ public class ReportService {
         cacheService.evictAllPrivateReportsByStatusCache();
 
         return mapToDto(newReport);
+
+    }
+
+    @Transactional
+    public ReportDTO submitReport(Long reportId, Long companyId, ReportPrivacy reportPrivacy){
+
+        Report report = reportRepository.findById(reportId)
+                .orElseThrow(ReportNotFoundException::new);
+
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(()-> new CompanyNotFoundException(companyId));
+
+        report.setReportStatus(ReportStatus.IN_PROGRESS);
+
+        if (reportPrivacy == ReportPrivacy.PUBLIC){
+            report.setCompanyId(companyId);
+        }
+        cacheService.evictAllPublicReportsByStatusCache();
+        cacheService.evictAllPrivateReportsByStatusCache();
+
+        reportRepository.save(report);
+
+        return mapToDto(report);
 
     }
 

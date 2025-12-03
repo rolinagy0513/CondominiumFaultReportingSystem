@@ -39,6 +39,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -126,7 +127,7 @@ public class AuthenticationService {
    */
   public AuthenticationResponse authenticate(AuthenticationRequest request, HttpServletResponse response) {
 
-    Long groupId = null;
+    List<Long> groupIds = null;
 
     try {
       authenticationManager.authenticate(
@@ -159,7 +160,25 @@ public class AuthenticationService {
       }
 
       Group adminGroup = groupOpt.get();
-      groupId = adminGroup.getId();
+      groupIds = List.of(adminGroup.getId());
+
+    }
+
+    if (user.getRole().equals(Role.RESIDENT)){
+
+      Optional<List<Group>> groupOpt = groupRepository.findGroupsByUsersId(user.getId());
+
+      if (groupOpt.isEmpty()){
+        throw new GroupNotFoundException();
+      }
+
+      //Meg kell változtatni a frontend-et, hogy tudja kezelni ha több a groupId
+      //Vagy csak a company-nál lessz több, vagy ott sem
+
+      List<Group> groups = groupOpt.get();
+      groupIds = groups.stream()
+              .map(Group::getId)
+              .toList();
 
     }
 
@@ -170,7 +189,7 @@ public class AuthenticationService {
             .message("Login complete")
             .user(mapToUserResponseDto(user))
             .role(user.getRole())
-            .groupId(groupId)
+            .groupIds(groupIds)
             .activeApartmentRequest(activeApartmentRequest)
             .activeCompanyRequest(activeCompanyRequest)
             .build();

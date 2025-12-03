@@ -3,6 +3,7 @@ package org.example.condominiumfaultreportingsystem.report;
 import lombok.RequiredArgsConstructor;
 import org.example.condominiumfaultreportingsystem.DTO.ReportDTO;
 import org.example.condominiumfaultreportingsystem.DTO.ReportRequestDTO;
+import org.example.condominiumfaultreportingsystem.DTO.SubmitReportDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +30,13 @@ public class ReportController {
             @RequestBody ReportRequestDTO reportRequestDTO
     ){
         return reportService.sendPrivateReport(companyId, reportRequestDTO);
+    }
+
+    @PutMapping("/company/report/submitReport")
+    public ReportDTO submitReport(
+            @RequestBody SubmitReportDTO submitReportDTO
+    ){
+        return reportService.submitReport(submitReportDTO.getReportId(), submitReportDTO.getCompanyId(), submitReportDTO.getReportPrivacy());
     }
 
     @GetMapping("/shared/report/getAllPublicSubmitted")
