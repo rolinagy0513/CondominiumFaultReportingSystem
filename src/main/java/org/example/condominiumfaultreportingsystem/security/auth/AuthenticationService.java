@@ -4,6 +4,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.condominiumfaultreportingsystem.DTO.UserResponseDTO;
 import org.example.condominiumfaultreportingsystem.apartmentRequest.ActiveApartmentRequest;
 import org.example.condominiumfaultreportingsystem.apartmentRequest.ApartmentRequest;
@@ -50,6 +51,7 @@ import java.util.Optional;
  * Stores tokens in cookies for client-side usage.
  * </p>
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -127,7 +129,7 @@ public class AuthenticationService {
    */
   public AuthenticationResponse authenticate(AuthenticationRequest request, HttpServletResponse response) {
 
-    List<Long> groupIds = null;
+      Long groupId = null;
 
     try {
       authenticationManager.authenticate(
@@ -160,25 +162,33 @@ public class AuthenticationService {
       }
 
       Group adminGroup = groupOpt.get();
-      groupIds = List.of(adminGroup.getId());
+      groupId = adminGroup.getId();
 
     }
 
     if (user.getRole().equals(Role.RESIDENT)){
 
-      Optional<List<Group>> groupOpt = groupRepository.findGroupsByUsersId(user.getId());
+      Optional<Group> groupOpt = groupRepository.findGroupByUsersId(user.getId());
 
       if (groupOpt.isEmpty()){
         throw new GroupNotFoundException();
       }
 
-      //Meg kell változtatni a frontend-et, hogy tudja kezelni ha több a groupId
-      //Vagy csak a company-nál lessz több, vagy ott sem
+      Group group = groupOpt.get();
+      groupId = group.getId();
 
-      List<Group> groups = groupOpt.get();
-      groupIds = groups.stream()
-              .map(Group::getId)
-              .toList();
+    }
+
+    if (user.getRole().equals(Role.COMPANY)){
+
+      Optional<Group> groupOpt = groupRepository.findGroupByUsersId(user.getId());
+
+      if (groupOpt.isEmpty()){
+        throw new GroupNotFoundException();
+      }
+
+      Group group = groupOpt.get();
+      groupId = group.getId();
 
     }
 
@@ -189,7 +199,7 @@ public class AuthenticationService {
             .message("Login complete")
             .user(mapToUserResponseDto(user))
             .role(user.getRole())
-            .groupIds(groupIds)
+            .groupId(groupId)
             .activeApartmentRequest(activeApartmentRequest)
             .activeCompanyRequest(activeCompanyRequest)
             .build();

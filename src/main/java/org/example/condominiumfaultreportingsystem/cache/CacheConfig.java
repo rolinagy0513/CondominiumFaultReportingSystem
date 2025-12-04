@@ -34,7 +34,7 @@ public class CacheConfig {
                 "buildings",
                 "companiesByBuilding","companiesByServiceType","companiesByBuildingIdAndServiceType","allCompanies",
                 "apartmentsByBuilding","apartmentByFloorAndBuilding","availableApartmentsByBuilding",
-                "reportByPublicStatus","reportByPrivateStatus"
+                "reportByPublicStatus","reportByPrivateStatus","privateReports"
         ));
         return cacheManager;
     }

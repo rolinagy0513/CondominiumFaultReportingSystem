@@ -229,8 +229,6 @@ public class ApartmentRequestService implements IApartmentRequestService {
 
         userService.promoteUserToResident(currentAdmin.getId(),userToAdd.getId());
 
-        log.info("The  method run");
-
         eventPublisher.publishEvent(
                 new ApartmentRequestAcceptedEvent(apartmentRequest,apartment,usersGroup)
         );

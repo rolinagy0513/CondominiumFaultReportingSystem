@@ -460,6 +460,74 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handles ReportServiceTypeMismatchException.
+     * Returns HTTP 409 when a report and the service type is not matching
+     *
+     * @param ex the ReportServiceTypeMismatchException thrown
+     * @return ResponseEntity with ApiError and HTTP 409 status
+     */
+    @ExceptionHandler(ReportServiceTypeMismatchException.class)
+    public ResponseEntity<ApiError> handleReportServiceTypeMismatchException(ReportServiceTypeMismatchException ex) {
+        return new ResponseEntity<>(
+                new ApiError(ex.getMessage(),
+                        "There was a mismatch between the company's services and the reports type",
+                        LocalDateTime.now()),
+                HttpStatus.CONFLICT
+        );
+    }
+
+    /**
+     * Handles InvalidReportStatusException.
+     * Returns HTTP 409 when a report doesn't have the required status
+     *
+     * @param ex the InvalidReportStatusException thrown
+     * @return ResponseEntity with ApiError and HTTP 409 status
+     */
+    @ExceptionHandler(InvalidReportStatusException.class)
+    public ResponseEntity<ApiError> handleInvalidReportStatusException(InvalidReportStatusException ex) {
+        return new ResponseEntity<>(
+                new ApiError(ex.getMessage(),
+                        "The report is not in the right state",
+                        LocalDateTime.now()),
+                HttpStatus.CONFLICT
+        );
+    }
+
+    /**
+     * Handles UserNotPartOfCompanyException.
+     * Returns HTTP 409 when a user is not owning the company with the provided id.
+     *
+     * @param ex the UserNotPartOfCompanyException thrown
+     * @return ResponseEntity with ApiError and HTTP 409 status
+     */
+    @ExceptionHandler(UserNotPartOfCompanyException.class)
+    public ResponseEntity<ApiError> handleInvalidReportStatusException(UserNotPartOfCompanyException ex) {
+        return new ResponseEntity<>(
+                new ApiError(ex.getMessage(),
+                        "The currently authenticated user is not owning the company with the provided id",
+                        LocalDateTime.now()),
+                HttpStatus.CONFLICT
+        );
+    }
+
+    /**
+     * Handles ReportAlreadyAcceptedException.
+     * Returns HTTP 409 when a report has been accepted by another company.
+     *
+     * @param ex the ReportAlreadyAcceptedException thrown
+     * @return ResponseEntity with ApiError and HTTP 409 status
+     */
+    @ExceptionHandler(ReportAlreadyAcceptedException.class)
+    public ResponseEntity<ApiError> handleReportAlreadyAcceptedException(ReportAlreadyAcceptedException ex) {
+        return new ResponseEntity<>(
+                new ApiError(ex.getMessage(),
+                        "The report has already been accepted by another company",
+                        LocalDateTime.now()),
+                HttpStatus.CONFLICT
+        );
+    }
+
+    /**
      * Handles DataAccessException from Spring Data.
      * Returns HTTP 500 for database operation failures with details.
      *

@@ -38,6 +38,10 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 public class CompanyService implements ICompanyService {
 
+    //Kell majd a company a feedback-el,
+    //Kell majd az add feedback
+    //Le kell tesztelni is
+
     private final CompanyRepository companyRepository;
     private final UserRepository userRepository;
     private final BuildingRepository buildingRepository;

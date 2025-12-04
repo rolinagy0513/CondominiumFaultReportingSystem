@@ -33,7 +33,7 @@ public class AuthenticationResponse {
 
   private String message;
   private UserResponseDTO user;
-  private List<Long> groupIds;
+  private Long groupId;
   private Role role;
   private ActiveApartmentRequest activeApartmentRequest;
   private ActiveCompanyRequest activeCompanyRequest;

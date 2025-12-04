@@ -7,6 +7,7 @@ import org.example.condominiumfaultreportingsystem.apartment.Apartment;
 import org.example.condominiumfaultreportingsystem.apartmentRequest.ApartmentRequest;
 import org.example.condominiumfaultreportingsystem.company.Company;
 import org.example.condominiumfaultreportingsystem.companyRequest.CompanyRequest;
+import org.example.condominiumfaultreportingsystem.eventHandler.events.ReportSubmittedEvent;
 import org.example.condominiumfaultreportingsystem.group.Group;
 import org.example.condominiumfaultreportingsystem.notificationHandler.notifications.*;
 import org.example.condominiumfaultreportingsystem.report.Report;
@@ -194,6 +195,19 @@ public class NotificationService {
 
         messagingTemplate.convertAndSendToUser(companyIdString, "/queue/notification", newReportCameNotification);
 
+    }
+
+    public void sendReportSubmittedNotification(Long residentId, Company company, Report report){
+
+        ReportSubmittedNotification reportSubmittedNotification = ReportSubmittedNotification.builder()
+                .message("A company has selected your report.")
+                .reportType(report.getReportType())
+                .companyName(company.getName())
+                .build();
+
+        String residentIdString = residentId.toString();
+
+        messagingTemplate.convertAndSendToUser(residentIdString,"/queue/notification", reportSubmittedNotification);
     }
 
 }

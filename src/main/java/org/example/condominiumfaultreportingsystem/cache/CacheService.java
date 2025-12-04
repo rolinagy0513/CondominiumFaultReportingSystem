@@ -52,4 +52,7 @@ public class CacheService {
     @CacheEvict(value = "reportByPrivateStatus", allEntries = true)
     public void evictAllPrivateReportsByStatusCache(){}
 
+    @CacheEvict(value = "privateReports", key = "#companyId")
+    public void evictPrivateReportsCache(Long companyId){}
+
 }

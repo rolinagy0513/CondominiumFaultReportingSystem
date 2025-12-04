@@ -16,6 +16,10 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     @Query("SELECT c FROM Company c WHERE c.user.id = :userId")
     Optional<Company> findCompanyWithUser(@Param("userId") Long userId);
 
+    @EntityGraph(attributePaths = "feedbacks")
+    @Query("SELECT c FROM Company c WHERE c.id = :companyId")
+    Optional<Company> findCompanyWithFeedbacks(@Param("companyId") Long companyId);
+
     @EntityGraph(attributePaths = "user")
     @Query("SELECT c FROM Company c WHERE c.id = :companyId")
     Optional<Company> findUserWithCompany(@Param("companyId") Long companyId);

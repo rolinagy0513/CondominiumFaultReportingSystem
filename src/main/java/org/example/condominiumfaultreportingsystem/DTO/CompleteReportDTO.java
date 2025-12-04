@@ -4,15 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.condominiumfaultreportingsystem.report.ReportPrivacy;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SubmitReportDTO {
+public class CompleteReportDTO {
 
-    private Long reportId;
-    private Long companyId;
+    private String companyName;
+    private String reportName;
+    private Integer roomNumber;
+
+    private Double cost;
+
 
 }

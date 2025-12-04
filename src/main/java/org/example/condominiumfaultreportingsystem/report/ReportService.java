@@ -1,6 +1,7 @@
 package org.example.condominiumfaultreportingsystem.report;
 
 import lombok.RequiredArgsConstructor;
+import org.example.condominiumfaultreportingsystem.DTO.CompleteReportDTO;
 import org.example.condominiumfaultreportingsystem.DTO.ReportDTO;
 import org.example.condominiumfaultreportingsystem.DTO.ReportRequestDTO;
 import org.example.condominiumfaultreportingsystem.apartment.Apartment;
@@ -8,16 +9,18 @@ import org.example.condominiumfaultreportingsystem.apartment.ApartmentRepository
 import org.example.condominiumfaultreportingsystem.cache.CacheService;
 import org.example.condominiumfaultreportingsystem.company.Company;
 import org.example.condominiumfaultreportingsystem.company.CompanyRepository;
+import org.example.condominiumfaultreportingsystem.company.ServiceType;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.NewPrivateReportCameEvent;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.NewPublicReportCameEvent;
+import org.example.condominiumfaultreportingsystem.eventHandler.events.ReportSubmittedEvent;
 import org.example.condominiumfaultreportingsystem.exception.*;
 import org.example.condominiumfaultreportingsystem.group.Group;
 import org.example.condominiumfaultreportingsystem.group.GroupRepository;
 import org.example.condominiumfaultreportingsystem.security.user.User;
 import org.example.condominiumfaultreportingsystem.security.user.UserService;
-import org.springframework.data.domain.Page;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -37,12 +40,12 @@ public class ReportService {
     private final ReportRepository reportRepository;
     private final GroupRepository groupRepository;
     private final ApartmentRepository apartmentRepository;
+    private final CompanyRepository companyRepository;
 
     private final UserService userService;
+    private final CacheService cacheService;
 
     private final ApplicationEventPublisher eventPublisher;
-    private final CacheService cacheService;
-    private final CompanyRepository companyRepository;
 
     @Transactional
     public ReportDTO sendPublicReport(ReportRequestDTO reportRequestDTO){
@@ -91,6 +94,7 @@ public class ReportService {
 
     }
 
+    @Transactional
     public ReportDTO sendPrivateReport(Long companyId, ReportRequestDTO reportRequestDTO){
 
         User user  = userService.getCurrentUserTemporary();
@@ -105,6 +109,12 @@ public class ReportService {
 
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(()-> new CompanyNotFoundException(companyId));
+
+        boolean isValid = validateServiceTypes(reportRequestDTO.getReportType(), company.getServiceType());
+
+        if (!isValid){
+            throw new ReportServiceTypeMismatchException(reportRequestDTO.getReportType(), company.getServiceType());
+        }
 
         List<Group> userGroups = groupRepository.findByUsersId(user.getId());
 
@@ -140,26 +150,114 @@ public class ReportService {
     }
 
     @Transactional
-    public ReportDTO submitReport(Long reportId, Long companyId, ReportPrivacy reportPrivacy){
+    public ReportDTO acceptReport(Long reportId, Long companyId){
 
-        Report report = reportRepository.findById(reportId)
-                .orElseThrow(ReportNotFoundException::new);
+        User user = userService.getCurrentUserTemporary();
+
+        Optional<Report> reportOpt = reportRepository.getReportByIdWithUser(reportId);
+
+        if (reportOpt.isEmpty()){
+            throw new ReportNotFoundException();
+        }
+
+        Report report = reportOpt.get();
+
+        if (!report.getReportStatus().equals(ReportStatus.SUBMITTED)){
+            throw new InvalidReportStatusException(report.getReportStatus());
+        }
 
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(()-> new CompanyNotFoundException(companyId));
 
-        report.setReportStatus(ReportStatus.IN_PROGRESS);
-
-        if (reportPrivacy == ReportPrivacy.PUBLIC){
-            report.setCompanyId(companyId);
+        if (!user.getCompany().equals(company)){
+            throw new UserNotPartOfCompanyException();
         }
+
+        boolean isValid = validateServiceTypes(report.getReportType(), company.getServiceType());
+
+        if (!isValid){
+            throw new ReportServiceTypeMismatchException(report.getReportType(), company.getServiceType());
+        }
+
+        if (report.getReportPrivacy() == ReportPrivacy.PUBLIC){
+            if (report.getCompanyId() != null) {
+                throw new ReportAlreadyAcceptedException();
+            }
+            report.setCompanyId(companyId);
+        } else {
+            if (!report.getCompanyId().equals(companyId)){
+                throw new RoleValidationException("This private report belongs to another company");
+            }
+        }
+
+        report.setReportStatus(ReportStatus.IN_PROGRESS);
+        reportRepository.save(report);
+
+        eventPublisher.publishEvent(
+                new ReportSubmittedEvent(report.getUser().getId(), company , report)
+        );
+
         cacheService.evictAllPublicReportsByStatusCache();
         cacheService.evictAllPrivateReportsByStatusCache();
 
-        reportRepository.save(report);
-
         return mapToDto(report);
 
+    }
+
+    @Transactional
+    public CompleteReportDTO completeReport(Long reportId, Long companyId, Double cost){
+
+        User user = userService.getCurrentUserTemporary();
+
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(()-> new CompanyNotFoundException(companyId));
+
+        if (!user.getCompany().equals(company)){
+            throw new UserNotPartOfCompanyException();
+        }
+
+        Report report = reportRepository.findById(reportId)
+                .orElseThrow(ReportNotFoundException::new);
+
+        if (!report.getReportStatus().equals(ReportStatus.IN_PROGRESS)){
+            throw new InvalidReportStatusException(ReportStatus.IN_PROGRESS);
+        }
+
+        if (!report.getCompanyId().equals(companyId)){
+            throw new RoleValidationException("This report is for another company");
+        }
+
+        report.setReportStatus(ReportStatus.DONE);
+        reportRepository.save(report);
+
+        cacheService.evictPrivateReportsCache(companyId);
+        cacheService.evictAllPublicReportsByStatusCache();
+        cacheService.evictAllPrivateReportsByStatusCache();
+
+
+        return CompleteReportDTO.builder()
+                .companyName(company.getName())
+                .reportName(report.getName())
+                .roomNumber(report.getRoomNumber())
+                .cost(cost)
+                .build();
+
+    }
+
+    @Async("asyncExecutor")
+    @Cacheable(value = "privateReports", key = "#companyId")
+    public CompletableFuture<List<ReportDTO>> getAcceptedReportsForCompany(Long companyId){
+
+        Optional<List<Report>> reportsOpt = reportRepository.getAllAcceptedReportsForCompany(companyId, ReportStatus.IN_PROGRESS);
+
+        if (reportsOpt.isEmpty()){
+            throw new ReportNotFoundException();
+        }
+
+        List<Report> reports = reportsOpt.get();
+        List<ReportDTO> reportDTOS = reports.stream().map(this::mapToDto).toList();
+
+        return CompletableFuture.completedFuture(reportDTOS);
     }
 
     @Async("asyncExecutor")
@@ -229,6 +327,18 @@ public class ReportService {
                 .orElseThrow(ReportNotFoundException::new);
 
         return mapToDto(report);
+
+    }
+
+    private boolean validateServiceTypes(ReportType reportType, ServiceType serviceType){
+
+        return switch (reportType) {
+            case ELECTRICITY, LIGHTNING -> serviceType == ServiceType.ELECTRICIAN;
+            case WATER_SUPPLY, SEWAGE, HEATING -> serviceType == ServiceType.PLUMBER;
+            case GARBAGE_COLLECTION -> serviceType == ServiceType.CLEANING;
+            case SECURITY -> serviceType == ServiceType.SECURITY;
+            case OTHER -> serviceType == ServiceType.OTHER;
+        };
 
     }
 
