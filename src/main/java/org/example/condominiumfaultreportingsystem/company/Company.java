@@ -1,6 +1,8 @@
 package org.example.condominiumfaultreportingsystem.company;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -42,6 +44,10 @@ public class Company {
     private String email;
     private String phoneNumber;
     private String address;
+
+    @Max(5)
+    @Min(1)
+    private Double overallRating;
 
     private String companyIntroduction;
 

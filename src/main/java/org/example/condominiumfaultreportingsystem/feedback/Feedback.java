@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.condominiumfaultreportingsystem.company.Company;
+import org.example.condominiumfaultreportingsystem.report.Report;
 
 import java.time.LocalDateTime;
 
@@ -25,12 +26,15 @@ public class Feedback {
 
     @Min(1)
     @Max(5)
-    private Integer rating;
+    private Double rating;
     private String message;
     private LocalDateTime createdAt;
 
     private String reviewerEmail;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "report_id", nullable = false, unique = true)
+    private Report report;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)

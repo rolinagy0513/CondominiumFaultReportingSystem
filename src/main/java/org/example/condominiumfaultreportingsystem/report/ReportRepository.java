@@ -1,5 +1,6 @@
 package org.example.condominiumfaultreportingsystem.report;
 
+import org.example.condominiumfaultreportingsystem.security.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -35,4 +36,5 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     @Query("SELECT r FROM Report r WHERE r.id = :reportId")
     Optional<Report> getReportByIdWithUser(@Param("reportId") Long reportId);
 
+    Long user(User user);
 }

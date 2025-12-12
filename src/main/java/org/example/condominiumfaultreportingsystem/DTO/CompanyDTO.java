@@ -21,6 +21,8 @@ public class CompanyDTO {
     private String phoneNumber;
     private String address;
 
+    private Double overallRating;
+
     private String companyIntroduction;
 
     @Enumerated(EnumType.STRING)

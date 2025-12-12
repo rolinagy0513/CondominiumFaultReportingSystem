@@ -8,6 +8,7 @@ import org.example.condominiumfaultreportingsystem.apartmentRequest.ApartmentReq
 import org.example.condominiumfaultreportingsystem.company.Company;
 import org.example.condominiumfaultreportingsystem.companyRequest.CompanyRequest;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.ReportSubmittedEvent;
+import org.example.condominiumfaultreportingsystem.feedback.Feedback;
 import org.example.condominiumfaultreportingsystem.group.Group;
 import org.example.condominiumfaultreportingsystem.notificationHandler.notifications.*;
 import org.example.condominiumfaultreportingsystem.report.Report;
@@ -208,6 +209,20 @@ public class NotificationService {
         String residentIdString = residentId.toString();
 
         messagingTemplate.convertAndSendToUser(residentIdString,"/queue/notification", reportSubmittedNotification);
+    }
+
+    public void sendFeedbackNotification(Feedback feedback, Long companyId){
+
+        FeedbackNotification feedbackNotification = FeedbackNotification.builder()
+                .senderEmail(feedback.getReviewerEmail())
+                .rating(feedback.getRating())
+                .message("A new feedback has came!")
+                .build();
+
+        String companyIdString = companyId.toString();
+
+        messagingTemplate.convertAndSendToUser(companyIdString,"queue/notification", feedbackNotification);
+
     }
 
 }

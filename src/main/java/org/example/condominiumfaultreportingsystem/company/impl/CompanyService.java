@@ -38,10 +38,6 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 public class CompanyService implements ICompanyService {
 
-    //Kell majd a company a feedback-el,
-    //Kell majd az add feedback
-    //Le kell tesztelni is
-
     private final CompanyRepository companyRepository;
     private final UserRepository userRepository;
     private final BuildingRepository buildingRepository;
@@ -148,6 +144,7 @@ public class CompanyService implements ICompanyService {
 
     }
 
+
     @Transactional
     public void removeCompany(RemovalDTO removalDTO, Principal principal){
 
@@ -207,6 +204,18 @@ public class CompanyService implements ICompanyService {
 
     }
 
+    public double calculateOverallRating(Long companyId, Double overallRating, Double newRating){
+
+        Integer numberOfRatings = companyRepository.countFeedbacksByCompanyId(companyId);
+
+        if (numberOfRatings == 0 || overallRating == null) {
+            return newRating.doubleValue();
+        }
+
+        return (overallRating * numberOfRatings + newRating) / (numberOfRatings + 1);
+
+    }
+
     private CompanyDTO mapToDto(Company company){
 
         return CompanyDTO.builder()
@@ -215,6 +224,7 @@ public class CompanyService implements ICompanyService {
                 .email(company.getEmail())
                 .phoneNumber(company.getPhoneNumber())
                 .address(company.getAddress())
+                .overallRating(company.getOverallRating())
                 .companyIntroduction(company.getCompanyIntroduction())
                 .serviceType(company.getServiceType())
                 .build();

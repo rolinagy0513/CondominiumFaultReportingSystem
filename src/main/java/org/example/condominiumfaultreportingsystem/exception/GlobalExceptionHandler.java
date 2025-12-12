@@ -528,6 +528,23 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handles CanNotSendFeedbackException.
+     * Returns HTTP 409 when the resident can not send the feedback for some reason like invalid companyId or status.
+     *
+     * @param ex the CanNotSendFeedbackException thrown
+     * @return ResponseEntity with ApiError and HTTP 409 status
+     */
+    @ExceptionHandler(CanNotSendFeedbackException.class)
+    public ResponseEntity<ApiError> handleCanNotSendFeedbackException(CanNotSendFeedbackException ex) {
+        return new ResponseEntity<>(
+                new ApiError(ex.getMessage(),
+                        "The feedback can not be sent.",
+                        LocalDateTime.now()),
+                HttpStatus.CONFLICT
+        );
+    }
+
+    /**
      * Handles DataAccessException from Spring Data.
      * Returns HTTP 500 for database operation failures with details.
      *

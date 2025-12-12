@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.condominiumfaultreportingsystem.feedback.Feedback;
 import org.example.condominiumfaultreportingsystem.group.Group;
 import org.example.condominiumfaultreportingsystem.security.user.User;
 
@@ -23,7 +24,7 @@ import java.time.LocalDateTime;
                         attributeNodes = {
                                 @NamedAttributeNode("group"),
                                 @NamedAttributeNode("user")
-                        })
+                        }),
         }
 )
 public class Report {
@@ -50,6 +51,9 @@ public class Report {
     private LocalDateTime createdAt;
 
     private Long companyId;
+
+    @OneToOne(mappedBy = "report", cascade = CascadeType.ALL)
+    private Feedback feedback;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
