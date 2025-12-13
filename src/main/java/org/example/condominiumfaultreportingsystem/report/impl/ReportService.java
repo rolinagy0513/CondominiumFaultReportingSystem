@@ -1,9 +1,10 @@
-package org.example.condominiumfaultreportingsystem.report;
+package org.example.condominiumfaultreportingsystem.report.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.condominiumfaultreportingsystem.DTO.CompleteReportDTO;
 import org.example.condominiumfaultreportingsystem.DTO.ReportDTO;
 import org.example.condominiumfaultreportingsystem.DTO.ReportRequestDTO;
+import org.example.condominiumfaultreportingsystem.DTO.UserDTO;
 import org.example.condominiumfaultreportingsystem.apartment.Apartment;
 import org.example.condominiumfaultreportingsystem.apartment.ApartmentRepository;
 import org.example.condominiumfaultreportingsystem.cache.CacheService;
@@ -16,6 +17,7 @@ import org.example.condominiumfaultreportingsystem.eventHandler.events.ReportSub
 import org.example.condominiumfaultreportingsystem.exception.*;
 import org.example.condominiumfaultreportingsystem.group.Group;
 import org.example.condominiumfaultreportingsystem.group.GroupRepository;
+import org.example.condominiumfaultreportingsystem.report.*;
 import org.example.condominiumfaultreportingsystem.security.user.User;
 import org.example.condominiumfaultreportingsystem.security.user.UserService;
 import org.springframework.cache.annotation.Cacheable;
@@ -35,7 +37,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
-public class ReportService {
+public class ReportService implements IReportService{
 
     private final ReportRepository reportRepository;
     private final GroupRepository groupRepository;
@@ -321,10 +323,33 @@ public class ReportService {
 
     }
 
+    public List<ReportDTO> getInProgressReport(){
+
+        UserDTO currentUser = userService.getCurrentUser();
+
+        Optional<List<Report>> reportOpt = reportRepository.findReportByUser(currentUser.getId(), ReportStatus.IN_PROGRESS);
+
+        if (reportOpt.isEmpty()){
+            throw new ReportNotFoundException();
+        }
+
+        List<Report> reports = reportOpt.get();
+
+        return reports.stream().map(this::mapToDto).toList();
+
+    }
+
     public ReportDTO getReportById(Long reportId){
 
-        Report report = reportRepository.findById(reportId)
-                .orElseThrow(ReportNotFoundException::new);
+        UserDTO currentUser = userService.getCurrentUser();
+
+        Optional<Report> reportOpt = reportRepository.getReportByIdAndUserId(reportId,currentUser.getId());
+
+        if (reportOpt.isEmpty()){
+            throw new ReportNotFoundException();
+        }
+
+        Report report = reportOpt.get();
 
         return mapToDto(report);
 

@@ -13,6 +13,9 @@ import java.util.Optional;
 
 public interface ReportRepository extends JpaRepository<Report, Long> {
 
+    @Query("SELECT r FROM Report r WHERE r.user.id = :userId AND r.reportStatus = :reportStatus")
+    Optional<List<Report>> findReportByUser(@Param("userId") Long userId, @Param("reportStatus") ReportStatus reportStatus);
+
     @EntityGraph(attributePaths = {"group", "user"})
     @Query("SELECT r FROM Report r WHERE r.reportPrivacy = :reportPrivacy AND r.reportStatus = :reportStatus AND r.group.id = :groupId")
     Optional<Page<Report>> getAllSubmittedPublicReportsInGroup(
@@ -35,6 +38,9 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     @EntityGraph(attributePaths = "user")
     @Query("SELECT r FROM Report r WHERE r.id = :reportId")
     Optional<Report> getReportByIdWithUser(@Param("reportId") Long reportId);
+
+    @Query("SELECT r FROM Report r WHERE r.id = :reportId AND r.user.id = :userId")
+    Optional<Report> getReportByIdAndUserId(@Param("reportId") Long reportId, @Param("userId") Long userId);
 
     Long user(User user);
 }

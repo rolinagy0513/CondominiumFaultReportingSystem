@@ -3,7 +3,6 @@ package org.example.condominiumfaultreportingsystem.company;
 import org.example.condominiumfaultreportingsystem.DTO.CompanyDTO;
 import org.example.condominiumfaultreportingsystem.DTO.RemovalDTO;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.security.Principal;
 import java.util.List;

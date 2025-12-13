@@ -5,6 +5,7 @@ import org.example.condominiumfaultreportingsystem.DTO.CompleteReportDTO;
 import org.example.condominiumfaultreportingsystem.DTO.ReportDTO;
 import org.example.condominiumfaultreportingsystem.DTO.ReportRequestDTO;
 import org.example.condominiumfaultreportingsystem.DTO.SubmitReportDTO;
+import org.example.condominiumfaultreportingsystem.report.impl.ReportService;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
@@ -84,6 +85,12 @@ public class ReportController {
             @PathVariable Long reportId
     ){
         return reportService.getReportById(reportId);
+    }
+
+    @GetMapping("/resident/report/getInProgressReport")
+    public List<ReportDTO> getInProgressReport(
+    ){
+        return reportService.getInProgressReport();
     }
 
 }
