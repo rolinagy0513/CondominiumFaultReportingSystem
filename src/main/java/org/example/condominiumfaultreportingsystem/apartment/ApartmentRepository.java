@@ -41,4 +41,16 @@ public interface ApartmentRepository extends JpaRepository<Apartment,Long> {
     @EntityGraph(attributePaths = "owner")
     @Query("SELECT a FROM Apartment a WHERE a.owner.id = :ownerId")
     Optional<Apartment> findByApartmentNumberAndFloor(@Param("ownerId") Long ownerId);
+
+    //For the excel feature
+    @Query("SELECT a FROM Apartment a " +
+            "JOIN FETCH a.building b " +
+            "WHERE b.buildingNumber = :buildingNumber " +
+            "AND a.floor = :floor " +
+            "AND a.apartmentNumber = :apartmentNumber")
+    Optional<Apartment> findByBuildingNumberAndFloorAndApartmentNumber(
+            @Param("buildingNumber") Integer buildingNumber,
+            @Param("floor") Integer floor,
+            @Param("apartmentNumber") Integer apartmentNumber
+    );
 }
