@@ -103,6 +103,7 @@ public class AuthenticationService {
             .userName(request.getFirstName() + " " + request.getLastName())
             .email(request.getEmail())
             .password(passwordEncoder.encode(request.getPassword()))
+            .mustChangePassword(false)
             .build();
     var savedUser = repository.save(user);
     var jwtToken = jwtService.generateToken(user);
@@ -202,6 +203,7 @@ public class AuthenticationService {
             .groupId(groupId)
             .activeApartmentRequest(activeApartmentRequest)
             .activeCompanyRequest(activeCompanyRequest)
+            .mustChangePassword(user.isMustChangePassword())
             .build();
   }
 

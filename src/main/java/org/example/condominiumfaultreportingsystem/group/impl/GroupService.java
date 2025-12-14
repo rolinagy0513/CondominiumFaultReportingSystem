@@ -74,6 +74,10 @@ public class GroupService implements IGroupService {
     @Transactional(propagation = Propagation.REQUIRED)
     public GroupDTO addUserToGroup(Integer buildingNumber, String buildingAddress, User userToAdd){
 
+        if (userToAdd.getGroups() == null){
+            userToAdd.setGroups(new ArrayList<>());
+        }
+
         String uniqueKey = createGroupIdentifier(buildingNumber,buildingAddress);
 
         Optional<Group> existingGroupOpt = groupRepository.findWithUsersByGroupName(uniqueKey);

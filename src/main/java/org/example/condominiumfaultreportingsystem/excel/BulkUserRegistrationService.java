@@ -10,7 +10,9 @@ import org.example.condominiumfaultreportingsystem.apartment.ApartmentRepository
 import org.example.condominiumfaultreportingsystem.apartment.ApartmentStatus;
 import org.example.condominiumfaultreportingsystem.building.Building;
 import org.example.condominiumfaultreportingsystem.building.BuildingRepository;
+import org.example.condominiumfaultreportingsystem.cache.CacheService;
 import org.example.condominiumfaultreportingsystem.exception.ApartmentNotFoundException;
+import org.example.condominiumfaultreportingsystem.group.impl.GroupService;
 import org.example.condominiumfaultreportingsystem.security.user.Role;
 import org.example.condominiumfaultreportingsystem.security.user.User;
 import org.example.condominiumfaultreportingsystem.security.user.UserRepository;
@@ -34,6 +36,8 @@ public class BulkUserRegistrationService {
     private final ApartmentRepository apartmentRepository;
     private final PasswordEncoder passwordEncoder;
     private final ExcelParserService excelParserService;
+    private final GroupService groupService;
+    private final CacheService cacheService;
 
     @Transactional
     public ExcelUploadResultDTO processExcelUpload(MultipartFile file) throws IOException {
@@ -61,10 +65,7 @@ public class BulkUserRegistrationService {
                     continue;
                 }
 
-                // Step 2: Register user
                 User user = registerUser(data);
-
-                // Step 3: Assign to building/apartment
                 assignUserToApartment(user, data);
 
                 createdUsers.add(mapToUserDTO(user));
@@ -93,7 +94,6 @@ public class BulkUserRegistrationService {
 
     private ValidationResult validateUploadData(ExcelUploadDTO data) {
 
-        // Check required fields
         if (data.getEmail() == null || data.getEmail().isBlank()) {
             return ValidationResult.invalid("Email is required", ErrorType.INVALID_DATA);
         }
@@ -102,7 +102,6 @@ public class BulkUserRegistrationService {
             return ValidationResult.invalid("First name is required", ErrorType.INVALID_DATA);
         }
 
-        // Check if email already exists
         if (userRepository.existsByEmail((data.getEmail()))) {
             return ValidationResult.invalid(
                     "User with email " + data.getEmail() + " already exists",
@@ -110,12 +109,10 @@ public class BulkUserRegistrationService {
             );
         }
 
-        // Validate email format
         if (!isValidEmail(data.getEmail())) {
             return ValidationResult.invalid("Invalid email format", ErrorType.INVALID_DATA);
         }
 
-        // Check if building exists (if provided)
         if (data.getBuildingNumber() != null) {
             Building building = buildingRepository
                     .findByBuildingNumber(data.getBuildingNumber())
@@ -129,7 +126,6 @@ public class BulkUserRegistrationService {
             }
         }
 
-        // Check if apartment exists and is available
         if (data.getBuildingNumber() != null && data.getApartmentNumber() != null && data.getFloor() != null) {
             Optional<Apartment> apartmentOpt = apartmentRepository
                     .findByBuildingNumberAndFloorAndApartmentNumber(
@@ -148,7 +144,6 @@ public class BulkUserRegistrationService {
 
             Apartment apartment = apartmentOpt.get();
 
-            // Check if apartment is already occupied
             if (apartment.getOwner() != null) {
                 return ValidationResult.invalid(
                         String.format("Apartment %d on floor %d is already occupied by %s",
@@ -158,7 +153,6 @@ public class BulkUserRegistrationService {
                 );
             }
 
-            // Check if apartment status allows assignment
             if (apartment.getStatus() != ApartmentStatus.AVAILABLE) {
                 return ValidationResult.invalid(
                         "Apartment is not available for assignment (Status: " + apartment.getStatus() + ")",
@@ -178,7 +172,9 @@ public class BulkUserRegistrationService {
                 .email(data.getEmail())
                 .password(passwordEncoder.encode(data.getPassword() != null ?
                         data.getPassword() : generateDefaultPassword()))
-                .role(data.getRole() != null ? data.getRole() : Role.USER)
+                .mustChangePassword(true)
+                .role(data.getRole() != null ? data.getRole() : Role.RESIDENT)
+                .groups(new ArrayList<>())
                 .build();
 
         return userRepository.save(user);
@@ -208,6 +204,12 @@ public class BulkUserRegistrationService {
         apartment.setStatus(ApartmentStatus.OCCUPIED);
         apartmentRepository.save(apartment);
 
+        groupService.addUserToGroup(data.getBuildingNumber(), data.getBuildingAddress(), user);
+
+        cacheService.evictAAllApartmentsByBuildingCache();
+        cacheService.evictAllApartmentByFloorAndBuildingCache();
+        cacheService.evictAvailableApartmentsInBuildingCache();
+
         log.info("Assigned user {} to apartment {} in building {}",
                 user.getEmail(), apartment.getApartmentNumber(), data.getBuildingNumber());
     }
@@ -228,7 +230,6 @@ public class BulkUserRegistrationService {
                 .build();
     }
 
-    // Validation helper class
     @Data
     @AllArgsConstructor
     private static class ValidationResult {

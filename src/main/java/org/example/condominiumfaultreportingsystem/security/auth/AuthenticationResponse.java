@@ -37,5 +37,6 @@ public class AuthenticationResponse {
   private Role role;
   private ActiveApartmentRequest activeApartmentRequest;
   private ActiveCompanyRequest activeCompanyRequest;
+  private boolean mustChangePassword;
 
 }

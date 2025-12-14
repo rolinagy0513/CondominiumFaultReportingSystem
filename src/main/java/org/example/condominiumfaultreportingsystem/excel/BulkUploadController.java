@@ -7,7 +7,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource; // ✅ CORRECT IMPORT
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,6 +18,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+
+//Frontend reagáljon arra ha true a pssword change
+//Kell az email service
+//Erre még rakhatnák methodokat hogy az adminnak ne kellejn beírnia semmit csak a user-adatait plussz a floor és szobaszám
+//A building num és adress egyszer lenne beírva a role pedig nem is
+//Change password emailes baszás
 
 @RestController
 @RequestMapping("/api/admin/bulk-upload")
@@ -31,7 +37,6 @@ public class BulkUploadController {
             @RequestParam("file") MultipartFile file) {
 
         try {
-            // Validate file
             if (file.isEmpty()) {
                 return ResponseEntity.badRequest().build();
             }
@@ -63,13 +68,13 @@ public class BulkUploadController {
         }
     }
 
-    @GetMapping("/template")
+    @GetMapping("/templateDownload")
     public ResponseEntity<Resource> downloadTemplate() throws IOException {
 
         Workbook workbook = new XSSFWorkbook();
+
         Sheet sheet = workbook.createSheet("Users");
 
-        // Create header row
         Row headerRow = sheet.createRow(0);
         String[] headers = {
                 "First Name", "Last Name", "Email", "Password", "Role",
@@ -81,19 +86,18 @@ public class BulkUploadController {
             cell.setCellValue(headers[i]);
         }
 
-        // Add example row
-        Row exampleRow = sheet.createRow(1);
-        exampleRow.createCell(0).setCellValue("John");
-        exampleRow.createCell(1).setCellValue("Doe");
-        exampleRow.createCell(2).setCellValue("john.doe@example.com");
-        exampleRow.createCell(3).setCellValue("password123");
-        exampleRow.createCell(4).setCellValue("USER");
-        exampleRow.createCell(5).setCellValue(1);
-        exampleRow.createCell(6).setCellValue("123 Main St");
-        exampleRow.createCell(7).setCellValue(2);
-        exampleRow.createCell(8).setCellValue(201);
+        //Example rows for the excel file if needed
+//        Row exampleRow = sheet.createRow(1);
+//        exampleRow.createCell(0).setCellValue("John");
+//        exampleRow.createCell(1).setCellValue("Doe");
+//        exampleRow.createCell(2).setCellValue("john.doe@example.com");
+//        exampleRow.createCell(3).setCellValue("password123");
+//        exampleRow.createCell(4).setCellValue("RESIDENT");
+//        exampleRow.createCell(5).setCellValue(1);
+//        exampleRow.createCell(6).setCellValue("123 Main St");
+//        exampleRow.createCell(7).setCellValue(2);
+//        exampleRow.createCell(8).setCellValue(201);
 
-        // Write to byte array
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         workbook.write(outputStream);
         workbook.close();

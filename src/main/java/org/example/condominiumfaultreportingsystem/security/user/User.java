@@ -54,6 +54,8 @@ public class User implements UserDetails {
   @Enumerated(EnumType.STRING)
   private Role role;
 
+  private boolean mustChangePassword;
+
   @OneToMany(mappedBy = "user")
   private List<Token> tokens;
 

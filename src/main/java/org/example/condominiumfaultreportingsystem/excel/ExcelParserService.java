@@ -3,6 +3,7 @@ package org.example.condominiumfaultreportingsystem.excel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
+import org.example.condominiumfaultreportingsystem.exception.InvalidRoleException;
 import org.example.condominiumfaultreportingsystem.security.user.Role;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,11 +24,10 @@ public class ExcelParserService {
         try (Workbook workbook = WorkbookFactory.create(file.getInputStream())) {
             Sheet sheet = workbook.getSheetAt(0);
 
-            // Skip header row
             int rowNumber = 1;
 
             for (Row row : sheet) {
-                if (row.getRowNum() == 0) continue; // Skip header
+                if (row.getRowNum() == 0) continue;
 
                 try {
                     ExcelUploadDTO dto = ExcelUploadDTO.builder()
@@ -47,7 +47,6 @@ public class ExcelParserService {
 
                 } catch (Exception e) {
                     log.error("Error parsing row {}: {}", rowNumber, e.getMessage());
-                    // You can collect these errors and return them
                 }
             }
         }
@@ -83,12 +82,12 @@ public class ExcelParserService {
     }
 
     private Role parseRole(String roleString) {
-        if (roleString == null) return Role.USER;
+        if (roleString == null) return Role.RESIDENT;
 
         try {
             return Role.valueOf(roleString.toUpperCase().trim());
-        } catch (IllegalArgumentException e) {
-            return Role.USER;
+        } catch (InvalidRoleException e) {
+            return Role.RESIDENT;
         }
     }
 
