@@ -16,4 +16,5 @@ public class ExcelUploadResultDTO {
     private List<ExcelUploadErrorDTO> errors;
     private List<UserDTO> createdUsers;
 
+
 }

@@ -1,6 +1,7 @@
 package org.example.condominiumfaultreportingsystem.excel;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -65,10 +66,14 @@ public class BulkUserRegistrationService {
                     continue;
                 }
 
-                User user = registerUser(data);
-                assignUserToApartment(user, data);
+                UserRegistrationResult userData = registerUser(data);
+                assignUserToApartment(userData.getUser(), data);
 
-                createdUsers.add(mapToUserDTO(user));
+                log.info("THIS IS THE NEEDED LOG");
+                log.info("Generated password for {}: {}", userData.getUser().getEmail(), userData.getPlainPassword());
+                log.info("END OF THE NEEDED LOG");
+
+                createdUsers.add(mapToUserDTO(userData.getUser()));
                 successCount++;
 
             } catch (Exception e) {
@@ -164,20 +169,27 @@ public class BulkUserRegistrationService {
         return ValidationResult.valid();
     }
 
-    private User registerUser(ExcelUploadDTO data) {
+    private UserRegistrationResult registerUser(ExcelUploadDTO data) {
+
+        String plainPassword = data.getPassword() != null ?
+                data.getPassword() : generateDefaultPassword();
 
         User user = User.builder()
                 .firstname(data.getFirstname())
                 .lastname(data.getLastname())
                 .email(data.getEmail())
-                .password(passwordEncoder.encode(data.getPassword() != null ?
-                        data.getPassword() : generateDefaultPassword()))
+                .password(passwordEncoder.encode(plainPassword))
                 .mustChangePassword(true)
                 .role(data.getRole() != null ? data.getRole() : Role.RESIDENT)
                 .groups(new ArrayList<>())
                 .build();
 
-        return userRepository.save(user);
+        userRepository.save(user);
+
+        return UserRegistrationResult.builder()
+                .user(user)
+                .plainPassword(plainPassword)
+                .build();
     }
 
     private void assignUserToApartment(User user, ExcelUploadDTO data) {

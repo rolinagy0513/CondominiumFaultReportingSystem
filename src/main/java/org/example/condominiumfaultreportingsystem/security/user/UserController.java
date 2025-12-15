@@ -30,7 +30,7 @@ public class UserController {
      * @param connectedUser the security principal of the authenticated user
      * @return HTTP 200 OK on successful password change
      */
-    @PatchMapping("/changePassword")
+    @PatchMapping("/resident/changePassword")
     public ResponseEntity<?> changePassword(
           @RequestBody ChangePasswordRequest request,
           Principal connectedUser

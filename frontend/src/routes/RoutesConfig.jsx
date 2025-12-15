@@ -9,6 +9,7 @@ import ResidentRequest from "../pages/role-selection/ResidentRequest.jsx"
 import CompanyRequest from "../pages/role-selection/CompanyRequest.jsx"
 import ResidentPage from "../pages/resident/ResidentPage.jsx";
 import CompanyPage from "../pages/company/CompanyPage.jsx";
+import PasswordChangePage from "../pages/passwordChange/PasswordChangePage.jsx";
 
 export const AuthRoutes = () =>{
     return(
@@ -27,6 +28,7 @@ export const MainRoutes = () => {
             <Route path="/company-request" element={<CompanyRequest/>}/>
             <Route path="/resident-page" element={<ResidentPage/>}/>
             <Route path="/company-page" element={<CompanyPage/>}/>
+            <Route path="/password-change" element={<PasswordChangePage/>}/>
         </Routes>
     )
 }

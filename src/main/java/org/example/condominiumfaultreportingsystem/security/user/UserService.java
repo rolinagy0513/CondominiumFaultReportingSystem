@@ -4,10 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.example.condominiumfaultreportingsystem.DTO.UserDTO;
 import org.example.condominiumfaultreportingsystem.DTO.UserWithRoleDTO;
 import org.example.condominiumfaultreportingsystem.company.Company;
-import org.example.condominiumfaultreportingsystem.exception.CompanyNotFoundException;
-import org.example.condominiumfaultreportingsystem.exception.InvalidRoleException;
-import org.example.condominiumfaultreportingsystem.exception.RoleValidationException;
-import org.example.condominiumfaultreportingsystem.exception.UserNotFoundException;
+import org.example.condominiumfaultreportingsystem.exception.*;
+import org.example.condominiumfaultreportingsystem.security.auth.AuthenticationService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -155,7 +153,14 @@ public class UserService {
             throw new IllegalStateException("Password are not the same");
         }
 
+        String validationError = validatePassword(request.getNewPassword(), request.getConfirmationPassword());
+
+        if (validationError != null){
+            throw new InvalidPasswordException(validationError);
+        }
+
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.setMustChangePassword(false);
 
         userRepository.save(user);
     }
@@ -228,5 +233,28 @@ public class UserService {
             throw new RoleValidationException("Cannot switch directly between company and resident roles");
         }
 
+    }
+
+    /**
+     * Validates a password against the confirmation password and strength requirements.
+     *
+     * @param password        The password to validate.
+     * @param confirmPassword The confirmation password to match against.
+     * @return A validation error message if invalid; otherwise {@code null}.
+     */
+    public String validatePassword(String password, String confirmPassword) {
+        if (!password.equals(confirmPassword)) {
+            return "Passwords do not match.";
+        }
+
+        if (password.length() < 8) {
+            return "Password must be at least 8 characters long.";
+        }
+
+        if (!password.matches(".*\\d.*")) {
+            return "Password must contain at least one number.";
+        }
+
+        return null;
     }
 }

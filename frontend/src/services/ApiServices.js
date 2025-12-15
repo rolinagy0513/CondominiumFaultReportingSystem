@@ -148,6 +148,57 @@ const apiServices = {
     },
 
     /**
+     * Sends a PATCH request to the provided URL with optional JSON data.
+     *
+     * @param {string} url - The endpoint to send the PATCH request to.
+     * @param {Object} [data=null] - Optional data object to be sent as JSON in the request body.
+     * @returns {Promise<Object|string|null>} - Parsed JSON response from the server, plain text if JSON parsing fails, or null if response body is empty.
+     * @throws {Error} - Throws an error if the request fails or returns a non-OK response.
+     */
+
+    patch: async (url, data = null) => {
+        try {
+            const headers = {
+                "Content-Type": "application/json"
+            };
+
+            const body = JSON.stringify(data);
+
+            const response = await fetch(url, {
+                method: "PATCH",
+                headers: headers,
+                credentials: "include",
+                body: body
+            });
+
+            if (!response.ok) {
+                let errorData;
+                try {
+                    errorData = await response.json();
+                } catch {
+                    errorData = await response.text();
+                }
+                throw new Error(errorData?.message || errorData || "Request failed");
+            }
+
+            const text = await response.text();
+            if (!text || text.trim().length === 0) {
+                return null;
+            }
+
+            try {
+                return JSON.parse(text);
+            } catch {
+                return text;
+            }
+
+        } catch (error) {
+            console.error("Api error: " + error.message);
+            throw error;
+        }
+    },
+
+    /**
      * Sends a DELETE request to the provided URL.
      *
      * @param {string} url - The endpoint to send the DELETE request to.

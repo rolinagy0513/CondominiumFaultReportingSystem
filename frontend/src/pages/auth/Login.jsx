@@ -6,12 +6,14 @@ import apiServices from "../../services/ApiServices.js";
 import {FeedbackContext} from "../../context/general/FeedbackContext.jsx";
 import {AuthContext} from "../../context/auth/AuthContext.jsx";
 import {UserContext} from "../../context/general/UserContext.jsx";
+import {RoleSelectionContext} from "../../context/role-selection/RoleSelectionContext.jsx";
 
 import AuthForm from "./components/AuthForm.jsx";
 import loginImage from "../../assets/building.png";
 
 import "./styles/Login.css"
-import {RoleSelectionContext} from "../../context/role-selection/RoleSelectionContext.jsx";
+
+//Meg kell oldani hogy ha van a fal akkor ne mentesen el semmit a local storag-ba
 
 const Login = () =>{
 
@@ -109,7 +111,8 @@ const Login = () =>{
                 navigate("/admin-panel")
             }
 
-            if (response.role === RESIDENT_ROLE){
+            if (response.role === RESIDENT_ROLE && !response.mustChangePassword){
+
                 localStorage.setItem("residentGroupId",response.groupId);
                 localStorage.setItem("authenticatedResidentId",response.user.id);
                 localStorage.setItem("authenticatedResidentUserName",response.user.userName);
@@ -119,7 +122,15 @@ const Login = () =>{
                 console.log("  - authenticatedResidentId:", localStorage.getItem("authenticatedResidentId"));
                 console.log("  - authenticatedResidentUserName:", localStorage.getItem("authenticatedResidentUserName"));
 
-                navigate("/resident-page")
+
+                console.log(response)
+
+
+                if(response.mustChangePassword){
+                    navigate("/password-change")
+                } else{
+                    navigate("/resident-page")
+                }
             }
 
             if(response.role === COMPANY_ROLE){
