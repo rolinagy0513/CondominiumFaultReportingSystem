@@ -31,7 +31,6 @@
 }
 
 .back-button:hover {
-    background: #2d3748;
     transform: translateY(-1px);
 }
 

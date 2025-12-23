@@ -180,7 +180,7 @@ public class BulkUserRegistrationService {
                 .email(data.getEmail())
                 .password(passwordEncoder.encode(plainPassword))
                 .mustChangePassword(true)
-                .role(data.getRole() != null ? data.getRole() : Role.RESIDENT)
+                .role(Role.RESIDENT)
                 .groups(new ArrayList<>())
                 .build();
 

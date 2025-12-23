@@ -236,6 +236,33 @@ const apiServices = {
             console.error("Api error: " + error.message);
             throw error;
         }
+    },
+
+    /**
+     * Downloads a file from the given URL.
+     *
+     * @param {string} url - The endpoint URL to download from.
+     * @returns {Promise<Blob>} - The file as a Blob.
+     * @throws {Error} - If the request fails or returns a non-OK status.
+     */
+    download: async (url) => {
+        try {
+            const response = await fetch(url, {
+                method: "GET",
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || "Download failed");
+            }
+
+            return response.blob();
+
+        } catch (error) {
+            console.error("Download error: " + error.message)
+            throw error;
+        }
     }
 
 }

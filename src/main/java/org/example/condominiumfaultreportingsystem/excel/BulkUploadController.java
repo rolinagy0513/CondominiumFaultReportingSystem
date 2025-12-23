@@ -19,12 +19,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-//Frontend reagáljon arra ha true a pssword change
-//Kell az email service
-//Erre még rakhatnák methodokat hogy az adminnak ne kellejn beírnia semmit csak a user-adatait plussz a floor és szobaszám
-//A building num és adress egyszer lenne beírva a role pedig nem is
-//Change password emailes baszás
-
 @RestController
 @RequestMapping("/api/admin/bulk-upload")
 @RequiredArgsConstructor
@@ -77,7 +71,7 @@ public class BulkUploadController {
 
         Row headerRow = sheet.createRow(0);
         String[] headers = {
-                "First Name", "Last Name", "Email", "Password", "Role",
+                "First Name", "Last Name", "Email", "Password",
                 "Building Number", "Building Address", "Floor", "Apartment Number"
         };
 

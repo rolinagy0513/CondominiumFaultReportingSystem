@@ -24,10 +24,12 @@ export const AddBuildingProvider = ({ children }) => {
         overrides:[],
     });
 
+    const[addWithExcel, setAddWithExcel] = useState(false);
 
     return (
         <AddBuildingContext.Provider value={{
-            addBuildingFormData, setAddBuildingFormData
+            addBuildingFormData, setAddBuildingFormData,
+            addWithExcel, setAddWithExcel
         }}>
             {children}
         </AddBuildingContext.Provider>

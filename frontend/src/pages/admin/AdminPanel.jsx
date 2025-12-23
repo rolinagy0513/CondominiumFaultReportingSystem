@@ -10,6 +10,10 @@ import {AdminPanelContext} from "../../context/admin/AdminPanelContext.jsx";
 import {PaginationContext} from "../../context/general/PaginationContext.jsx";
 import {AdminModalContext} from "../../context/admin/AdminModalContext.jsx";
 import {AdminUserContext} from "../../context/admin/AdminUserContext.jsx";
+import {BuildingContext} from "../../context/admin/BuildingContext.jsx";
+import {ApartmentContext} from "../../context/admin/ApartmentContext.jsx";
+import {NotificationContext} from "../../context/admin/NotificationContext.jsx";
+import {CompanyContext} from "../../context/admin/CompanyContext.jsx";
 
 import SideBar from "./components/SideBar.jsx";
 import TopHeader from "./components/TopHeader.jsx";
@@ -19,17 +23,13 @@ import CompanyRequestNotification from "./components/CompanyRequestNotification.
 import ApartmentRequestNotification from "./components/ApartmentRequestNotification.jsx";
 import RemovalModal from "./components/RemoveModal.jsx";
 
-import {BuildingContext} from "../../context/admin/BuildingContext.jsx";
-import {ApartmentContext} from "../../context/admin/ApartmentContext.jsx";
-import {NotificationContext} from "../../context/admin/NotificationContext.jsx";
-import {CompanyContext} from "../../context/admin/CompanyContext.jsx";
-
 import {useBuildings} from "../../hooks/useBuildings.js";
-
-import "./styles/AdminPanel.css";
 import {useApartments} from "../../hooks/useApartments.js";
 import {useCompanies} from "../../hooks/useCompanies.js";
 import {useNotifications} from "../../hooks/useNotifications.js";
+import {useExcelOperations} from "../../hooks/useExcelOperations.js";
+
+import "./styles/AdminPanel.css";
 
 const AdminPanel = () => {
 
@@ -113,8 +113,12 @@ const AdminPanel = () => {
         modalTitleText, setModalTitleText
     } = useContext(AdminModalContext);
 
+    const {
+        addBuildingFormData, setAddBuildingFormData,
+        addWithExcel, setAddWithExcel
+    } = useContext(AddBuildingContext);
+
     const {adminGroupId, authenticatedAdminUserName} = useContext(AdminUserContext);
-    const {addBuildingFormData, setAddBuildingFormData} = useContext(AddBuildingContext);
     const {isLoading, setIsLoading, message, setMessage} = useContext(FeedbackContext);
 
     const { getAllBuildings, addBuilding } = useBuildings(
@@ -154,6 +158,8 @@ const AdminPanel = () => {
         SOCK_URL, adminGroupId, setCompanyNotification,
         setApartmentNotification, setNewNotification
     );
+
+    const{ getExcelTemplate, uploadExcelFile } = useExcelOperations();
 
     const subscriptionRef = useRef(null);
 
@@ -360,6 +366,10 @@ const AdminPanel = () => {
                     setModalText={setModalText}
                     setModalTitleText={setModalTitleText}
                     handleAssignOwner={handleAssignOwner}
+                    addWithExcel={addWithExcel}
+                    setAddWithExcel={setAddWithExcel}
+                    getExcelTemplate={getExcelTemplate}
+                    uploadExcelFile={uploadExcelFile}
                 />
 
             </div>

@@ -35,7 +35,6 @@ public class ExcelParserService {
                             .lastname(getCellValueAsString(row.getCell(1)))
                             .email(getCellValueAsString(row.getCell(2)))
                             .password(getCellValueAsString(row.getCell(3)))
-                            .role(parseRole(getCellValueAsString(row.getCell(4))))
                             .buildingNumber(getCellValueAsInteger(row.getCell(5)))
                             .buildingAddress(getCellValueAsString(row.getCell(6)))
                             .floor(getCellValueAsInteger(row.getCell(7)))
@@ -79,16 +78,6 @@ public class ExcelParserService {
             }
             default -> null;
         };
-    }
-
-    private Role parseRole(String roleString) {
-        if (roleString == null) return Role.RESIDENT;
-
-        try {
-            return Role.valueOf(roleString.toUpperCase().trim());
-        } catch (InvalidRoleException e) {
-            return Role.RESIDENT;
-        }
     }
 
 }
