@@ -114,8 +114,7 @@ const AdminPanel = () => {
     } = useContext(AdminModalContext);
 
     const {
-        addBuildingFormData, setAddBuildingFormData,
-        addWithExcel, setAddWithExcel
+        addBuildingFormData, setAddBuildingFormData
     } = useContext(AddBuildingContext);
 
     const {adminGroupId, authenticatedAdminUserName} = useContext(AdminUserContext);
@@ -162,8 +161,6 @@ const AdminPanel = () => {
     const{ getExcelTemplate, uploadExcelFile } = useExcelOperations();
 
     const subscriptionRef = useRef(null);
-
-    console.log(apartments)
 
     useEffect(() => {
         getAllBuildings();
@@ -366,8 +363,6 @@ const AdminPanel = () => {
                     setModalText={setModalText}
                     setModalTitleText={setModalTitleText}
                     handleAssignOwner={handleAssignOwner}
-                    addWithExcel={addWithExcel}
-                    setAddWithExcel={setAddWithExcel}
                     getExcelTemplate={getExcelTemplate}
                     uploadExcelFile={uploadExcelFile}
                 />

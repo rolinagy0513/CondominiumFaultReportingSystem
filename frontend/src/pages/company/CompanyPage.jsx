@@ -2,7 +2,7 @@ const CompanyPage = () =>{
 
     return(
         <div>
-            <p>Fasz</p>
+            <p>Company Page</p>
         </div>
     )
 

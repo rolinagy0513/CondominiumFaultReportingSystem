@@ -14,6 +14,7 @@ import org.example.condominiumfaultreportingsystem.building.BuildingRepository;
 import org.example.condominiumfaultreportingsystem.cache.CacheService;
 import org.example.condominiumfaultreportingsystem.exception.ApartmentNotFoundException;
 import org.example.condominiumfaultreportingsystem.group.impl.GroupService;
+import org.example.condominiumfaultreportingsystem.report.ReportRepository;
 import org.example.condominiumfaultreportingsystem.security.user.Role;
 import org.example.condominiumfaultreportingsystem.security.user.User;
 import org.example.condominiumfaultreportingsystem.security.user.UserRepository;
@@ -39,6 +40,7 @@ public class BulkUserRegistrationService {
     private final ExcelParserService excelParserService;
     private final GroupService groupService;
     private final CacheService cacheService;
+    private final ReportRepository reportRepository;
 
     @Transactional
     public ExcelUploadResultDTO processExcelUpload(MultipartFile file) throws IOException {

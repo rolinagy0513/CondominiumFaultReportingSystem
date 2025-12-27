@@ -8,6 +8,7 @@ import AuthForm from "./components/AuthForm.jsx";
 import registerImage from "../../assets/building.png";
 
 import "./styles/Register.css"
+import {UserContext} from "../../context/general/UserContext.jsx";
 
 const Register = () =>{
 
@@ -19,6 +20,7 @@ const Register = () =>{
 
     const { message, setMessage, isLoading, setIsLoading } = useContext(FeedbackContext);
     const { registerFormData, setRegisterFormData} = useContext(AuthContext);
+    const { setAuthenticatedUserId, setAuthenticatedUserName } = useContext(UserContext);
 
     const resetForm = () =>{
         setRegisterFormData({
@@ -57,6 +59,9 @@ const Register = () =>{
 
             localStorage.setItem("authenticatedUserId", response.user.id);
             localStorage.setItem("authenticatedUserName", response.user.userName);
+
+            setAuthenticatedUserId(response.user.id);
+            setAuthenticatedUserName(response.user.userName);
 
             navigate("/choose-role");
 

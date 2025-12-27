@@ -1,8 +1,14 @@
 const ResidentPage = () =>{
 
+    //A saját apartment
+    //A building amiben éppen van§
+    //Websocket subscriptions
+    //Az összes cég ami van a building-ben
+    //Az összes report
+
     return(
         <div>
-            <p>FAsz</p>
+            <p>Resident Page</p>
         </div>
     )
 

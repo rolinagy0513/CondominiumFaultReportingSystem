@@ -1,7 +1,5 @@
 import { useState } from "react";
-
 import { IoMdAdd } from "react-icons/io";
-
 import "./component-styles/ApartmentsContent.css"
 
 const ApartmentsContent = ({
@@ -9,10 +7,15 @@ const ApartmentsContent = ({
                                currentPage, pageSize,
                                totalElements, loadingApartments, apartments,
                                removeResidentAction, totalPages,
-                               handlePageChange, handleAssignOwner
-                           }) =>{
+                               handlePageChange, handleAssignOwner,
+                               getExcelTemplate,uploadExcelFile
+                           }) => {
 
     const [emailInputs, setEmailInputs] = useState({});
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [uploadResult, setUploadResult] = useState(null);
+    const [isUploading, setIsUploading] = useState(false);
+    const [addWithExcel, setAddWithExcel] = useState(false);
 
     const handleEmailChange = (apartmentId, value) => {
         setEmailInputs(prev => ({
@@ -40,22 +43,159 @@ const ApartmentsContent = ({
         }
     };
 
-    return(
+    const handleExcelUpload = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            setSelectedFile(file);
+            setUploadResult(null);
+        }
+    };
+
+    const handleSubmitExcel = async () => {
+        if (!selectedFile) {
+            console.error('No file selected');
+            alert("No file selected")
+            return;
+        }
+
+        setIsUploading(true);
+        const result = await uploadExcelFile(selectedFile);
+        setUploadResult(result);
+        setIsUploading(false);
+
+        if (result.success) {
+            setSelectedFile(null);
+            document.getElementById('excel-upload').value = '';
+        }
+    };
+
+    const handleRemoveFile = () => {
+        setSelectedFile(null);
+        setUploadResult(null);
+        document.getElementById('excel-upload').value = '';
+    };
+
+    return (
         <div className="apartments-content">
             <div className="content-header">
+                <h3>{addWithExcel ? "Import Apartments from Excel" : "Apartments List"}</h3>
+                {!addWithExcel && (
+                    <p className="pagination-info">
+                        Showing {apartments.length > 0 ? (currentPage * pageSize + 1) : 0} - {Math.min((currentPage + 1) * pageSize, totalElements)} of {totalElements} apartments
+                    </p>
+                )}
                 <button
-                    className="back-button"
-                    onClick={handleBackToBuildings}
+                    className="apartments-content-excel-import-button"
+                    onClick={() => setAddWithExcel(!addWithExcel)}
                 >
-                    ← Back to Buildings
+                    {addWithExcel ? "Go back to apartments" : "Import from excel"}
                 </button>
-                <h3>Apartments List</h3>
-                <p className="pagination-info">
-                    Showing {apartments.length > 0 ? (currentPage * pageSize + 1) : 0} - {Math.min((currentPage + 1) * pageSize, totalElements)} of {totalElements} apartments
-                </p>
             </div>
 
-            {loadingApartments ? (
+            {addWithExcel ? (
+                <div className="excel-upload-section">
+                    <div className="upload-instructions">
+                        <h3>Import Apartments from Excel</h3>
+                        <p>Upload an Excel file with the wanted structure to add multiple apartments at once, you can download an example excel sheet for the structure.</p>
+
+                        <div className="instructions-list">
+                            <h4>Requirements:</h4>
+                            <ul>
+                                <li>Use the provided template format</li>
+                                <li>Supported formats: .xlsx, .xls</li>
+                                <li>Download the template with the button, fill the fields and upload it here to add the apartments at once</li>
+                                <li>Required fields: building number, building address, floor, apartment number</li>
+                                <li>Optional columns: owner email</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div className="upload-area">
+                        <div className="file-drop-zone">
+                            <div className="upload-icon">📊</div>
+                            <h4>Drag & Drop Excel File Here</h4>
+                            <p>or click to browse files</p>
+                            <input
+                                type="file"
+                                id="excel-upload"
+                                accept=".xlsx,.xls"
+                                className="file-input"
+                                onChange={handleExcelUpload}
+                            />
+                            <label htmlFor="excel-upload" className="browse-button">
+                                Browse Files
+                            </label>
+                        </div>
+
+                        {selectedFile && (
+                            <div className="file-info">
+                                <span>
+                                    Selected: {selectedFile.name}
+                                    ({Math.round(selectedFile.size / 1024)} KB)
+                                </span>
+                                <button
+                                    className="remove-file"
+                                    onClick={handleRemoveFile}
+                                >
+                                    Remove
+                                </button>
+                            </div>
+                        )}
+
+                        {uploadResult && !uploadResult.success && uploadResult.error?.errors && (
+                            <div className="upload-errors">
+                                <h4>Upload Errors:</h4>
+                                {uploadResult.error.errors.map((err, index) => (
+                                    <div key={index} className="error-item">
+                                        Row {err.rowNumber || 'Unknown'}: {err.errorMessage}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {uploadResult && uploadResult.success && (
+                            <div className="upload-success">
+                                <h4>✅ Upload Successful!</h4>
+                                <p>
+                                    Successfully added {uploadResult.data?.successfulRegistrations || 0} apartments.
+                                    {uploadResult.data?.failedRegistrations ?
+                                        ` ${uploadResult.data.failedRegistrations} failed.` : ''}
+                                </p>
+                            </div>
+                        )}
+
+                        <div className="download-template">
+                            <button
+                                className="download-button"
+                                onClick={getExcelTemplate}
+                            >
+                                📥 Download Excel Template
+                            </button>
+                            <p className="template-note">Use our pre-formatted template to ensure correct data structure</p>
+                        </div>
+                    </div>
+
+                    <div className="upload-actions">
+                        <button
+                            className="cancel-button"
+                            onClick={() => {
+                                setAddWithExcel(false);
+                                setSelectedFile(null);
+                                setUploadResult(null);
+                            }}
+                        >
+                            ← Back to Apartments List
+                        </button>
+                        <button
+                            className="upload-button"
+                            onClick={handleSubmitExcel}
+                            disabled={!selectedFile || isUploading}
+                        >
+                            {isUploading ? 'Uploading...' : 'Upload and Process File'}
+                        </button>
+                    </div>
+                </div>
+            ) : loadingApartments ? (
                 <div className="loading">Loading apartments...</div>
             ) : (
                 <>

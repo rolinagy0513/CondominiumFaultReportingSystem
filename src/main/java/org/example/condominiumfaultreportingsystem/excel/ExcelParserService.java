@@ -35,10 +35,10 @@ public class ExcelParserService {
                             .lastname(getCellValueAsString(row.getCell(1)))
                             .email(getCellValueAsString(row.getCell(2)))
                             .password(getCellValueAsString(row.getCell(3)))
-                            .buildingNumber(getCellValueAsInteger(row.getCell(5)))
-                            .buildingAddress(getCellValueAsString(row.getCell(6)))
-                            .floor(getCellValueAsInteger(row.getCell(7)))
-                            .apartmentNumber(getCellValueAsInteger(row.getCell(8)))
+                            .buildingNumber(getCellValueAsInteger(row.getCell(4)))
+                            .buildingAddress(getCellValueAsString(row.getCell(5)))
+                            .floor(getCellValueAsInteger(row.getCell(6)))
+                            .apartmentNumber(getCellValueAsInteger(row.getCell(7)))
                             .rowNumber(rowNumber++)
                             .build();
 

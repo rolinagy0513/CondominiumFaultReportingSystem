@@ -9,8 +9,6 @@ import {UserContext} from "../../context/general/UserContext.jsx";
 import "./styles/ResidentRequest.css"
 import {ResidentRequestContext} from "../../context/role-selection/ResidentRequestContext.jsx";
 
-//El kell majd kezdeni csinálni a ticket report rendszert
-
 const ResidentRequest = () => {
     const AUTH_API_PATH = import.meta.env.VITE_API_BASE_AUTH_URL;
     const BUILDING_API_PATH = import.meta.env.VITE_API_BASE_BUILDING_URL

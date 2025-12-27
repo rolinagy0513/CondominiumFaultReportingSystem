@@ -48,6 +48,32 @@
     font-weight: 500;
 }
 
+/* Import from Excel Button */
+.apartments-content-excel-import-button {
+    background: #38a169;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.apartments-content-excel-import-button:hover {
+    background: #2f855a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.apartments-content-excel-import-button:active {
+    transform: translateY(0);
+}
+
 .loading {
     text-align: center;
     padding: 60px 30px;
@@ -265,76 +291,296 @@
     outline-offset: 2px;
 }
 
-/* Pagination Styles */
-.pagination {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 25px 30px;
-    border-top: 1px solid #e2e8f0;
-    background: #f8fafc;
+/* Excel Upload Section Styles */
+.excel-upload-section {
+    padding: 30px;
 }
 
-.pagination-btn {
-    background: #4a5568;
-    color: white;
-    border: none;
-    padding: 10px 20px;
+.upload-instructions {
+    background: #f7fafc;
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 30px;
+    border-left: 4px solid #2c5282;
+}
+
+.upload-instructions h3 {
+    color: #2d3748;
+    margin: 0 0 15px 0;
+    font-size: 20px;
+}
+
+.upload-instructions p {
+    color: #4a5568;
+    margin: 0 0 20px 0;
+    line-height: 1.6;
+}
+
+.instructions-list {
+    background: white;
+    border-radius: 6px;
+    padding: 20px;
+    margin-top: 15px;
+}
+
+.instructions-list h4 {
+    color: #2d3748;
+    margin: 0 0 12px 0;
+    font-size: 16px;
+}
+
+.instructions-list ul {
+    margin: 0;
+    padding-left: 20px;
+    color: #4a5568;
+}
+
+.instructions-list li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+/* Upload Area */
+.upload-area {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.file-drop-zone {
+    border: 3px dashed #cbd5e0;
+    border-radius: 12px;
+    padding: 40px 20px;
+    text-align: center;
+    background: #f8fafc;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.file-drop-zone:hover {
+    border-color: #2c5282;
+    background: #edf2f7;
+}
+
+.file-drop-zone.drag-over {
+    border-color: #2c5282;
+    background: #e6fffa;
+}
+
+.upload-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.file-drop-zone h4 {
+    color: #2d3748;
+    margin: 0 0 8px 0;
+    font-size: 18px;
+}
+
+.file-drop-zone p {
+    color: #718096;
+    margin: 0 0 20px 0;
+}
+
+.file-input {
+    display: none;
+}
+
+.browse-button {
+    background: white;
+    border: 2px solid #2c5282;
+    color: #2c5282;
+    padding: 12px 24px;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    display: flex;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.browse-button:hover {
+    background: #2c5282;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Download Template */
+.download-template {
+    text-align: center;
+    padding: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.download-button {
+    background: #38a169;
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
 }
 
-.pagination-btn:hover:not(:disabled) {
-    background: #2d3748;
+.download-button:hover {
+    background: #2f855a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.template-note {
+    color: #718096;
+    font-size: 14px;
+    margin: 12px 0 0 0;
+}
+
+.upload-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.cancel-button {
+    background: none;
+    border: 1px solid #cbd5e0;
+    color: #4a5568;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.cancel-button:hover {
+    background: #f7fafc;
+    border-color: #a0aec0;
     transform: translateY(-1px);
 }
 
-.pagination-btn:disabled {
-    background: #a0aec0;
+.upload-button {
+    background: #2c5282;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 200px;
+}
+
+.upload-button:hover:not(:disabled) {
+    background: #1a365d;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.upload-button:disabled {
+    background: #cbd5e0;
     cursor: not-allowed;
     transform: none;
+    box-shadow: none;
 }
 
-.pagination-pages {
+/* File Upload Status */
+.file-info {
+    background: #e6fffa;
+    border: 1px solid #81e6d9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 8px;
+    animation: fadeIn 0.3s ease;
 }
 
-.pagination-page {
-    background: white;
-    border: 1px solid #cbd5e0;
-    color: #4a5568;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
+.file-info span {
+    color: #234e52;
     font-weight: 500;
-    min-width: 40px;
-    transition: all 0.2s ease;
-}
-
-.pagination-page:hover {
-    background: #edf2f7;
-    border-color: #a0aec0;
-}
-
-.pagination-page.active {
-    background: #4299e1;
-    border-color: #4299e1;
-    color: white;
-}
-
-.pagination-ellipsis {
-    color: #718096;
-    padding: 8px 4px;
     font-size: 14px;
+}
+
+.remove-file {
+    background: none;
+    border: 1px solid #e53e3e;
+    color: #e53e3e;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.remove-file:hover {
+    background: #fed7d7;
+    border-color: #c53030;
+}
+
+.upload-errors {
+    background: #fff5f5;
+    border: 1px solid #fc8181;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    animation: fadeIn 0.3s ease;
+}
+
+.upload-errors h4 {
+    color: #c53030;
+    margin: 0 0 10px 0;
+    font-size: 16px;
+}
+
+.error-item {
+    color: #742a2a;
+    font-size: 13px;
+    padding: 5px 0;
+    border-bottom: 1px solid #fed7d7;
+}
+
+.error-item:last-child {
+    border-bottom: none;
+}
+
+.upload-success {
+    background: #f0fff4;
+    border: 1px solid #9ae6b4;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    animation: fadeIn 0.3s ease;
+}
+
+.upload-success h4 {
+    color: #276749;
+    margin: 0 0 8px 0;
+    font-size: 16px;
+}
+
+.upload-success p {
+    color: #2f855a;
+    font-size: 14px;
+    margin: 0;
+}
+
+.upload-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* Responsive Design for ApartmentsContent */
@@ -368,19 +614,31 @@
         min-width: auto;
     }
 
-    .pagination {
-        flex-direction: column;
-        gap: 15px;
+    /* Excel Upload Responsive */
+    .excel-upload-section {
         padding: 20px;
     }
 
-    .pagination-pages {
-        order: -1;
-        flex-wrap: wrap;
-        justify-content: center;
+    .upload-instructions {
+        padding: 20px;
     }
 
-    .pagination-btn {
+    .file-drop-zone {
+        padding: 30px 15px;
+    }
+
+    .upload-actions {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .cancel-button,
+    .upload-button {
+        width: 100%;
+        text-align: center;
+    }
+
+    .download-button {
         width: 100%;
         justify-content: center;
     }
@@ -429,13 +687,9 @@
         padding: 7px 12px;
     }
 
-    .pagination-pages {
-        gap: 4px;
-    }
-
-    .pagination-page {
-        min-width: 36px;
-        padding: 6px 8px;
+    .apartments-content-excel-import-button {
+        padding: 10px 16px;
         font-size: 13px;
+        width: 100%;
     }
 }
