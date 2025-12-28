@@ -8,4 +8,8 @@ public class ApartmentNotFoundException extends RuntimeException {
     public ApartmentNotFoundException(Integer apartmentNumber) {
         super("The apartment is not found with the room number of: " + apartmentNumber);
     }
+
+    public ApartmentNotFoundException(String ownerName){
+        super("The apartment is not found for the resident: " + ownerName);
+    }
 }

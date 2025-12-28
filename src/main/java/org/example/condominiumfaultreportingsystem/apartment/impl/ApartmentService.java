@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.condominiumfaultreportingsystem.DTO.ApartmentDTO;
 import org.example.condominiumfaultreportingsystem.DTO.RemovalDTO;
+import org.example.condominiumfaultreportingsystem.DTO.UserDTO;
 import org.example.condominiumfaultreportingsystem.DTO.UserWithRoleDTO;
 import org.example.condominiumfaultreportingsystem.apartment.Apartment;
 import org.example.condominiumfaultreportingsystem.apartment.ApartmentRepository;
@@ -27,6 +28,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.security.Principal;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -42,6 +44,22 @@ public class ApartmentService implements IApartmentService {
     private final GroupService groupService;
     private final CacheService cacheService;
     private final UserRepository userRepository;
+
+    public ApartmentDTO getApartmentWithOwnerId(){
+
+        UserDTO currentUser = userService.getCurrentUser();
+
+        Optional<Apartment> apartmentOpt = apartmentRepository.findByOwnerId(currentUser.getId());
+
+        if (apartmentOpt.isEmpty()){
+            throw new ApartmentNotFoundException(currentUser.getUserName());
+        }
+
+        Apartment apartment = apartmentOpt.get();
+
+        return mapToDto(apartment);
+
+    }
 
     @Async("asyncExecutor")
     @Cacheable(value = "apartmentsByBuilding")

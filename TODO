@@ -1,3 +1,4 @@
- - Meg kell csinálni a többi page-et ahol a resident-ek majd a reportokat teszik fel
- - Kezdjed a resident page-el csinálj csak jsx-et majd a cs menjen rá utoljára
+ - Legfontosabb: Kezdeni kell valamit a custom hook-al
+ - Még fel kell iratkoztatni a resident-et az összes que-ra amire sutüksége van!!
+ - Folytatni a resident page-et
  - Meg kell csinálni az email-t is ami kiküldi majd a notification-t

@@ -54,7 +54,7 @@ public class ReportService implements IReportService{
 
         User user  = userService.getCurrentUserTemporary();
 
-        Optional<Apartment> apartmentOpt = apartmentRepository.findByApartmentNumberAndFloor(user.getId());
+        Optional<Apartment> apartmentOpt = apartmentRepository.findByOwnerId(user.getId());
 
         if (apartmentOpt.isEmpty()){
             throw new UnauthorizedApartmentAccessException();
@@ -101,7 +101,7 @@ public class ReportService implements IReportService{
 
         User user  = userService.getCurrentUserTemporary();
 
-        Optional<Apartment> apartmentOpt = apartmentRepository.findByApartmentNumberAndFloor(user.getId());
+        Optional<Apartment> apartmentOpt = apartmentRepository.findByOwnerId(user.getId());
 
         if (apartmentOpt.isEmpty()){
             throw new UnauthorizedApartmentAccessException();

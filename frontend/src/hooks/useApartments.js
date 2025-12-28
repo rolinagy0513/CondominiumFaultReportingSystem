@@ -6,7 +6,7 @@ export const useApartments = (
     pageSize, currentPage, setLoadingApartments, setApartments, setCurrentPage, setTotalPages,
     setTotalElements, buildings, setSelectedBuilding, setCurrentView, setApartmentRequests,
     selectedBuilding, setTargetId, setIsRemovalModalOpen, setModalText, setModalButtonText, setModalTitleText,
-    GET_AVAILABLE_APARTMENTS_URL,ASSIGN_OWNER_URL
+    GET_AVAILABLE_APARTMENTS_URL,ASSIGN_OWNER_URL,GET_OWNER_APARTMENT_URL
 ) =>{
 
     console.log(`This is the page size: ${pageSize}`)
@@ -191,6 +191,20 @@ export const useApartments = (
             return false;
         }
     }
+
+    // const handleGetApartmentByOwnerId = async () => {
+    //
+    //     try{
+    //         const response = await apiServices.get(GET_OWNER_APARTMENT_URL);
+    //         // setOwnersApartment(response);
+    //         console.log("The owners apartment was successfully retrieved")
+    //         console.log("THIS IS THE RESPONSE LOG THAT I NEED: ")
+    //         console.log(response)
+    //
+    //     }catch (error){
+    //         console.error("Error retrieving the owners apartment: ", error.message)
+    //     }
+    // }
 
     return{
         getApartments, handleGetPendingApartmentRequests,

@@ -23,6 +23,11 @@ public class ApartmentController {
 
     private final ApartmentService apartmentService;
 
+    @GetMapping("/resident/apartment/getByOwnerId")
+    public ApartmentDTO getByOwnerId(){
+        return apartmentService.getApartmentWithOwnerId();
+    }
+
     @GetMapping("/resident/apartment/getByBuildingId/{buildingId}")
     public CompletableFuture<Page<ApartmentDTO>> getApartmentsInBuilding(
             @PathVariable Long buildingId,

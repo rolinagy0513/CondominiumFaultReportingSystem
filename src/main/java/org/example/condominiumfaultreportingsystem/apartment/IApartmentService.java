@@ -9,6 +9,7 @@ import java.util.concurrent.CompletableFuture;
 
 public interface IApartmentService {
 
+    ApartmentDTO getApartmentWithOwnerId();
     CompletableFuture<Page<ApartmentDTO>> getApartmentsInBuilding(Long buildingId, Integer page, Integer size, String sortBy, String direction);
     ApartmentDTO getApartmentById(Long apartmentId);
     CompletableFuture<Page<ApartmentDTO>> getAvailableApartmentsInBuilding(Long buildingId, Integer page, Integer size, String sortBy, String direction);CompletableFuture<Page<ApartmentDTO>> getApartmentsByFloorAndBuilding(Long buildingId, Integer floorNumber, Integer page, Integer size, String sortBy, String direction);
