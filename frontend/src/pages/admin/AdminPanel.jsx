@@ -33,55 +33,26 @@ import "./styles/AdminPanel.css";
 
 const AdminPanel = () => {
 
-    const ADMIN_BUILDING_API_PATH = import.meta.env.VITE_API_ADMIN_BUILDING_URL;
-    const BUILDING_API_PATH = import.meta.env.VITE_API_BASE_BUILDING_URL
-
     const AUTH_API_PATH = import.meta.env.VITE_API_BASE_AUTH_URL;
-
-    const APARTMENT_BASE_API_PATH =import.meta.env.VITE_API_BASE_APARTMENT_URL;
-    const RESIDENT_APARTMENT_API_PATH = import.meta.env.VITE_API_RESIDENT_APARTMENT_URL
-    const ADMIN_APARTMENT_API_PATH = import.meta.env.VITE_API_ADMIN_APARTMENT_URL
-
-    const ADMIN_COMPANY_API_PATH = import.meta.env.VITE_API_ADMIN_COMPANY_URL
-
-    const ADMIN_APARTMENT_REQUEST_API_PATH = import.meta.env.VITE_API_ADMIN_APARTMENT_REQUEST_URL
-    const ADMIN_COMPANY_REQUEST_API_PATH = import.meta.env.VITE_API_ADMIN_COMPANY_REQUEST_URL
-
-    const SEND_APARTMENT_RESPONSE = import.meta.env.VITE_API_ADMIN_WEBSOCKET_APARTMENT_REQUEST_RESPONSE_DESTINATION
-    const SEND_COMPANY_RESPONSE = import.meta.env.VITE_API_ADMIN_WEBSOCKET_COMPANY_REQUEST_RESPONSE_DESTINATION
-    const REMOVE_RESIDENT = import.meta.env.VITE_API_ADMIN_WEBSOCKET_RESIDENT_REMOVE_DESTINATION
-    const REMOVE_COMPANY = import.meta.env.VITE_ADMIN_WEBSOCKET_COMPANY_REMOVE_DESTINATION
-
     const SOCK_URL = import.meta.env.VITE_API_WEBSOCKET_BASE_URL;
 
     const LOGOUT_URL = `${AUTH_API_PATH}/logout`
-    const ADD_BUILDING_URL = `${ADMIN_BUILDING_API_PATH}/addNew`;
-    const ASSIGN_OWNER_URL = `${ADMIN_APARTMENT_API_PATH}/addUserToApartment`;
-    const GET_ALL_BUILDING_URL = `${BUILDING_API_PATH}/getAll`;
-    const GET_APARTMENT_URL = `${RESIDENT_APARTMENT_API_PATH}/getByBuildingId`;
-    const GET_PENDING_APARTMENT_REQUEST_URL = `${ADMIN_APARTMENT_REQUEST_API_PATH}/getPendingRequests`
-    const GET_PENDING_COMPANY_REQUEST_URL = `${ADMIN_COMPANY_REQUEST_API_PATH}/getPendingRequests`
-    const GET_ALL_COMPANY_URL = `${ADMIN_COMPANY_API_PATH}/getAll`
-    const GET_AVAILABLE_APARTMENTS_URL = `${APARTMENT_BASE_API_PATH}/getAvailableByBuildingId`;
 
     const navigate = useNavigate();
 
     const{
-        buildings, setBuildings,
-        selectedBuilding, setSelectedBuilding
+        buildings, selectedBuilding, setSelectedBuilding
     } = useContext(BuildingContext);
 
     const{
         apartments, setApartments,
-        loadingApartments, setLoadingApartments,
+        loadingApartments,
     } = useContext(ApartmentContext);
 
     const{
         companies, setCompanies,
-        loadingCompanies, setLoadingCompanies,
-        companiesCurrentPage, setCompaniesCurrentPage,
-        companiesTotalPages, setCompaniesTotalPages,
-        companiesTotalElements, setCompaniesTotalElements
+        loadingCompanies, companiesCurrentPage,
+        companiesTotalPages, companiesTotalElements,
     } = useContext(CompanyContext);
 
     const{
@@ -97,15 +68,13 @@ const AdminPanel = () => {
     const {
         currentPage, setCurrentPage,
         totalPages, setTotalPages,
-        totalElements, setTotalElements,
-        pageSize
+        totalElements, pageSize
     } = useContext(PaginationContext);
 
     const {
         isAdminModalOpen, setIsAdminModalOpen,
         isRemovalModalOpen, setIsRemovalModalOpen,
-        apartmentRequests, setApartmentRequests,
-        companyRequests, setCompanyRequests,
+        apartmentRequests, companyRequests,
         targetId, setTargetId,
         modalText, setModalText,
         removalType, setRemovalType,
@@ -120,43 +89,25 @@ const AdminPanel = () => {
     const {adminGroupId, authenticatedAdminUserName} = useContext(AdminUserContext);
     const {isLoading, setIsLoading, message, setMessage} = useContext(FeedbackContext);
 
-    const { getAllBuildings, addBuilding } = useBuildings(
-        GET_ALL_BUILDING_URL, ADD_BUILDING_URL,
-        setBuildings, setIsLoading,
-        addBuildingFormData, setAddBuildingFormData,
-        setMessage, setCurrentView
-    );
-
+    const {
+        getAllBuildings, addBuilding
+    } = useBuildings();
 
     const {
         getApartments, handleGetPendingApartmentRequests,
         handleAcceptApartmentRequest, handleRejectApartmentRequest,
         handleRemoveResidentFromApartment, handleAssignOwner
-    } = useApartments(
-        GET_APARTMENT_URL, GET_PENDING_APARTMENT_REQUEST_URL, SEND_APARTMENT_RESPONSE, REMOVE_RESIDENT,
-        pageSize, currentPage, setLoadingApartments, setApartments, setCurrentPage, setTotalPages,
-        setTotalElements, buildings, setSelectedBuilding, setCurrentView, setApartmentRequests,
-        selectedBuilding, setTargetId, setIsRemovalModalOpen, setModalText, setModalButtonText, setModalTitleText,
-        GET_AVAILABLE_APARTMENTS_URL, ASSIGN_OWNER_URL
-    );
+    } = useApartments();
 
     const {
         getCompanies, handleGetPendingCompanyRequests,
         handleAcceptCompanyRequest, handleRejectCompanyRequest,
         handleRemoveCompanyFromSystem
-    } = useCompanies(
-        GET_ALL_COMPANY_URL, GET_PENDING_COMPANY_REQUEST_URL, SEND_COMPANY_RESPONSE, REMOVE_COMPANY,
-        pageSize, setCompanies, setCompaniesCurrentPage, setCompaniesTotalPages, setCompaniesTotalElements,
-        setCompanyRequests, setCurrentView, setLoadingCompanies, setTargetId, setIsRemovalModalOpen,
-        setModalTitleText, setModalText, setModalButtonText
-    );
+    } = useCompanies();
 
     const {
         handleCloseApartmentNotification, handleCloseCompanyNotification
-    } = useNotifications(
-        SOCK_URL, adminGroupId, setCompanyNotification,
-        setApartmentNotification, setNewNotification
-    );
+    } = useNotifications();
 
     const{ getExcelTemplate, uploadExcelFile } = useExcelOperations();
 

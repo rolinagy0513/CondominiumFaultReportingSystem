@@ -23,6 +23,13 @@ public class BuildingController {
         return buildingService.addNewBuilding(requestDTO);
     }
 
+    @GetMapping("resident/building/getBuildingByApartmentId/{apartmentId}")
+    public BuildingDTO getBuildingByApartmentId(
+            @PathVariable Long apartmentId
+    ){
+        return buildingService.getBuildingByApartmentId(apartmentId);
+    }
+
     @GetMapping("/building/getAll")
     public CompletableFuture<List<BuildingDTO>> getAll(){
         return buildingService.getAll();

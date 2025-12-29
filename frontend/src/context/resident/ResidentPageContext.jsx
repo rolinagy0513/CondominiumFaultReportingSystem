@@ -4,7 +4,13 @@ export const ResidentPageContext = createContext();
 
 export const ResidentPageProvider = ({ children }) => {
 
-    const [ownersApartment, setOwnersApartment] = useState([])
+    const [ownersApartment, setOwnersApartment] = useState([]);
+    const [ownersApartmentId, setOwnersApartmentId] = useState(null);
+
+    const [ownersBuilding, setOwnersBuilding] = useState([]);
+    const [ownersBuildingId, setOwnersBuildingId] = useState(null);
+
+    const [companiesInBuilding, setCompaniesInBuilding] = useState([])
 
     const [residentGroupId, setResidentGroupId] = useState(() =>
         localStorage.getItem("residentGroupId")
@@ -21,6 +27,10 @@ export const ResidentPageProvider = ({ children }) => {
     return (
         <ResidentPageContext.Provider value={{
             ownersApartment, setOwnersApartment,
+            ownersBuilding, setOwnersBuilding,
+            ownersApartmentId, setOwnersApartmentId,
+            ownersBuildingId, setOwnersBuildingId,
+            companiesInBuilding, setCompaniesInBuilding,
             residentGroupId, setResidentGroupId,
             authenticatedResidentId, setAuthenticatedResidentId,
             authenticatedResidentUserName, setAuthenticatedResidentUserName

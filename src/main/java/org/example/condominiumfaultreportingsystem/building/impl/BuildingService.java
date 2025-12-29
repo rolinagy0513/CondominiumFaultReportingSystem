@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.condominiumfaultreportingsystem.DTO.BuildingDTO;
 import org.example.condominiumfaultreportingsystem.DTO.BuildingRequestDTO;
 import org.example.condominiumfaultreportingsystem.DTO.FloorOverrideDTO;
+import org.example.condominiumfaultreportingsystem.DTO.UserDTO;
 import org.example.condominiumfaultreportingsystem.apartment.Apartment;
 import org.example.condominiumfaultreportingsystem.apartment.ApartmentRepository;
 import org.example.condominiumfaultreportingsystem.apartment.ApartmentStatus;
@@ -11,9 +12,11 @@ import org.example.condominiumfaultreportingsystem.building.Building;
 import org.example.condominiumfaultreportingsystem.building.BuildingRepository;
 import org.example.condominiumfaultreportingsystem.building.IBuildingService;
 import org.example.condominiumfaultreportingsystem.cache.CacheService;
+import org.example.condominiumfaultreportingsystem.exception.ApartmentNotFoundException;
 import org.example.condominiumfaultreportingsystem.exception.BuildingIsNotFoundException;
 import org.example.condominiumfaultreportingsystem.exception.BuildingIsPresentException;
 import org.example.condominiumfaultreportingsystem.exception.FloorCanNotBeNullException;
+import org.example.condominiumfaultreportingsystem.security.user.UserService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -116,6 +119,19 @@ public class BuildingService implements IBuildingService {
 
         return mapToDTO(existingBuilding);
 
+    }
+
+    public BuildingDTO getBuildingByApartmentId(Long apartmentId){
+
+       Optional<Building> buildingOpt = buildingRepository.findBuildingByApartmentId(apartmentId);
+
+       if (buildingOpt.isEmpty()){
+           throw new ApartmentNotFoundException(apartmentId);
+       }
+
+       Building building = buildingOpt.get();
+
+       return mapToDTO(building);
     }
 
     @Async("asyncExecutor")

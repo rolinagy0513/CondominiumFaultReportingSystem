@@ -1,4 +1,3 @@
- - Legfontosabb: Kezdeni kell valamit a custom hook-al
  - Még fel kell iratkoztatni a resident-et az összes que-ra amire sutüksége van!!
- - Folytatni a resident page-et
+ - Folytatni a resident page-et(Ott a Report controller, meg kell hívni a getAllPublicSubmitted report ot)
  - Meg kell csinálni az email-t is ami kiküldi majd a notification-t

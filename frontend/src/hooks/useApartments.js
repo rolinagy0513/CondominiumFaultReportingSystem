@@ -1,15 +1,62 @@
 import apiServices from "../services/ApiServices.js";
 import websocketServices from "../services/WebsocketServices.js";
 
+import {ApartmentContext} from "../context/admin/ApartmentContext.jsx";
+import {PaginationContext} from "../context/general/PaginationContext.jsx";
+import {AdminModalContext} from "../context/admin/AdminModalContext.jsx";
+import {BuildingContext} from "../context/admin/BuildingContext.jsx";
+import {AdminPanelContext} from "../context/admin/AdminPanelContext.jsx";
+
+import {useContext} from "react";
+import {ResidentPageContext} from "../context/resident/ResidentPageContext.jsx";
+
 export const useApartments = (
-    GET_APARTMENT_URL, GET_PENDING_APARTMENT_REQUEST_URL, SEND_APARTMENT_RESPONSE, REMOVE_RESIDENT,
-    pageSize, currentPage, setLoadingApartments, setApartments, setCurrentPage, setTotalPages,
-    setTotalElements, buildings, setSelectedBuilding, setCurrentView, setApartmentRequests,
-    selectedBuilding, setTargetId, setIsRemovalModalOpen, setModalText, setModalButtonText, setModalTitleText,
-    GET_AVAILABLE_APARTMENTS_URL,ASSIGN_OWNER_URL,GET_OWNER_APARTMENT_URL
 ) =>{
 
-    console.log(`This is the page size: ${pageSize}`)
+    const APARTMENT_BASE_API_PATH =import.meta.env.VITE_API_BASE_APARTMENT_URL;
+    const RESIDENT_APARTMENT_API_PATH = import.meta.env.VITE_API_RESIDENT_APARTMENT_URL
+    const ADMIN_APARTMENT_API_PATH = import.meta.env.VITE_API_ADMIN_APARTMENT_URL
+
+    const ADMIN_APARTMENT_REQUEST_API_PATH = import.meta.env.VITE_API_ADMIN_APARTMENT_REQUEST_URL
+
+    const SEND_APARTMENT_RESPONSE = import.meta.env.VITE_API_ADMIN_WEBSOCKET_APARTMENT_REQUEST_RESPONSE_DESTINATION
+    const REMOVE_RESIDENT = import.meta.env.VITE_API_ADMIN_WEBSOCKET_RESIDENT_REMOVE_DESTINATION
+
+    const ASSIGN_OWNER_URL = `${ADMIN_APARTMENT_API_PATH}/addUserToApartment`;
+    const GET_APARTMENT_URL = `${RESIDENT_APARTMENT_API_PATH}/getByBuildingId`;
+    const GET_PENDING_APARTMENT_REQUEST_URL = `${ADMIN_APARTMENT_REQUEST_API_PATH}/getPendingRequests`
+    const GET_AVAILABLE_APARTMENTS_URL = `${APARTMENT_BASE_API_PATH}/getAvailableByBuildingId`;
+    const GET_OWNER_APARTMENT_URL = `${RESIDENT_APARTMENT_API_PATH}/getByOwnerId`;
+
+    const{
+        setApartments,
+        setLoadingApartments
+    } = useContext(ApartmentContext);
+
+    const {
+        currentPage, setCurrentPage,
+        setTotalPages, setTotalElements, pageSize
+    } = useContext(PaginationContext);
+
+    const {
+        setIsRemovalModalOpen,setApartmentRequests,
+        setTargetId,setModalText,
+        setModalButtonText,setModalTitleText
+    } = useContext(AdminModalContext);
+
+    const{
+        buildings, selectedBuilding,
+        setSelectedBuilding
+    } = useContext(BuildingContext);
+
+    const {
+        setCurrentView
+    } = useContext(AdminPanelContext);
+
+    const {
+        setOwnersApartment,
+        setOwnersApartmentId
+    } = useContext(ResidentPageContext);
 
     const getApartments = async(buildingId, page = 0) => {
         setLoadingApartments(true);
@@ -192,25 +239,23 @@ export const useApartments = (
         }
     }
 
-    // const handleGetApartmentByOwnerId = async () => {
-    //
-    //     try{
-    //         const response = await apiServices.get(GET_OWNER_APARTMENT_URL);
-    //         // setOwnersApartment(response);
-    //         console.log("The owners apartment was successfully retrieved")
-    //         console.log("THIS IS THE RESPONSE LOG THAT I NEED: ")
-    //         console.log(response)
-    //
-    //     }catch (error){
-    //         console.error("Error retrieving the owners apartment: ", error.message)
-    //     }
-    // }
+    const handleGetApartmentByOwnerId = async () => {
+
+        try{
+            const response = await apiServices.get(GET_OWNER_APARTMENT_URL);
+            setOwnersApartment(response);
+            setOwnersApartmentId(response.id);
+
+        }catch (error){
+            console.error("Error retrieving the owners apartment: ", error.message)
+        }
+    }
 
     return{
         getApartments, handleGetPendingApartmentRequests,
         handleAcceptApartmentRequest, handleRejectApartmentRequest,
         handleRemoveResidentFromApartment, getAvailableApartmentsInBuilding,
-        handleAssignOwner,
+        handleAssignOwner, handleGetApartmentByOwnerId
     }
 
 }

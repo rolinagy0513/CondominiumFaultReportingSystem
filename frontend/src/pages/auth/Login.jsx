@@ -6,14 +6,15 @@ import apiServices from "../../services/ApiServices.js";
 import {FeedbackContext} from "../../context/general/FeedbackContext.jsx";
 import {AuthContext} from "../../context/auth/AuthContext.jsx";
 import {UserContext} from "../../context/general/UserContext.jsx";
-import {RoleSelectionContext} from "../../context/role-selection/RoleSelectionContext.jsx";
+import {ResidentPageContext} from "../../context/resident/ResidentPageContext.jsx";
 
 import AuthForm from "./components/AuthForm.jsx";
+
 import loginImage from "../../assets/building.png";
 
 import "./styles/Login.css"
+import {AdminUserContext} from "../../context/admin/AdminUserContext.jsx";
 
-//Meg kell oldani hogy ha van a fal akkor ne mentesen el semmit a local storag-ba
 
 const Login = () =>{
 
@@ -29,8 +30,9 @@ const Login = () =>{
 
     const { message, setMessage, isLoading, setIsLoading } = useContext(FeedbackContext);
     const { loginFormData, setLoginFormData} = useContext(AuthContext);
+    const {setAdminGroupId, setAuthenticatedAdminId, setAuthenticatedAdminUserName} = useContext(AdminUserContext);
     const { setAuthenticatedUserId, setAuthenticatedUserName } = useContext(UserContext);
-    const {setShowPendingView} = useContext(RoleSelectionContext);
+    const { setResidentGroupId, setAuthenticatedResidentId, setAuthenticatedResidentUserName} = useContext(ResidentPageContext);
 
     const resetForm = () =>{
         setLoginFormData({
@@ -108,7 +110,15 @@ const Login = () =>{
                 console.log("  - authenticatedAdminId:", localStorage.getItem("authenticatedAdminId"));
                 console.log("  - authenticatedAdminUserName:", localStorage.getItem("authenticatedAdminUserName"));
 
+                setAdminGroupId(response.groupId);
+                setAuthenticatedAdminId(response.user.id);
+                setAuthenticatedAdminUserName(response.user.userName);
+
                 navigate("/admin-panel")
+            }
+
+            if(response.role === RESIDENT_ROLE && response.mustChangePassword){
+                navigate("password-change")
             }
 
             if (response.role === RESIDENT_ROLE && !response.mustChangePassword){
@@ -122,15 +132,13 @@ const Login = () =>{
                 console.log("  - authenticatedResidentId:", localStorage.getItem("authenticatedResidentId"));
                 console.log("  - authenticatedResidentUserName:", localStorage.getItem("authenticatedResidentUserName"));
 
+                setResidentGroupId(response.groupId);
+                setAuthenticatedResidentId(response.user.id);
+                setAuthenticatedResidentUserName(response.user.userName);
 
                 console.log(response)
 
-
-                if(response.mustChangePassword){
-                    navigate("/password-change")
-                } else{
-                    navigate("/resident-page")
-                }
+                navigate("/resident-page")
             }
 
             if(response.role === COMPANY_ROLE){

@@ -1,7 +1,12 @@
-export const useNotifications = (
-    SOCK_URL, adminGroupId, setCompanyNotification,
-    setApartmentNotification, setNewNotification
-) => {
+import {NotificationContext} from "../context/admin/NotificationContext.jsx";
+
+import {useContext} from "react";
+
+export const useNotifications = () => {
+
+    const{
+        setCompanyNotification, setApartmentNotification, setNewNotification
+    } = useContext(NotificationContext);
 
     const handleNotification = (notification) => {
         if (notification.type === 'COMPANY_REQUEST') {

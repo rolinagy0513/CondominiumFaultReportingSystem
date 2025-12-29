@@ -13,5 +13,7 @@ public interface BuildingRepository extends JpaRepository<Building, Long> {
     Optional<Building> findByBuildingNumber(Integer buildingNumber);
     List<Building> findByAddressContainingIgnoreCase(String address);
 
+    @Query("SELECT b FROM Building b JOIN b.apartments a WHERE a.id = :apartmentId")
+    Optional<Building> findBuildingByApartmentId(@Param("apartmentId") Long apartmentId);
 
 }
