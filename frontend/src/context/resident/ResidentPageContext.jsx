@@ -10,7 +10,11 @@ export const ResidentPageProvider = ({ children }) => {
     const [ownersBuilding, setOwnersBuilding] = useState([]);
     const [ownersBuildingId, setOwnersBuildingId] = useState(null);
 
-    const [companiesInBuilding, setCompaniesInBuilding] = useState([])
+    const [companiesInBuilding, setCompaniesInBuilding] = useState([]);
+    const [selectedCompanyId, setSelectedCompanyId] = useState(null);
+    const [selectedCompany, setSelectedCompany] = useState([]);
+
+    const [publicReports, setPublicReports] = useState([]);
 
     const [residentGroupId, setResidentGroupId] = useState(() =>
         localStorage.getItem("residentGroupId")
@@ -31,6 +35,9 @@ export const ResidentPageProvider = ({ children }) => {
             ownersApartmentId, setOwnersApartmentId,
             ownersBuildingId, setOwnersBuildingId,
             companiesInBuilding, setCompaniesInBuilding,
+            selectedCompanyId, setSelectedCompanyId,
+            selectedCompany, setSelectedCompany,
+            publicReports, setPublicReports,
             residentGroupId, setResidentGroupId,
             authenticatedResidentId, setAuthenticatedResidentId,
             authenticatedResidentUserName, setAuthenticatedResidentUserName

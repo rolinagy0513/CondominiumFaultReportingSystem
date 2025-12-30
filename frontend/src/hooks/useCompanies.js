@@ -20,6 +20,7 @@ export const useCompanies = () =>{
     const GET_PENDING_COMPANY_REQUEST_URL = `${ADMIN_COMPANY_REQUEST_API_PATH}/getPendingRequests`
     const GET_ALL_COMPANY_URL = `${ADMIN_COMPANY_API_PATH}/getAll`
     const GET_COMPANIES_IN_BUILDING_URL = `${RESIDENT_COMPANY_API_PATH}/getByBuildingId`
+    const GET_COMPANY_BY_ID = `${RESIDENT_COMPANY_API_PATH}/getById`
 
     const{
         setCompanies, setLoadingCompanies,
@@ -42,7 +43,8 @@ export const useCompanies = () =>{
     } = useContext(AdminModalContext);
 
     const {
-        ownersBuildingId,setCompaniesInBuilding
+        ownersBuildingId,setCompaniesInBuilding,
+        selectedCompanyId, setSelectedCompany
     } = useContext(ResidentPageContext);
 
     const getCompanies = async (page = 0) => {
@@ -177,10 +179,22 @@ export const useCompanies = () =>{
 
     }
 
+    const getCompanyById = async () =>{
+
+        try {
+            const response = await apiServices.get(`${GET_COMPANY_BY_ID}/${selectedCompanyId}`);
+            setSelectedCompany(response);
+        }catch (error){
+            console.error(error.message);
+        }
+
+    }
+
     return{
         getCompanies, handleGetPendingCompanyRequests,
         handleAcceptCompanyRequest, handleRejectCompanyRequest,
-        handleRemoveCompanyFromSystem, getCompanyByBuildingId
+        handleRemoveCompanyFromSystem, getCompanyByBuildingId,
+        getCompanyById,
     }
 
 }

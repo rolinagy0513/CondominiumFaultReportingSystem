@@ -1,3 +1,3 @@
- - Még fel kell iratkoztatni a resident-et az összes que-ra amire sutüksége van!!
- - Folytatni a resident page-et(Ott a Report controller, meg kell hívni a getAllPublicSubmitted report ot)
+ - Folytatni a page-et, Jöhet a send public és a send private method. Filterezni a company-kat
+ - Áttrakni a css-t hogy a ticket jobban nézzen ki pl színek vagy valami.
  - Meg kell csinálni az email-t is ami kiküldi majd a notification-t

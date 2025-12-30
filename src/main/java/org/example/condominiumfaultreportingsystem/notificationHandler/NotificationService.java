@@ -7,18 +7,14 @@ import org.example.condominiumfaultreportingsystem.apartment.Apartment;
 import org.example.condominiumfaultreportingsystem.apartmentRequest.ApartmentRequest;
 import org.example.condominiumfaultreportingsystem.company.Company;
 import org.example.condominiumfaultreportingsystem.companyRequest.CompanyRequest;
-import org.example.condominiumfaultreportingsystem.eventHandler.events.ReportSubmittedEvent;
 import org.example.condominiumfaultreportingsystem.feedback.Feedback;
 import org.example.condominiumfaultreportingsystem.group.Group;
 import org.example.condominiumfaultreportingsystem.notificationHandler.notifications.*;
 import org.example.condominiumfaultreportingsystem.report.Report;
-import org.example.condominiumfaultreportingsystem.report.ReportType;
 import org.example.condominiumfaultreportingsystem.security.user.User;
-import org.slf4j.Logger;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
