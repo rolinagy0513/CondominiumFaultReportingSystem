@@ -12,7 +12,8 @@ export const useReports = () =>{
     const GET_PUBLIC_REPORTS = `${SHARED_API_PATH}/getAllPublicSubmitted`
 
     const {
-        setPublicReports, residentGroupId
+        setPublicReports, residentGroupId,
+        sendPublicReportData
     } = useContext(ResidentPageContext);
 
     const {
@@ -65,6 +66,30 @@ export const useReports = () =>{
 
     }
 
-    return{ getAllPublicReports }
+    const sendPublicReport = async(reportData) => {
+        try {
+            const response = await apiServices.post(
+                "/api/resident/report/sendPublic",
+                reportData
+            );
+            console.log('Report sent:', response);
+            return response;
+        } catch (error) {
+            console.error(error.message);
+            throw error;
+        }
+    }
+
+    const sendPrivateReport = async (selectedCompanyId ,reportData) =>{
+        try{
+            const response = await apiServices.post(`/api/resident/report/sendPrivate/${selectedCompanyId}`, reportData)
+            console.log(`Report sent` + response);
+        }catch (error){
+            console.error(error.message)
+        }
+
+    }
+
+    return{ getAllPublicReports, sendPublicReport, sendPrivateReport}
 
 }

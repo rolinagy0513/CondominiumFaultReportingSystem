@@ -10,6 +10,8 @@ import org.example.condominiumfaultreportingsystem.report.ReportPrivacy;
 import org.example.condominiumfaultreportingsystem.report.ReportStatus;
 import org.example.condominiumfaultreportingsystem.report.ReportType;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,6 +27,8 @@ public class ReportDTO {
     private String comment;
     private Integer roomNumber;
     private Integer floor;
+
+    private LocalDateTime createdAt;
 
     private ReportStatus reportStatus;
     private ReportType reportType;

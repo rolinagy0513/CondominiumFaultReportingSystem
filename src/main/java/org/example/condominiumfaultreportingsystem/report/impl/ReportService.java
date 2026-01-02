@@ -391,6 +391,7 @@ public class ReportService implements IReportService{
                 .floor(report.getFloor())
                 .reportStatus(report.getReportStatus())
                 .reportType(report.getReportType())
+                .createdAt(report.getCreatedAt())
                 .build();
     }
 

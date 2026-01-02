@@ -1,3 +1,3 @@
- - Folytatni a page-et, Jöhet a send public és a send private method. Filterezni a company-kat
+ - Company filter, send private report, company a residnet page-en megcsinálni hogy normálisan nézzen ki
  - Áttrakni a css-t hogy a ticket jobban nézzen ki pl színek vagy valami.
  - Meg kell csinálni az email-t is ami kiküldi majd a notification-t

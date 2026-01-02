@@ -1,4 +1,4 @@
-import {useContext, useEffect, useRef} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 import apiServices from "../../services/ApiServices.js";
@@ -14,24 +14,24 @@ import {useReports} from "../../hooks/useReports.js";
 
 import { IoLogOut } from "react-icons/io5";
 import { IoMdNotifications } from "react-icons/io";
+import { FaBuilding, FaHome, FaFileAlt, FaChartBar, FaExclamationTriangle } from "react-icons/fa";
+import { MdApartment, MdLocationOn, MdPeople } from "react-icons/md";
 
-import "./style/ResidentPage.css"
 import {getServiceIcon} from "../../utility/GetCompanyLogoUtility.jsx";
 
+import "./style/ResidentPage.css"
+
 const ResidentPage = () => {
-
     const navigate = useNavigate();
-
     const AUTH_API_PATH = import.meta.env.VITE_API_BASE_AUTH_URL;
     const SOCK_URL = import.meta.env.VITE_API_WEBSOCKET_BASE_URL;
-
     const LOGOUT_URL = `${AUTH_API_PATH}/logout`;
 
     const {
         ownersApartment, residentGroupId,
         authenticatedResidentId, authenticatedResidentUserName,
         ownersApartmentId, ownersBuilding, ownersBuildingId,
-        companiesInBuilding, publicReports
+        companiesInBuilding, publicReports,
     } = useContext(ResidentPageContext);
 
     const {
@@ -52,13 +52,10 @@ const ResidentPage = () => {
     } = useCompanies()
 
     const {
-        getAllPublicReports
+        getAllPublicReports,
+        sendPublicReport,
+        sendPrivateReport
     } = useReports()
-
-    console.log(ownersApartmentId)
-    console.log(residentGroupId, authenticatedResidentId, authenticatedResidentUserName)
-
-    console.log(ownersBuilding)
 
     const subscriptionRefs = useRef({
         requestResponse: null,
@@ -67,9 +64,31 @@ const ResidentPage = () => {
         groupTopic: null
     });
 
+    const [showReportForm, setShowReportForm] = useState(false);
+    const [reportFormData, setReportFormData] = useState({
+        name: '',
+        issueDescription: '',
+        comment: '',
+        reportType: 'ELECTRICITY'
+    });
+
+    const [expandedReportId, setExpandedReportId] = useState(null);
+
+    // Add these icons to the report type mapping
+    const reportTypeIcons = {
+        ELECTRICITY: "⚡",
+        LIGHTNING: "💡",
+        WATER_SUPPLY: "💧",
+        SEWAGE: "🚽",
+        HEATING: "🔥",
+        GARBAGE_COLLECTION: "🗑️",
+        SECURITY: "🔒",
+        OTHER: "📋"
+    };
+
     useEffect(() => {
         handleGetApartmentByOwnerId();
-        getAllPublicReports(0); // Start from page 0
+        getAllPublicReports(0);
     }, []);
 
     useEffect(() => {
@@ -85,7 +104,6 @@ const ResidentPage = () => {
     },[ownersBuildingId])
 
     useEffect(() => {
-
         if (!authenticatedResidentId || !residentGroupId) {
             console.log("⚠️ Missing authentication or group info, skipping WebSocket setup");
             return;
@@ -106,12 +124,6 @@ const ResidentPage = () => {
                         path,
                         handleNotification
                     );
-
-                    if (subscriptionRefs.current[key]) {
-                        console.log(`✅ Successfully subscribed to user queue: ${path}`);
-                    } else {
-                        console.error(`❌ Failed to subscribe to user queue: ${path}`);
-                    }
                 });
 
                 const groupTopic = `/topic/group/${residentGroupId}`;
@@ -119,12 +131,6 @@ const ResidentPage = () => {
                     groupTopic,
                     handleNotification
                 );
-
-                if (subscriptionRefs.current.groupTopic) {
-                    console.log(`✅ Successfully subscribed to group topic: ${groupTopic}`);
-                } else {
-                    console.error(`❌ Failed to subscribe to group topic: ${groupTopic}`);
-                }
             },
             onDisconnect: () => {
                 console.log("🔌 Resident WebSocket disconnected");
@@ -145,15 +151,12 @@ const ResidentPage = () => {
         });
 
         return () => {
-            console.log("🧹 Cleaning up Resident WebSocket subscriptions...");
-
             Object.keys(subscriptionRefs.current).forEach(key => {
                 if (subscriptionRefs.current[key]) {
                     subscriptionRefs.current[key].unsubscribe();
                     subscriptionRefs.current[key] = null;
                 }
             });
-
             websocketServices.disconnect();
         };
     }, [authenticatedResidentId, residentGroupId]);
@@ -190,172 +193,429 @@ const ResidentPage = () => {
         }
     };
 
-    console.log(`This is the owners apartments id: ${ownersApartment?.id}`);
-    console.log(`This is the owners apartments number: ${ownersApartment?.apartmentNumber}`)
+    const handleReportFormChange = (e) => {
+        const { name, value } = e.target;
+        setReportFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
 
-    console.log("These are the public reports: ")
-    console.log(publicReports);
+    const handleSubmitPublicReport = async (e) => {
+        e.preventDefault();
+        try {
+            await sendPublicReport(reportFormData);
+
+            getAllPublicReports(currentPage);
+
+            setReportFormData({
+                name: '',
+                issueDescription: '',
+                comment: '',
+                reportType: 'ELECTRICITY'
+            });
+            setShowReportForm(false);
+            alert('Report submitted successfully!');
+        } catch (error) {
+            console.error('Error submitting report:', error);
+            alert('Failed to submit report. Please try again.');
+        }
+    };
+
+    const toggleReportExpansion = (index) => {
+        setExpandedReportId(expandedReportId === index ? null : index);
+    };
+
+    const truncateText = (text, maxLength = 100) => {
+        if (text.length <= maxLength) return text;
+        return text.substr(0, maxLength) + '...';
+    };
 
     return(
         <div className="resident-page">
-            <div className="resident-header">
-                <h2>Resident Dashboard</h2>
-                <div className="resident-header-buttons">
-                    <button className="resident-header-button">Notifications<IoMdNotifications/></button>
-                    <button className="resident-header-button" onClick={handleLogout}>Logout<IoLogOut/></button>
+            <div className="resident-page-header">
+                <div className="resident-page-header-left">
+                    <h2>Resident Dashboard</h2>
+                    <p className="resident-page-welcome-text">Welcome back, {authenticatedResidentUserName || "Resident"}</p>
+                </div>
+                <div className="resident-page-header-right">
+                    <button className="resident-page-header-action-btn resident-page-notification-btn">
+                        <IoMdNotifications className="resident-page-header-icon"/>
+                        <span className="resident-page-notification-badge">3</span>
+                    </button>
+                    <button
+                        className="resident-page-header-action-btn resident-page-logout-btn"
+                        onClick={handleLogout}
+                    >
+                        <IoLogOut className="resident-page-header-icon"/>
+                        Logout
+                    </button>
                 </div>
             </div>
 
-            <div className="resident-main-content">
-                <div className="resident-primary-content">
-                    <div className="residentPage-apartment-info">
-                        <h2>Apartment Information</h2>
+            {/* Stats Overview Cards */}
+            <div className="resident-page-stats-overview">
+                <div className="resident-page-stat-card">
+                    <div className="resident-page-stat-icon">
+                        <FaHome />
+                    </div>
+                    <div className="resident-page-stat-info">
+                        <h3>My Apartment</h3>
+                        <p>{ownersApartment?.apartmentNumber || "N/A"}</p>
+                    </div>
+                </div>
+                <div className="resident-page-stat-card">
+                    <div className="resident-page-stat-icon">
+                        <FaBuilding />
+                    </div>
+                    <div className="resident-page-stat-info">
+                        <h3>Building</h3>
+                        <p>{ownersBuilding?.buildingNumber || "N/A"}</p>
+                    </div>
+                </div>
+                <div className="resident-page-stat-card">
+                    <div className="resident-page-stat-icon">
+                        <MdPeople />
+                    </div>
+                    <div className="resident-page-stat-info">
+                        <h3>Service Companies</h3>
+                        <p>{companiesInBuilding?.length || 0}</p>
+                    </div>
+                </div>
+                <div className="resident-page-stat-card">
+                    <div className="resident-page-stat-icon">
+                        <FaChartBar />
+                    </div>
+                    <div className="resident-page-stat-info">
+                        <h3>Active Reports</h3>
+                        <p>{publicReports?.length || 0}</p>
+                    </div>
+                </div>
+            </div>
 
+            <div className="resident-page-main-content">
+                <div className="resident-page-content-left">
+                    <div className="resident-page-info-card">
+                        <div className="resident-page-card-header">
+                            <FaHome className="resident-page-card-icon" />
+                            <h3>Apartment Information</h3>
+                        </div>
                         {ownersApartment ? (
-                            <div>
-                                <p><strong>Apartment Number:</strong> {ownersApartment.apartmentNumber}</p>
-                                <p><strong>Owner name</strong>{ownersApartment.ownerName}</p>
-                                <p><strong>Floor:</strong> {ownersApartment.floorNumber}</p>
+                            <div className="resident-page-info-grid">
+                                <div className="resident-page-info-item">
+                                    <span className="resident-page-info-label">Number</span>
+                                    <span className="resident-page-info-value">{ownersApartment.apartmentNumber}</span>
+                                </div>
+                                <div className="resident-page-info-item">
+                                    <span className="resident-page-info-label">Owner</span>
+                                    <span className="resident-page-info-value">{ownersApartment.ownerName}</span>
+                                </div>
+                                <div className="resident-page-info-item">
+                                    <span className="resident-page-info-label">Floor</span>
+                                    <span className="resident-page-info-value">{ownersApartment.floorNumber}</span>
+                                </div>
                             </div>
                         ) : (
-                            <p>Loading apartment information...</p>
+                            <p className="resident-page-loading-text">Loading apartment information...</p>
                         )}
                     </div>
 
-                    {/* Building Info - Center Top */}
-                    <div className="residentPage-building-info">
-                        <h2>Building Information</h2>
-
+                    <div className="resident-page-info-card">
+                        <div className="resident-page-card-header">
+                            <FaBuilding className="resident-page-card-icon" />
+                            <h3>Building Information</h3>
+                        </div>
                         {ownersBuilding ? (
-                            <div>
-                                <p><strong>Building Number:</strong> {ownersBuilding.buildingNumber}</p>
-                                <p><strong>Building Address:</strong> {ownersBuilding.address}</p>
-                                <p><strong>Number of apartments in the building:</strong>{ownersBuilding.numberOfApartments}</p>
+                            <div className="resident-page-info-grid">
+                                <div className="resident-page-info-item">
+                                    <span className="resident-page-info-label">Building No.</span>
+                                    <span className="resident-page-info-value">{ownersBuilding.buildingNumber}</span>
+                                </div>
+                                <div className="resident-page-info-item">
+                                    <MdLocationOn className="resident-page-location-icon" />
+                                    <span className="resident-page-info-label">Address</span>
+                                    <span className="resident-page-info-value resident-page-address">{ownersBuilding.address}</span>
+                                </div>
+                                <div className="resident-page-info-item">
+                                    <span className="resident-page-info-label">Apartments</span>
+                                    <span className="resident-page-info-value">{ownersBuilding.numberOfApartments}</span>
+                                </div>
                             </div>
                         ) : (
-                            <p>Loading building information...</p>
+                            <p className="resident-page-loading-text">Loading building information...</p>
                         )}
                     </div>
+                </div>
 
-                    {/* Reports Section - Below Building Info */}
-                    <div className="residentPage-reports-section">
-                        <h2>Public Reports</h2>
+                {/* Middle Column - Reports */}
+                <div className="resident-page-content-middle">
+                    <div className="resident-page-reports-card">
+                        <div className="resident-page-card-header">
+                            <FaFileAlt className="resident-page-card-icon" />
+                            <h3>Public Reports</h3>
+                            <button
+                                className="resident-page-new-report-btn"
+                                onClick={() => setShowReportForm(true)}
+                            >
+                                + New Report
+                            </button>
+                        </div>
 
                         {publicReports && publicReports.length > 0 ? (
-                            <div className="residentPage-reports-list">
+                            <div className="resident-page-reports-list">
                                 {publicReports.map((report, index) => (
-                                    <div key={index} className="residentPage-report-card">
-                                        <h3>{report.name}</h3>
-                                        <p><strong>Sender:</strong> {report.senderName}</p>
-                                        <p><strong>Report Type:</strong> {report.reportType}</p>
-                                        <p><strong>Issue Description:</strong> {report.issueDescription}</p>
-                                        {report.comment && (
-                                            <p><strong>Comment:</strong> {report.comment}</p>
-                                        )}
-                                        {report.roomNumber && (
-                                            <p><strong>Room Number:</strong> {report.roomNumber}</p>
-                                        )}
-                                        {report.floor && (
-                                            <p><strong>Floor:</strong> {report.floor}</p>
-                                        )}
+                                    <div
+                                        key={index}
+                                        className={`resident-page-report-item ${expandedReportId === index ? 'resident-page-expanded' : ''}`}
+                                        onClick={() => toggleReportExpansion(index)}
+                                    >
+                                        <div className="resident-page-report-header">
+                                            <span className="resident-page-report-type-icon">
+                                                {reportTypeIcons[report.reportType] || "📋"}
+                                            </span>
+                                            <div className="resident-page-report-title">
+                                                <h4>{report.name}</h4>
+                                                <span className="resident-page-report-meta">
+                                                    By {report.senderName} • {report.reportType}
+                                                </span>
+                                            </div>
+                                            <span className="resident-page-expand-icon">
+                                                {expandedReportId === index ? '−' : '+'}
+                                            </span>
+                                        </div>
+
+                                        <div className="resident-page-report-details">
+                                            <p className="resident-page-report-description">
+                                                {expandedReportId === index
+                                                    ? report.issueDescription
+                                                    : truncateText(report.issueDescription, 80)}
+                                            </p>
+
+                                            {expandedReportId === index && report.comment && (
+                                                <div className="resident-page-report-comment">
+                                                    <strong>Additional Comments:</strong>
+                                                    <p>{report.comment}</p>
+                                                </div>
+                                            )}
+
+                                            <div className="resident-page-report-footer">
+                                                {report.roomNumber && (
+                                                    <span className="resident-page-footer-tag">
+                                                        Room: {report.roomNumber}
+                                                    </span>
+                                                )}
+                                                {report.floor && (
+                                                    <span className="resident-page-footer-tag">
+                                                        Floor: {report.floor}
+                                                    </span>
+                                                )}
+                                                <span className="resident-page-report-date">
+                                                    {report.createdAt || "recently"}
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
                         ) : (
-                            <p>No public reports available</p>
+                            <div className="resident-page-empty-state">
+                                <FaFileAlt className="resident-page-empty-icon" />
+                                <p>No public reports available</p>
+                                <button
+                                    className="resident-page-create-first-btn"
+                                    onClick={() => setShowReportForm(true)}
+                                >
+                                    Create First Report
+                                </button>
+                            </div>
                         )}
 
                         {totalPages > 1 && (
-                            <div className="residentPage-pagination">
+                            <div className="resident-page-pagination">
                                 <button
-                                    className="residentPage-pagination-btn"
+                                    className="resident-page-pagination-btn resident-page-prev"
                                     onClick={() => handleReportsPageChange(currentPage - 1)}
                                     disabled={currentPage === 0}
                                 >
-                                    ← Previous
+                                    Previous
                                 </button>
-
-                                <div className="residentPage-pagination-pages">
-                                    {currentPage >= 3 && (
-                                        <>
-                                            <button
-                                                className="residentPage-pagination-page"
-                                                onClick={() => handleReportsPageChange(0)}
-                                            >
-                                                1
-                                            </button>
-                                            {currentPage > 3 && <span className="residentPage-pagination-ellipsis">...</span>}
-                                        </>
-                                    )}
-
-                                    {[...Array(totalPages)].map((_, index) => {
-                                        if (index >= currentPage - 1 && index <= currentPage + 1 && index >= 0 && index < totalPages) {
-                                            return (
-                                                <button
-                                                    key={index}
-                                                    className={`residentPage-pagination-page ${currentPage === index ? 'active' : ''}`}
-                                                    onClick={() => handleReportsPageChange(index)}
-                                                >
-                                                    {index + 1}
-                                                </button>
-                                            );
+                                <div className="resident-page-page-numbers">
+                                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                                        let pageNum;
+                                        if (totalPages <= 5) {
+                                            pageNum = i;
+                                        } else if (currentPage <= 2) {
+                                            pageNum = i;
+                                        } else if (currentPage >= totalPages - 3) {
+                                            pageNum = totalPages - 5 + i;
+                                        } else {
+                                            pageNum = currentPage - 2 + i;
                                         }
-                                        return null;
-                                    })}
-
-                                    {currentPage <= totalPages - 4 && (
-                                        <>
-                                            {currentPage < totalPages - 4 && <span className="residentPage-pagination-ellipsis">...</span>}
+                                        return (
                                             <button
-                                                className="residentPage-pagination-page"
-                                                onClick={() => handleReportsPageChange(totalPages - 1)}
+                                                key={pageNum}
+                                                className={`resident-page-page-number ${currentPage === pageNum ? 'resident-page-active' : ''}`}
+                                                onClick={() => handleReportsPageChange(pageNum)}
                                             >
-                                                {totalPages}
+                                                {pageNum + 1}
                                             </button>
-                                        </>
-                                    )}
+                                        );
+                                    })}
                                 </div>
-
                                 <button
-                                    className="residentPage-pagination-btn"
+                                    className="resident-page-pagination-btn resident-page-next"
                                     onClick={() => handleReportsPageChange(currentPage + 1)}
                                     disabled={currentPage === totalPages - 1}
                                 >
-                                    Next →
+                                    Next
                                 </button>
                             </div>
                         )}
                     </div>
                 </div>
 
-                {/* Right Sidebar - Companies Info */}
-                <div className="resident-sidebar">
-                    <div className="residentPage-companies-info">
-                        <h2>Companies in Building</h2>
+                {/* Right Column - Companies */}
+                <div className="resident-page-content-right">
+                    <div className="resident-page-companies-card">
+                        <div className="resident-page-card-header">
+                            <h3>Service Companies</h3>
+                            <span className="resident-page-company-count">
+                                {companiesInBuilding?.length || 0} services
+                            </span>
+                        </div>
 
                         {companiesInBuilding && companiesInBuilding.length > 0 ? (
-                            <div className="residentPage-companies-list">
+                            <div className="resident-page-companies-list">
                                 {companiesInBuilding.map((company) => (
-                                    <div key={company.id} className="residentPage-company-card">
-                                        {getServiceIcon(company.serviceType)}
-                                        <h3>{company.name}</h3>
-                                        <p><strong>Service Type:</strong> {company.serviceType.toLowerCase()}</p>
-                                        <p><strong>Email:</strong> {company.email}</p>
-                                        <p><strong>Phone:</strong> {company.phoneNumber}</p>
-                                        <p><strong>Address:</strong> {company.address}</p>
-                                        <p><strong>Rating:</strong> {company.overallRating || 'Not rated'}</p>
-                                        <p><strong>Introduction:</strong> {company.companyIntroduction || 'No introduction available'}</p>
+                                    <div key={company.id} className="resident-page-company-item">
+                                        <div className="resident-page-company-header">
+                                            {getServiceIcon(company.serviceType)}
+                                            <div className="resident-page-company-info">
+                                                <h4>{company.name}</h4>
+                                                <span className="resident-page-service-badge">
+                                                    {company.serviceType}
+                                                </span>
+                                                <span>{company.address}</span>
+                                                <span>{company.companyIntroduction}</span>
+                                                {/*<span>{company.overallRating}</span>*/}
+                                            </div>
+                                        </div>
+                                        <div className="resident-page-company-contact">
+                                            <div className="resident-page-contact-item">
+                                                <span className="resident-page-contact-label">Phone</span>
+                                                <span className="resident-page-contact-value">{company.phoneNumber}</span>
+                                            </div>
+                                            <div className="resident-page-contact-item">
+                                                <span className="resident-page-contact-label">Email</span>
+                                                <span className="resident-page-contact-value resident-page-email">{company.email}</span>
+                                            </div>
+                                        </div>
+                                        {company.overallRating && (
+                                            <div className="resident-page-company-rating">
+                                                <div className="resident-page-rating-stars">
+                                                    {'★'.repeat(Math.floor(company.overallRating))}
+                                                    {'☆'.repeat(5 - Math.floor(company.overallRating))}
+                                                </div>
+                                                <span className="resident-page-rating-value">{company.overallRating.toFixed(1)}</span>
+                                            </div>
+                                        )}
                                     </div>
                                 ))}
                             </div>
                         ) : (
-                            <div className="residentPage-companies-list">
-                                <p>No companies present in the building</p>
+                            <div className="resident-page-empty-state">
+                                <p>No companies in building</p>
                             </div>
                         )}
                     </div>
                 </div>
             </div>
+
+            {showReportForm && (
+                <div className="resident-page-modal-overlay">
+                    <div className="resident-page-modal-content">
+                        <div className="resident-page-modal-header">
+                            <h3>Report an Issue</h3>
+                            <button
+                                className="resident-page-modal-close"
+                                onClick={() => setShowReportForm(false)}
+                            >
+                                ×
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleSubmitPublicReport} className="resident-page-report-form">
+                            <div className="resident-page-form-row">
+                                <div className="resident-page-form-group">
+                                    <label>Report Title *</label>
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        value={reportFormData.name}
+                                        onChange={handleReportFormChange}
+                                        required
+                                        placeholder="Brief description"
+                                    />
+                                </div>
+                                <div className="resident-page-form-group">
+                                    <label>Report Type *</label>
+                                    <select
+                                        name="reportType"
+                                        value={reportFormData.reportType}
+                                        onChange={handleReportFormChange}
+                                        required
+                                    >
+                                        <option value="ELECTRICITY">⚡ Electricity</option>
+                                        <option value="LIGHTNING">💡 Lighting</option>
+                                        <option value="WATER_SUPPLY">💧 Water Supply</option>
+                                        <option value="SEWAGE">🚽 Sewage</option>
+                                        <option value="HEATING">🔥 Heating</option>
+                                        <option value="GARBAGE_COLLECTION">🗑️ Garbage</option>
+                                        <option value="SECURITY">🔒 Security</option>
+                                        <option value="OTHER">📋 Other</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="resident-page-form-group">
+                                <label>Issue Description *</label>
+                                <textarea
+                                    name="issueDescription"
+                                    value={reportFormData.issueDescription}
+                                    onChange={handleReportFormChange}
+                                    required
+                                    placeholder="Describe the issue in detail..."
+                                    rows="3"
+                                />
+                            </div>
+
+                            <div className="resident-page-form-group">
+                                <label>Additional Comments</label>
+                                <textarea
+                                    name="comment"
+                                    value={reportFormData.comment}
+                                    onChange={handleReportFormChange}
+                                    placeholder="Any additional information..."
+                                    rows="2"
+                                />
+                            </div>
+
+                            <div className="resident-page-form-actions">
+                                <button
+                                    type="button"
+                                    className="resident-page-btn-secondary"
+                                    onClick={() => setShowReportForm(false)}
+                                >
+                                    Cancel
+                                </button>
+                                <button type="submit" className="resident-page-btn-primary">
+                                    Submit Report
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

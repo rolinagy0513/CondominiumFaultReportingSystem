@@ -27,9 +27,9 @@ public class ReportController {
         return reportService.sendPublicReport(reportRequestDTO);
     }
 
-    @PostMapping("/resident/report/sendPrivate")
+    @PostMapping("/resident/report/sendPrivate/{companyId}")
     public ReportDTO sendPrivateReport(
-            @RequestParam Long companyId,
+            @PathVariable Long companyId,
             @RequestBody ReportRequestDTO reportRequestDTO
     ){
         return reportService.sendPrivateReport(companyId, reportRequestDTO);
