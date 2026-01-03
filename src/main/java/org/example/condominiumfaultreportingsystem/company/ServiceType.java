@@ -6,6 +6,7 @@ public enum ServiceType {
     CLEANING,
     SECURITY,
     ELEVATOR_MAINTENANCE,
+    HEATING_TECHNICIANS,
     GARDENING,
     OTHER
 }

@@ -191,6 +191,10 @@
     color: #10b981;
 }
 
+.heating-icon{
+    color: orangered;
+}
+
 .security-icon {
     color: #ef4444;
 }

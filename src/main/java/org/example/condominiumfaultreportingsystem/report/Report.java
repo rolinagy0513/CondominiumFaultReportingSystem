@@ -51,6 +51,7 @@ public class Report {
     private LocalDateTime createdAt;
 
     private Long companyId;
+    private String companyName;
 
     @OneToOne(mappedBy = "report", cascade = CascadeType.ALL)
     private Feedback feedback;

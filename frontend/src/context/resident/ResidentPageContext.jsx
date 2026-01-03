@@ -15,6 +15,7 @@ export const ResidentPageProvider = ({ children }) => {
     const [selectedCompany, setSelectedCompany] = useState([]);
 
     const [publicReports, setPublicReports] = useState([]);
+    const [inProgressReports, setInProgressReports] = useState([]);
 
     const [residentGroupId, setResidentGroupId] = useState(() =>
         localStorage.getItem("residentGroupId")
@@ -38,6 +39,7 @@ export const ResidentPageProvider = ({ children }) => {
             selectedCompanyId, setSelectedCompanyId,
             selectedCompany, setSelectedCompany,
             publicReports, setPublicReports,
+            inProgressReports, setInProgressReports,
             residentGroupId, setResidentGroupId,
             authenticatedResidentId, setAuthenticatedResidentId,
             authenticatedResidentUserName, setAuthenticatedResidentUserName

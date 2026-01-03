@@ -6,6 +6,8 @@ import { MdSecurity } from "react-icons/md";
 import { GiElevator } from "react-icons/gi";
 import { FaLeaf } from "react-icons/fa";
 import { IoMdBuild } from "react-icons/io";
+import { FaFire } from "react-icons/fa";
+import { FaFireAlt } from "react-icons/fa";
 
 export const getServiceIcon = (serviceType) => {
     switch (serviceType?.toUpperCase()) {
@@ -17,6 +19,8 @@ export const getServiceIcon = (serviceType) => {
             return <FaBroom className="cleaning-icon" />;
         case 'SECURITY':
             return <MdSecurity className="security-icon" />;
+        case 'HEATING_TECHNICIANS':
+           return <FaFireAlt className="heating-icon"/>
         case 'ELEVATOR_MAINTENANCE':
             return <GiElevator className="elevator-icon" />;
         case 'GARDENING':
@@ -40,6 +44,8 @@ export const getServiceTypeDisplay = (serviceType) => {
             return 'Security';
         case 'ELEVATOR_MAINTENANCE':
             return 'Elevator Maintenance';
+        case 'HEATING_TECHNICIANS':
+            return 'Heating Technicians'
         case 'GARDENING':
             return 'Gardening';
         case 'OTHER':

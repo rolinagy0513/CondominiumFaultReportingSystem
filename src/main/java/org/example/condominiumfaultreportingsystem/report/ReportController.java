@@ -1,10 +1,7 @@
 package org.example.condominiumfaultreportingsystem.report;
 
 import lombok.RequiredArgsConstructor;
-import org.example.condominiumfaultreportingsystem.DTO.CompleteReportDTO;
-import org.example.condominiumfaultreportingsystem.DTO.ReportDTO;
-import org.example.condominiumfaultreportingsystem.DTO.ReportRequestDTO;
-import org.example.condominiumfaultreportingsystem.DTO.SubmitReportDTO;
+import org.example.condominiumfaultreportingsystem.DTO.*;
 import org.example.condominiumfaultreportingsystem.report.impl.ReportService;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -88,7 +85,7 @@ public class ReportController {
     }
 
     @GetMapping("/resident/report/getInProgressReport")
-    public List<ReportDTO> getInProgressReport(
+    public List<ReportWithCompanyDTO> getInProgressReport(
     ){
         return reportService.getInProgressReport();
     }

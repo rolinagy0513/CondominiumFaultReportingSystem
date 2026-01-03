@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ReportDTO {
+public class ReportWithCompanyDTO {
 
     private String senderName;
 
@@ -25,6 +25,8 @@ public class ReportDTO {
     private String comment;
     private Integer roomNumber;
     private Integer floor;
+
+    private String companyName;
 
     private LocalDateTime createdAt;
 

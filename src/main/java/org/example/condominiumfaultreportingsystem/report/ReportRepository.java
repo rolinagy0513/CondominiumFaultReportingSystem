@@ -13,6 +13,7 @@ import java.util.Optional;
 
 public interface ReportRepository extends JpaRepository<Report, Long> {
 
+    @EntityGraph(attributePaths = "user")
     @Query("SELECT r FROM Report r WHERE r.user.id = :userId AND r.reportStatus = :reportStatus")
     Optional<List<Report>> findReportByUser(@Param("userId") Long userId, @Param("reportStatus") ReportStatus reportStatus);
 

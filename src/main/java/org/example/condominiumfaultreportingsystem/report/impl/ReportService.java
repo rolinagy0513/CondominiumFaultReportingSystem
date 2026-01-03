@@ -1,10 +1,7 @@
 package org.example.condominiumfaultreportingsystem.report.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.example.condominiumfaultreportingsystem.DTO.CompleteReportDTO;
-import org.example.condominiumfaultreportingsystem.DTO.ReportDTO;
-import org.example.condominiumfaultreportingsystem.DTO.ReportRequestDTO;
-import org.example.condominiumfaultreportingsystem.DTO.UserDTO;
+import org.example.condominiumfaultreportingsystem.DTO.*;
 import org.example.condominiumfaultreportingsystem.apartment.Apartment;
 import org.example.condominiumfaultreportingsystem.apartment.ApartmentRepository;
 import org.example.condominiumfaultreportingsystem.cache.CacheService;
@@ -30,6 +27,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -186,6 +184,7 @@ public class ReportService implements IReportService{
                 throw new ReportAlreadyAcceptedException();
             }
             report.setCompanyId(companyId);
+            report.setCompanyName(company.getName());
         } else {
             if (!report.getCompanyId().equals(companyId)){
                 throw new RoleValidationException("This private report belongs to another company");
@@ -323,7 +322,23 @@ public class ReportService implements IReportService{
 
     }
 
-    public List<ReportDTO> getInProgressReport(){
+//    public List<ReportDTO> getInProgressReport(){
+//
+//        UserDTO currentUser = userService.getCurrentUser();
+//
+//        Optional<List<Report>> reportOpt = reportRepository.findReportByUser(currentUser.getId(), ReportStatus.IN_PROGRESS);
+//
+//        if (reportOpt.isEmpty()){
+//            throw new ReportNotFoundException();
+//        }
+//
+//        List<Report> reports = reportOpt.get();
+//
+//        return reports.stream().map(this::mapToDto).toList();
+//
+//    }
+
+    public List<ReportWithCompanyDTO> getInProgressReport(){
 
         UserDTO currentUser = userService.getCurrentUser();
 
@@ -335,7 +350,19 @@ public class ReportService implements IReportService{
 
         List<Report> reports = reportOpt.get();
 
-        return reports.stream().map(this::mapToDto).toList();
+        return  reports.stream().map(report -> ReportWithCompanyDTO.builder()
+                .senderName(report.getUser().getName())
+                .reportPrivacy(report.getReportPrivacy())
+                .name(report.getName())
+                .issueDescription(report.getIssueDescription())
+                .comment(report.getComment())
+                .roomNumber(report.getRoomNumber())
+                .floor(report.getFloor())
+                .companyName(report.getCompanyName())
+                .createdAt(report.getCreatedAt())
+                .reportStatus(report.getReportStatus())
+                .reportType(report.getReportType())
+                .build()).toList();
 
     }
 
@@ -359,8 +386,11 @@ public class ReportService implements IReportService{
 
         return switch (reportType) {
             case ELECTRICITY, LIGHTNING -> serviceType == ServiceType.ELECTRICIAN;
-            case WATER_SUPPLY, SEWAGE, HEATING -> serviceType == ServiceType.PLUMBER;
+            case WATER_SUPPLY, SEWAGE -> serviceType == ServiceType.PLUMBER;
+            case HEATING -> serviceType == ServiceType.HEATING_TECHNICIANS;
             case GARBAGE_COLLECTION -> serviceType == ServiceType.CLEANING;
+            case ELEVATOR -> serviceType == ServiceType.ELEVATOR_MAINTENANCE;
+            case GARDENING -> serviceType == ServiceType.GARDENING;
             case SECURITY -> serviceType == ServiceType.SECURITY;
             case OTHER -> serviceType == ServiceType.OTHER;
         };

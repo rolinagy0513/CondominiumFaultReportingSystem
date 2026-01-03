@@ -15,9 +15,9 @@ import {useReports} from "../../hooks/useReports.js";
 import { IoLogOut } from "react-icons/io5";
 import { IoMdNotifications } from "react-icons/io";
 import { FaBuilding, FaHome, FaFileAlt, FaChartBar, FaExclamationTriangle } from "react-icons/fa";
-import { MdApartment, MdLocationOn, MdPeople } from "react-icons/md";
+import { MdLocationOn, MdPeople } from "react-icons/md";
 
-import {getServiceIcon} from "../../utility/GetCompanyLogoUtility.jsx";
+import {getServiceIcon, getServiceTypeDisplay} from "../../utility/GetCompanyLogoUtility.jsx";
 
 import "./style/ResidentPage.css"
 
@@ -31,8 +31,10 @@ const ResidentPage = () => {
         ownersApartment, residentGroupId,
         authenticatedResidentId, authenticatedResidentUserName,
         ownersApartmentId, ownersBuilding, ownersBuildingId,
-        companiesInBuilding, publicReports,
+        companiesInBuilding, publicReports,inProgressReports,
     } = useContext(ResidentPageContext);
+
+    const [selectedCompanyId, setSelectedCompanyId] = useState(null);
 
     const {
         currentPage, setCurrentPage,
@@ -54,7 +56,8 @@ const ResidentPage = () => {
     const {
         getAllPublicReports,
         sendPublicReport,
-        sendPrivateReport
+        sendPrivateReport,
+        getInProgressReport,
     } = useReports()
 
     const subscriptionRefs = useRef({
@@ -72,9 +75,17 @@ const ResidentPage = () => {
         reportType: 'ELECTRICITY'
     });
 
+    const [showPrivateReportForm, setShowPrivateReportForm] = useState(false);
+
+    const [privateReportFormData, setPrivateReportData] = useState({
+        name: '',
+        issueDescription: '',
+        comment: '',
+        reportType: 'ELECTRICITY'
+    })
+
     const [expandedReportId, setExpandedReportId] = useState(null);
 
-    // Add these icons to the report type mapping
     const reportTypeIcons = {
         ELECTRICITY: "⚡",
         LIGHTNING: "💡",
@@ -89,6 +100,7 @@ const ResidentPage = () => {
     useEffect(() => {
         handleGetApartmentByOwnerId();
         getAllPublicReports(0);
+        getInProgressReport();
     }, []);
 
     useEffect(() => {
@@ -201,6 +213,14 @@ const ResidentPage = () => {
         }));
     };
 
+    const handlePrivateReportFormChange = (e) =>{
+        const {name, value} = e.target;
+        setPrivateReportData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    }
+
     const handleSubmitPublicReport = async (e) => {
         e.preventDefault();
         try {
@@ -215,9 +235,37 @@ const ResidentPage = () => {
                 reportType: 'ELECTRICITY'
             });
             setShowReportForm(false);
-            alert('Report submitted successfully!');
         } catch (error) {
             console.error('Error submitting report:', error);
+            alert('Failed to submit report. Please try again.');
+        }
+    };
+
+    const handleSubmitPrivateReport = async (e) => {
+        e.preventDefault();
+
+        if (!selectedCompanyId) {
+            alert('Please select a company first');
+            return;
+        }
+
+        try {
+            await sendPrivateReport(selectedCompanyId, privateReportFormData);
+
+            setPrivateReportData({
+                name: '',
+                issueDescription: '',
+                comment: '',
+                reportType: 'ELECTRICITY'
+            });
+            setShowPrivateReportForm(false);
+            setSelectedCompanyId(null);
+
+            await getInProgressReport();
+
+            alert('Private report submitted successfully!');
+        } catch (error) {
+            console.error('Error submitting private report:', error);
             alert('Failed to submit report. Please try again.');
         }
     };
@@ -231,7 +279,8 @@ const ResidentPage = () => {
         return text.substr(0, maxLength) + '...';
     };
 
-    return(
+
+    return (
         <div className="resident-page">
             <div className="resident-page-header">
                 <div className="resident-page-header-left">
@@ -240,20 +289,19 @@ const ResidentPage = () => {
                 </div>
                 <div className="resident-page-header-right">
                     <button className="resident-page-header-action-btn resident-page-notification-btn">
-                        <IoMdNotifications className="resident-page-header-icon"/>
+                        <IoMdNotifications className="resident-page-header-icon" />
                         <span className="resident-page-notification-badge">3</span>
                     </button>
                     <button
                         className="resident-page-header-action-btn resident-page-logout-btn"
                         onClick={handleLogout}
                     >
-                        <IoLogOut className="resident-page-header-icon"/>
+                        <IoLogOut className="resident-page-header-icon" />
                         Logout
                     </button>
                 </div>
             </div>
 
-            {/* Stats Overview Cards */}
             <div className="resident-page-stats-overview">
                 <div className="resident-page-stat-card">
                     <div className="resident-page-stat-icon">
@@ -347,7 +395,6 @@ const ResidentPage = () => {
                     </div>
                 </div>
 
-                {/* Middle Column - Reports */}
                 <div className="resident-page-content-middle">
                     <div className="resident-page-reports-card">
                         <div className="resident-page-card-header">
@@ -370,18 +417,18 @@ const ResidentPage = () => {
                                         onClick={() => toggleReportExpansion(index)}
                                     >
                                         <div className="resident-page-report-header">
-                                            <span className="resident-page-report-type-icon">
-                                                {reportTypeIcons[report.reportType] || "📋"}
-                                            </span>
+                                    <span className="resident-page-report-type-icon">
+                                        {reportTypeIcons[report.reportType] || "📋"}
+                                    </span>
                                             <div className="resident-page-report-title">
                                                 <h4>{report.name}</h4>
                                                 <span className="resident-page-report-meta">
-                                                    By {report.senderName} • {report.reportType}
-                                                </span>
+                                            By {report.senderName} • {report.reportType}
+                                        </span>
                                             </div>
                                             <span className="resident-page-expand-icon">
-                                                {expandedReportId === index ? '−' : '+'}
-                                            </span>
+                                        {expandedReportId === index ? '−' : '+'}
+                                    </span>
                                         </div>
 
                                         <div className="resident-page-report-details">
@@ -401,17 +448,19 @@ const ResidentPage = () => {
                                             <div className="resident-page-report-footer">
                                                 {report.roomNumber && (
                                                     <span className="resident-page-footer-tag">
-                                                        Room: {report.roomNumber}
-                                                    </span>
+                                                Room: {report.roomNumber}
+                                            </span>
                                                 )}
                                                 {report.floor && (
                                                     <span className="resident-page-footer-tag">
-                                                        Floor: {report.floor}
-                                                    </span>
+                                                Floor: {report.floor}
+                                            </span>
                                                 )}
                                                 <span className="resident-page-report-date">
-                                                    {report.createdAt || "recently"}
-                                                </span>
+                                            {report.createdAt
+                                                ? new Date(report.createdAt).toLocaleString()
+                                                : "Recently"}
+                                        </span>
                                             </div>
                                         </div>
                                     </div>
@@ -474,14 +523,14 @@ const ResidentPage = () => {
                     </div>
                 </div>
 
-                {/* Right Column - Companies */}
+                {/* Right Column - Companies & In Progress Reports */}
                 <div className="resident-page-content-right">
                     <div className="resident-page-companies-card">
                         <div className="resident-page-card-header">
                             <h3>Service Companies</h3>
                             <span className="resident-page-company-count">
-                                {companiesInBuilding?.length || 0} services
-                            </span>
+                        {companiesInBuilding?.length || 0} services
+                    </span>
                         </div>
 
                         {companiesInBuilding && companiesInBuilding.length > 0 ? (
@@ -493,11 +542,8 @@ const ResidentPage = () => {
                                             <div className="resident-page-company-info">
                                                 <h4>{company.name}</h4>
                                                 <span className="resident-page-service-badge">
-                                                    {company.serviceType}
-                                                </span>
-                                                <span>{company.address}</span>
-                                                <span>{company.companyIntroduction}</span>
-                                                {/*<span>{company.overallRating}</span>*/}
+                                            {company.serviceType}
+                                        </span>
                                             </div>
                                         </div>
                                         <div className="resident-page-company-contact">
@@ -509,6 +555,16 @@ const ResidentPage = () => {
                                                 <span className="resident-page-contact-label">Email</span>
                                                 <span className="resident-page-contact-value resident-page-email">{company.email}</span>
                                             </div>
+                                            <div className="resident-page-company-address-item">
+                                                <span>Address</span>
+                                                <span>{company.address}</span>
+                                            </div>
+                                            {company.companyIntroduction && (
+                                                <div className="resident-page-company-introduction-item">
+                                                    <span>Introduction</span>
+                                                    <span>{company.companyIntroduction}</span>
+                                                </div>
+                                            )}
                                         </div>
                                         {company.overallRating && (
                                             <div className="resident-page-company-rating">
@@ -516,9 +572,20 @@ const ResidentPage = () => {
                                                     {'★'.repeat(Math.floor(company.overallRating))}
                                                     {'☆'.repeat(5 - Math.floor(company.overallRating))}
                                                 </div>
-                                                <span className="resident-page-rating-value">{company.overallRating.toFixed(1)}</span>
+                                                <span className="resident-page-rating-value">
+                                            {company.overallRating.toFixed(1)}
+                                        </span>
                                             </div>
                                         )}
+                                        <button
+                                            className="resident-page-companySection-privateReport"
+                                            onClick={() => {
+                                                setSelectedCompanyId(company.id);
+                                                setShowPrivateReportForm(true);
+                                            }}
+                                        >
+                                            Send Private Report
+                                        </button>
                                     </div>
                                 ))}
                             </div>
@@ -528,9 +595,60 @@ const ResidentPage = () => {
                             </div>
                         )}
                     </div>
+
+                    {/* In Progress Reports Section */}
+                    <div className="resident-page-inprogress-card">
+                        <div className="resident-page-inprogress-header">
+                            <FaExclamationTriangle className="resident-page-card-icon" />
+                            <h3>In Progress Reports</h3>
+                            <span className="resident-page-inprogress-count">
+                        {inProgressReports?.length || 0}
+                    </span>
+                        </div>
+
+                        {inProgressReports && inProgressReports.length > 0 ? (
+                            <div className="resident-page-inprogress-list">
+                                {inProgressReports.map((report, index) => (
+                                    <div key={index} className="resident-page-inprogress-item">
+                                        <div className="resident-page-inprogress-status">
+                                            In Progress
+                                        </div>
+                                        <div className="resident-page-inprogress-title">
+                                    <span className="resident-page-report-type-icon">
+                                        {reportTypeIcons[report.reportType] || "📋"}
+                                    </span>
+                                            <h4>{report.name || "Unnamed Report"}</h4>
+                                        </div>
+                                        <p className="resident-page-inprogress-description">
+                                            {report.issueDescription ?
+                                                truncateText(report.issueDescription, 100) :
+                                                "No description provided"}
+                                        </p>
+                                        <div className="resident-page-inprogress-footer">
+                                    <span className="resident-page-inprogress-date">
+                                        {report.createdAt
+                                            ? new Date(report.createdAt).toLocaleDateString()
+                                            : "Date unknown"}
+                                    </span>
+                                            {report.companyName && (
+                                                <span className="resident-page-inprogress-assigned">
+                                            To: {report.companyName}
+                                        </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="resident-page-inprogress-empty">
+                                <p>No reports in progress</p>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 
+            {/* Public Report Form Modal */}
             {showReportForm && (
                 <div className="resident-page-modal-overlay">
                     <div className="resident-page-modal-content">
@@ -610,6 +728,100 @@ const ResidentPage = () => {
                                 </button>
                                 <button type="submit" className="resident-page-btn-primary">
                                     Submit Report
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Private Report Form Modal */}
+            {showPrivateReportForm && (
+                <div className="resident-page-modal-overlay">
+                    <div className="resident-page-modal-content">
+                        <div className="resident-page-modal-header">
+                            <h3>Send Private Report</h3>
+                            {selectedCompanyId && (
+                                <p style={{ fontSize: '0.9em', color: '#666', margin: '5px 0' }}>
+                                    To: {companiesInBuilding?.find(c => c.id === selectedCompanyId)?.name}
+                                </p>
+                            )}
+                            <button
+                                className="resident-page-modal-close"
+                                onClick={() => {
+                                    setShowPrivateReportForm(false);
+                                    setSelectedCompanyId(null);
+                                }}
+                            >
+                                ×
+                            </button>
+                        </div>
+                        <form onSubmit={handleSubmitPrivateReport} className="resident-page-report-form">
+                            <div className="resident-page-form-row">
+                                <div className="resident-page-form-group">
+                                    <label>Report Title *</label>
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        value={privateReportFormData.name}
+                                        onChange={handlePrivateReportFormChange}
+                                        required
+                                        placeholder="Brief description"
+                                    />
+                                </div>
+                                <div className="resident-page-form-group">
+                                    <label>Report Type *</label>
+                                    <select
+                                        name="reportType"
+                                        value={privateReportFormData.reportType}
+                                        onChange={handlePrivateReportFormChange}
+                                        required
+                                    >
+                                        <option value="ELECTRICITY">⚡ Electricity</option>
+                                        <option value="LIGHTNING">💡 Lighting</option>
+                                        <option value="WATER_SUPPLY">💧 Water Supply</option>
+                                        <option value="SEWAGE">🚽 Sewage</option>
+                                        <option value="HEATING">🔥 Heating</option>
+                                        <option value="GARBAGE_COLLECTION">🗑️ Garbage</option>
+                                        <option value="SECURITY">🔒 Security</option>
+                                        <option value="OTHER">📋 Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="resident-page-form-group">
+                                <label>Issue Description *</label>
+                                <textarea
+                                    name="issueDescription"
+                                    value={privateReportFormData.issueDescription}
+                                    onChange={handlePrivateReportFormChange}
+                                    required
+                                    placeholder="Describe the issue in detail..."
+                                    rows="3"
+                                />
+                            </div>
+                            <div className="resident-page-form-group">
+                                <label>Additional Comments</label>
+                                <textarea
+                                    name="comment"
+                                    value={privateReportFormData.comment}
+                                    onChange={handlePrivateReportFormChange}
+                                    placeholder="Any additional information..."
+                                    rows="2"
+                                />
+                            </div>
+                            <div className="resident-page-form-actions">
+                                <button
+                                    type="button"
+                                    className="resident-page-btn-secondary"
+                                    onClick={() => {
+                                        setShowPrivateReportForm(false);
+                                        setSelectedCompanyId(null);
+                                    }}
+                                >
+                                    Cancel
+                                </button>
+                                <button type="submit" className="resident-page-btn-primary">
+                                    Submit Private Report
                                 </button>
                             </div>
                         </form>

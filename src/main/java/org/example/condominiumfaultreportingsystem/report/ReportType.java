@@ -6,7 +6,9 @@ public enum ReportType {
     WATER_SUPPLY,
     SEWAGE,
     HEATING,
+    ELEVATOR,
     GARBAGE_COLLECTION,
+    GARDENING,
     SECURITY,
     OTHER
 }

@@ -25,6 +25,7 @@ export const CompanyRequestProvider = ({ children }) => {
         { value: 'PLUMBER', label: 'Plumber' },
         { value: 'CLEANING', label: 'Cleaning' },
         { value: 'SECURITY', label: 'Security' },
+        {value: 'HEATING_TECHNICIANS', label: 'Heating Technicians'},
         { value: 'ELEVATOR_MAINTENANCE', label: 'Elevator Maintenance' },
         { value: 'GARDENING', label: 'Gardening' },
         { value: 'OTHER', label: 'Other' }

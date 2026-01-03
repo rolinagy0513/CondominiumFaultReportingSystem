@@ -13,7 +13,7 @@ export const useReports = () =>{
 
     const {
         setPublicReports, residentGroupId,
-        sendPublicReportData
+        sendPublicReportData, setInProgressReports,
     } = useContext(ResidentPageContext);
 
     const {
@@ -90,6 +90,15 @@ export const useReports = () =>{
 
     }
 
-    return{ getAllPublicReports, sendPublicReport, sendPrivateReport}
+    const getInProgressReport = async ()=>{
+        try {
+            const response = await apiServices.get("api/resident/report/getInProgressReport")
+            setInProgressReports(response);
+        }catch (error){
+            console.error(error.message)
+        }
+    }
+
+    return{ getAllPublicReports, sendPublicReport, sendPrivateReport, getInProgressReport}
 
 }
