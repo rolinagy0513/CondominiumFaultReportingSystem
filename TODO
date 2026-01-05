@@ -1,4 +1,4 @@
- - Optimalizálás ResidentPage!!
- - Company name test, company filter,
- - Áttrakni a css-t hogy a ticket jobban nézzen ki pl színek vagy valami.
+ - A filter nem megy mert valmi bugol a gond a useEffect el volt ami figyelte a selectedServiceType-ot
+ - Company filter resident - getByBuildingIdAndServiceType, admin - getByServiceType,
+ - ResidentPageContext optimalizálás
  - Meg kell csinálni az email-t is ami kiküldi majd a notification-t

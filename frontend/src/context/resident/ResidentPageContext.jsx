@@ -17,6 +17,24 @@ export const ResidentPageProvider = ({ children }) => {
     const [publicReports, setPublicReports] = useState([]);
     const [inProgressReports, setInProgressReports] = useState([]);
 
+    const [showReportForm, setShowReportForm] = useState(false);
+    const [reportFormData, setReportFormData] = useState({
+        name: '',
+        issueDescription: '',
+        comment: '',
+        reportType: 'ELECTRICITY'
+    });
+
+    const [showPrivateReportForm, setShowPrivateReportForm] = useState(false);
+    const [privateReportFormData, setPrivateReportData] = useState({
+        name: '',
+        issueDescription: '',
+        comment: '',
+        reportType: 'ELECTRICITY'
+    })
+
+    const{selectedServiceType, setSelectedServiceType} = useState(null);
+
     const [residentGroupId, setResidentGroupId] = useState(() =>
         localStorage.getItem("residentGroupId")
     )
@@ -40,6 +58,11 @@ export const ResidentPageProvider = ({ children }) => {
             selectedCompany, setSelectedCompany,
             publicReports, setPublicReports,
             inProgressReports, setInProgressReports,
+            showReportForm, setShowReportForm,
+            reportFormData, setReportFormData,
+            showPrivateReportForm, setShowPrivateReportForm,
+            privateReportFormData, setPrivateReportData,
+            selectedServiceType, setSelectedServiceType,
             residentGroupId, setResidentGroupId,
             authenticatedResidentId, setAuthenticatedResidentId,
             authenticatedResidentUserName, setAuthenticatedResidentUserName

@@ -61,9 +61,9 @@ public class CompanyController {
         return companyService.getCompaniesByServiceType(serviceType, page, size, sortBy, direction);
     }
 
-    @GetMapping("/resident/company/getByBuildingIdAndServiceType")
+    @GetMapping("/resident/company/getByBuildingIdAndServiceType/{buildingId}")
     public CompletableFuture<List<CompanyDTO>> getCompaniesByBuildingIdAndServiceType(
-            @RequestParam Long buildingId,
+            @PathVariable Long buildingId,
             @RequestParam ServiceType serviceType
     ){
         return companyService.getCompaniesByBuildingIdAndServiceType(buildingId, serviceType);

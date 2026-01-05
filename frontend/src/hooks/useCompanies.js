@@ -43,8 +43,8 @@ export const useCompanies = () =>{
     } = useContext(AdminModalContext);
 
     const {
-        ownersBuildingId,setCompaniesInBuilding,
-        selectedCompanyId, setSelectedCompany
+        ownersBuildingId, setCompaniesInBuilding,
+        selectedCompanyId, setSelectedCompany,
     } = useContext(ResidentPageContext);
 
     const getCompanies = async (page = 0) => {
@@ -190,11 +190,25 @@ export const useCompanies = () =>{
 
     }
 
+    const getCompanyByBuildingIdAndServiceType = async (buildingId, serviceType) => {
+        try {
+            const response = await apiServices.get(
+                `/resident/company/getByBuildingIdAndServiceType/${buildingId}`,
+                { serviceType: serviceType }
+            );
+
+            setCompaniesInBuilding(response);
+
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
+
     return{
         getCompanies, handleGetPendingCompanyRequests,
         handleAcceptCompanyRequest, handleRejectCompanyRequest,
         handleRemoveCompanyFromSystem, getCompanyByBuildingId,
-        getCompanyById,
+        getCompanyById,getCompanyByBuildingIdAndServiceType
     }
 
 }

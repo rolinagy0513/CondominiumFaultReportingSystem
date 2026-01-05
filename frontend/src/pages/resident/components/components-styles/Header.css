@@ -1,0 +1,113 @@
+.resident-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 32px;
+    background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(26, 54, 93, 0.2);
+    margin-bottom: 24px;
+    color: white;
+}
+
+.resident-page-header-left h2 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.resident-page-welcome-text {
+    margin: 8px 0 0 0;
+    opacity: 0.9;
+    font-size: 14px;
+}
+
+.resident-page-header-right {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.resident-page-header-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    backdrop-filter: blur(10px);
+}
+
+.resident-page-header-action-btn:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.resident-page-header-icon {
+    font-size: 18px;
+}
+
+.resident-page-notification-btn {
+    position: relative;
+    padding: 10px;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    justify-content: center;
+}
+
+.resident-page-notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ef4444;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+}
+
+.resident-page-logout-btn {
+    background: rgba(239, 68, 68, 0.9);
+}
+
+@media (max-width: 768px) {
+    .resident-page-header {
+        padding: 16px 20px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .resident-page-header-right {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 480px) {
+    .resident-page-header-left h2 {
+        font-size: 24px;
+    }
+
+    .resident-page-header-action-btn {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+
+    .resident-page-notification-btn {
+        width: 40px;
+        height: 40px;
+    }
+}

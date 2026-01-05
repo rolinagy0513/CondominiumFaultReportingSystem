@@ -19,39 +19,54 @@ const apiServices = {
      * Sends a GET request to the given URL.
      *
      * @param {string} url - The endpoint URL to fetch.
+     * @param params = The optional param if the get request requires any data
      * @returns {Promise<Object>} - Parsed JSON response.
      * @throws {Error} - If the request fails or returns a non-OK status.
      */
 
-    get: async (url) => {
-        try{
-
+    get: async (url, params = null) => {
+        try {
             const headers = {
-                "Content-Type":"application/json"
+                "Content-Type": "application/json"
             }
 
-            const response = await fetch(url, {
+            let fullUrl = url;
+            if (params) {
+                const queryString = new URLSearchParams(params).toString();
+                fullUrl = `${url}?${queryString}`;
+            }
+
+            const response = await fetch(fullUrl, {
                 method: "GET",
                 headers: headers,
                 credentials: 'include'
             });
 
-            const data = await response.json();
-
-
             if (!response.ok) {
-                throw new Error(data.message);
+                let errorData;
+                try {
+                    errorData = await response.json();
+                } catch {
+                    errorData = await response.text();
+                }
+                throw new Error(errorData?.message || errorData || "Request failed");
             }
 
-            return data;
+            const text = await response.text();
+            if (!text || text.trim().length === 0) {
+                return null;
+            }
 
-        }catch (error){
+            try {
+                return JSON.parse(text);
+            } catch (jsonError) {
+                return text;
+            }
 
+        } catch (error) {
             console.error("Api error: " + error.message)
             throw error;
-
         }
-
     },
 
     /**
