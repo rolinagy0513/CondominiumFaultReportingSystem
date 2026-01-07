@@ -6,6 +6,8 @@ import {AdminPanelContext} from "../context/admin/AdminPanelContext.jsx";
 
 import {useContext} from "react";
 import {ResidentPageContext} from "../context/resident/ResidentPageContext.jsx";
+import {ResidentBuildingContext} from "../context/resident/ResidentBuildingContext.jsx";
+import {ResidentApartmentContext} from "../context/resident/ResidentApartmentContext.jsx";
 
 export const useBuildings = () =>{
 
@@ -34,8 +36,12 @@ export const useBuildings = () =>{
     } = useContext(AdminPanelContext);
 
     const {
-        ownersApartmentId, setOwnersBuilding, setOwnersBuildingId
-    } = useContext(ResidentPageContext);
+        ownersApartmentId
+    } = useContext(ResidentApartmentContext);
+
+    const {
+        setOwnersBuilding, setOwnersBuildingId
+    } = useContext(ResidentBuildingContext);
 
     const getAllBuildings = async() => {
         try {

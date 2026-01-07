@@ -5,8 +5,11 @@ import {MdLocationOn} from "react-icons/md";
 
 import {getServiceIcon} from "../../../utility/GetCompanyLogoUtility.jsx";
 
-import {ResidentPageContext} from "../../../context/resident/ResidentPageContext.jsx";
 import {PaginationContext} from "../../../context/general/PaginationContext.jsx";
+import {ResidentApartmentContext} from "../../../context/resident/ResidentApartmentContext.jsx";
+import {ResidentBuildingContext} from "../../../context/resident/ResidentBuildingContext.jsx";
+import {ResidentCompanyContext} from "../../../context/resident/ResidentCompanyContext.jsx";
+import {ResidentReportContext} from "../../../context/resident/ResidentReportContext.jsx";
 
 import "./components-styles/MainContent.css"
 
@@ -16,12 +19,29 @@ const MainContent = ({
                          setShowPrivateReportForm
                      }) =>{
 
+    // const {
+    //     ownersApartment, ownersBuilding,
+    //     companiesInBuilding, publicReports,inProgressReports,
+    //     setSelectedCompanyId,
+    //     selectedServiceType, setSelectedServiceType,
+    // } = useContext(ResidentPageContext);
+
     const {
-        ownersApartment, ownersBuilding,
-        companiesInBuilding, publicReports,inProgressReports,
-        setSelectedCompanyId,
+        ownersApartment
+    } = useContext(ResidentApartmentContext);
+
+    const {
+        ownersBuilding
+    } = useContext(ResidentBuildingContext);
+
+    const {
+        companiesInBuilding, setSelectedCompanyId,
         selectedServiceType, setSelectedServiceType,
-    } = useContext(ResidentPageContext);
+    } = useContext(ResidentCompanyContext);
+
+    const {
+        publicReports,inProgressReports,
+    } = useContext(ResidentReportContext);
 
     const {
         currentPage, setCurrentPage,
@@ -260,9 +280,6 @@ const MainContent = ({
                     <div className="resident-page-card-header">
                         <h3>Service Companies</h3>
                         <div className="resident-page-filter-container">
-                            <span className="resident-page-company-count">
-                                {companiesInBuilding?.length || 0} services
-                            </span>
                             <select
                                 value={selectedServiceType || "ALL"}
                                 onChange={handleServiceTypeChange}

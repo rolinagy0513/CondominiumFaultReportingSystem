@@ -1,15 +1,23 @@
+import {useContext} from "react";
+
 import {FaBuilding} from "react-icons/fa6";
 
-import {getServiceIcon} from "../../../utility/GetCompanyLogoUtility.jsx";
-import {getServiceTypeDisplay} from "../../../utility/GetCompanyLogoUtility.jsx";
+import {getServiceIcon, getServiceTypeDisplay} from "../../../utility/GetCompanyLogoUtility.jsx";
+
+import {AdminModalContext} from "../../../context/admin/AdminModalContext.jsx";
 
 import "./component-styles/NotificationModal.css"
 
-const NotificationModal = ({ setIsAdminModalOpen, apartmentRequests,
-                               companyRequests, handleAcceptApartmentRequest,
-                               handleRejectApartmentRequest, handleAcceptCompanyRequest,
-                               handleRejectCompanyRequest,
-}) => {
+const NotificationModal = ({
+                               handleAcceptApartmentRequest, handleRejectApartmentRequest,
+                               handleAcceptCompanyRequest, handleRejectCompanyRequest,
+                           }) => {
+
+    const {
+        setIsAdminModalOpen, apartmentRequests,
+        companyRequests,
+    } = useContext(AdminModalContext);
+
 
     const handleBackdropClick = (e) => {
         if (e.target === e.currentTarget) {

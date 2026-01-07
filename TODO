@@ -1,4 +1,2 @@
- - A filter nem megy mert valmi bugol a gond a useEffect el volt ami figyelte a selectedServiceType-ot
- - Company filter resident - getByBuildingIdAndServiceType, admin - getByServiceType,
- - ResidentPageContext optimalizálás
+ - Motification a websocket-en keresztül pl ha kivan dobva a user vagy ha új jön vagy ha új report jön vagy ha efogadják a reportot
  - Meg kell csinálni az email-t is ami kiküldi majd a notification-t

@@ -1,10 +1,14 @@
-import "./components-styles/ReportModal.css"
 import {useContext} from "react";
-import {ResidentPageContext} from "../../../context/resident/ResidentPageContext.jsx";
+
+import {ResidentReportContext} from "../../../context/resident/ResidentReportContext.jsx";
+
+import "./components-styles/ReportModal.css"
 
 const PublicReportModal = ({handleSubmitPublicReport}) =>{
 
-    const {reportFormData, setReportFormData, setShowReportForm} = useContext(ResidentPageContext);
+    // const {reportFormData, setReportFormData, setShowReportForm} = useContext(ResidentPageContext);
+
+    const {reportFormData, setReportFormData, setShowReportForm} = useContext(ResidentReportContext);
 
     const handleReportFormChange = (e) => {
         const { name, value } = e.target;

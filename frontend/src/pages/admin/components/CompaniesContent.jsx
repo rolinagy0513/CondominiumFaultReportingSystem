@@ -1,5 +1,9 @@
+import {useContext, useEffect} from "react";
+
 import {getServiceIcon} from "../../../utility/GetCompanyLogoUtility.jsx";
 import {getServiceTypeDisplay} from "../../../utility/GetCompanyLogoUtility.jsx";
+
+import {CompanyContext} from "../../../context/admin/CompanyContext.jsx";
 
 import "./component-styles/CompaniesContent.css"
 
@@ -8,10 +12,44 @@ const CompaniesContent = ({
                               companiesCurrentPage, pageSize,
                               companiesTotalElements, loadingCompanies,
                               removeCompanyAction, companiesTotalPages,
-                              handleCompaniesPageChange,
-}) =>{
+                              handleCompaniesPageChange, getCompanies,
+                              getCompaniesByServiceType
+                          }) =>{
 
-    console.log(companies);
+    const {selectedServiceType, setSelectedServiceType} = useContext(CompanyContext);
+
+    const serviceTypes = [
+        { value: "ALL", label: "All Services" },
+        { value: "ELECTRICIAN", label: "Electrician" },
+        { value: "PLUMBER", label: "Plumber" },
+        { value: "CLEANING", label: "Cleaning" },
+        { value: "SECURITY", label: "Security" },
+        { value: "ELEVATOR_MAINTENANCE", label: "Elevator Maintenance" },
+        { value: "HEATING_TECHNICIANS", label: "Heating Technicians" },
+        { value: "GARDENING", label: "Gardening" },
+        { value: "OTHER", label: "Other" }
+    ];
+
+    const handleServiceTypeChange = (e) => {
+        const value = e.target.value;
+        setSelectedServiceType(value);
+
+        handleCompaniesPageChange(0);
+
+        if (value === "ALL") {
+            getCompanies(0);
+        } else {
+            getCompaniesByServiceType(value);
+        }
+    };
+
+    useEffect(() => {
+        if (selectedServiceType === "ALL" || !selectedServiceType) {
+            getCompanies(0);
+        } else {
+            getCompaniesByServiceType(selectedServiceType);
+        }
+    }, []);
 
     return(
         <div className="companies-content">
@@ -22,7 +60,22 @@ const CompaniesContent = ({
                 >
                     ← Back to Buildings
                 </button>
-                <h3>Companies List</h3>
+                <div className="header-title-section">
+                    <h3>Companies List</h3>
+                    <div className="companies-filter-container">
+                        <select
+                            value={selectedServiceType || "ALL"}
+                            onChange={handleServiceTypeChange}
+                            className="companies-service-filter"
+                        >
+                            {serviceTypes.map((type) => (
+                                <option key={type.value} value={type.value}>
+                                    {type.label}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
                 <p className="pagination-info">
                     Showing {companies.length > 0 ? (companiesCurrentPage * pageSize + 1) : 0} - {Math.min((companiesCurrentPage + 1) * pageSize, companiesTotalElements)} of {companiesTotalElements} companies
                 </p>
@@ -67,7 +120,16 @@ const CompaniesContent = ({
                         <div className="pagination">
                             <button
                                 className="pagination-btn"
-                                onClick={() => handleCompaniesPageChange(companiesCurrentPage - 1)}
+                                onClick={() => {
+                                    const newPage = companiesCurrentPage - 1;
+                                    handleCompaniesPageChange(newPage);
+                                    // Call appropriate function for the new page
+                                    if (selectedServiceType === "ALL") {
+                                        getCompanies(newPage);
+                                    } else {
+                                        getCompaniesByServiceType(selectedServiceType);
+                                    }
+                                }}
                                 disabled={companiesCurrentPage === 0}
                             >
                                 ← Previous
@@ -78,7 +140,14 @@ const CompaniesContent = ({
                                     <>
                                         <button
                                             className="pagination-page"
-                                            onClick={() => handleCompaniesPageChange(0)}
+                                            onClick={() => {
+                                                handleCompaniesPageChange(0);
+                                                if (selectedServiceType === "ALL") {
+                                                    getCompanies(0);
+                                                } else {
+                                                    getCompaniesByServiceType(selectedServiceType);
+                                                }
+                                            }}
                                         >
                                             1
                                         </button>
@@ -92,7 +161,14 @@ const CompaniesContent = ({
                                             <button
                                                 key={index}
                                                 className={`pagination-page ${companiesCurrentPage === index ? 'active' : ''}`}
-                                                onClick={() => handleCompaniesPageChange(index)}
+                                                onClick={() => {
+                                                    handleCompaniesPageChange(index);
+                                                    if (selectedServiceType === "ALL") {
+                                                        getCompanies(index);
+                                                    } else {
+                                                        getCompaniesByServiceType(selectedServiceType);
+                                                    }
+                                                }}
                                             >
                                                 {index + 1}
                                             </button>
@@ -106,7 +182,15 @@ const CompaniesContent = ({
                                         {companiesCurrentPage < companiesTotalPages - 4 && <span className="pagination-ellipsis">...</span>}
                                         <button
                                             className="pagination-page"
-                                            onClick={() => handleCompaniesPageChange(companiesTotalPages - 1)}
+                                            onClick={() => {
+                                                const lastPage = companiesTotalPages - 1;
+                                                handleCompaniesPageChange(lastPage);
+                                                if (selectedServiceType === "ALL") {
+                                                    getCompanies(lastPage);
+                                                } else {
+                                                    getCompaniesByServiceType(selectedServiceType);
+                                                }
+                                            }}
                                         >
                                             {companiesTotalPages}
                                         </button>
@@ -116,7 +200,15 @@ const CompaniesContent = ({
 
                             <button
                                 className="pagination-btn"
-                                onClick={() => handleCompaniesPageChange(companiesCurrentPage + 1)}
+                                onClick={() => {
+                                    const newPage = companiesCurrentPage + 1;
+                                    handleCompaniesPageChange(newPage);
+                                    if (selectedServiceType === "ALL") {
+                                        getCompanies(newPage);
+                                    } else {
+                                        getCompaniesByServiceType(selectedServiceType);
+                                    }
+                                }}
                                 disabled={companiesCurrentPage === companiesTotalPages - 1}
                             >
                                 Next →

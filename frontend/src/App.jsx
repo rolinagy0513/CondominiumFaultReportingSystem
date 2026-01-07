@@ -1,6 +1,7 @@
 import {BrowserRouter as Router} from 'react-router-dom';
-import {FeedBackProvider} from "./context/general/FeedbackContext.jsx";
 import {AdminRoutes, AuthRoutes, MainRoutes} from "./routes/RoutesConfig.jsx";
+
+import {FeedBackProvider} from "./context/general/FeedbackContext.jsx";
 import {AuthProvider} from "./context/auth/AuthContext.jsx";
 import {UserProvider} from "./context/general/UserContext.jsx";
 import {AddBuildingProvider} from "./context/admin/AddBuildingContext.jsx";
@@ -16,6 +17,11 @@ import {RoleSelectionProvider} from "./context/role-selection/RoleSelectionConte
 import {ResidentRequestProvider} from "./context/role-selection/ResidentRequestContext.jsx";
 import {CompanyRequestProvider} from "./context/role-selection/CompanyRequestContext.jsx";
 import {ResidentPageProvider} from "./context/resident/ResidentPageContext.jsx";
+import {ResidentApartmentProvider} from "./context/resident/ResidentApartmentContext.jsx";
+import {ResidentBuildingProvider} from "./context/resident/ResidentBuildingContext.jsx";
+import {ResidentCompanyProvider} from "./context/resident/ResidentCompanyContext.jsx";
+import {ResidentReportProvider} from "./context/resident/ResidentReportContext.jsx";
+import {ResidentUserProvider} from "./context/resident/ResidentUserContext.jsx";
 
 function App() {
 
@@ -37,9 +43,19 @@ function App() {
                                                            <ResidentRequestProvider>
                                                                <CompanyRequestProvider>
                                                                    <ResidentPageProvider>
-                                                                       <AuthRoutes/>
-                                                                       <MainRoutes/>
-                                                                       <AdminRoutes/>
+                                                                       <ResidentApartmentProvider>
+                                                                           <ResidentBuildingProvider>
+                                                                               <ResidentCompanyProvider>
+                                                                                   <ResidentReportProvider>
+                                                                                       <ResidentUserProvider>
+                                                                                           <AuthRoutes/>
+                                                                                           <MainRoutes/>
+                                                                                           <AdminRoutes/>
+                                                                                       </ResidentUserProvider>
+                                                                                   </ResidentReportProvider>
+                                                                               </ResidentCompanyProvider>
+                                                                           </ResidentBuildingProvider>
+                                                                       </ResidentApartmentProvider>
                                                                    </ResidentPageProvider>
                                                                </CompanyRequestProvider>
                                                            </ResidentRequestProvider>

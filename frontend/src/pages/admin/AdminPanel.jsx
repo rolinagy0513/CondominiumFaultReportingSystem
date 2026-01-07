@@ -86,8 +86,8 @@ const AdminPanel = () => {
         addBuildingFormData, setAddBuildingFormData
     } = useContext(AddBuildingContext);
 
-    const {adminGroupId, authenticatedAdminUserName} = useContext(AdminUserContext);
-    const {isLoading, setIsLoading, message, setMessage} = useContext(FeedbackContext);
+    const {adminGroupId} = useContext(AdminUserContext);
+    const {isLoading, message, setMessage} = useContext(FeedbackContext);
 
     const {
         getAllBuildings, addBuilding
@@ -102,7 +102,7 @@ const AdminPanel = () => {
     const {
         getCompanies, handleGetPendingCompanyRequests,
         handleAcceptCompanyRequest, handleRejectCompanyRequest,
-        handleRemoveCompanyFromSystem
+        handleRemoveCompanyFromSystem,getCompaniesByServiceType
     } = useCompanies();
 
     const {
@@ -263,59 +263,28 @@ const AdminPanel = () => {
         <div className="admin-panel">
 
             <SideBar
-                authenticatedAdminUserName={authenticatedAdminUserName}
-                currentView={currentView}
-                setCurrentView={setCurrentView}
                 handleAddBuilding={handleAddBuilding}
-                buildings={buildings}
                 getApartments={getApartments}
-                selectedBuilding={selectedBuilding}
                 getCompanies={getCompanies}
             />
 
             <div className="main-content">
 
                 <TopHeader
-                    currentView={currentView}
-                    selectedBuilding={selectedBuilding}
                     handleLogout={handleLogout}
-                    setIsAdminModalOpen={setIsAdminModalOpen}
-                    newNotification={newNotification}
-                    setNewNotification={setNewNotification}
                 />
 
                 <ContentArea
-                    currentView={currentView}
-                    buildings={buildings}
                     handleBackToBuildings={handleBackToBuildings}
-                    apartments={apartments}
-                    currentPage={currentPage}
-                    pageSize={pageSize}
-                    totalElements={totalElements}
-                    loadingApartments={loadingApartments}
                     handlePageChange={handlePageChange}
-                    totalPages={totalPages}
                     handleInputChange={handleInputChange}
                     addBuilding={handleAddBuildingsEvent}
-                    addBuildingFormData={addBuildingFormData}
-                    isLoading={isLoading}
-                    message={message}
-                    companies={companies}
-                    setCompanies={setCompanies}
-                    loadingCompanies={loadingCompanies}
                     handleCompaniesPageChange={handleCompaniesPageChange}
-                    companiesCurrentPage={companiesCurrentPage}
-                    companiesTotalPages={companiesTotalPages}
-                    companiesTotalElements={companiesTotalElements}
-                    setIsRemovalModalOpen={setIsRemovalModalOpen}
-                    setTargetId={setTargetId}
-                    setRemovalType={setRemovalType}
-                    setModalButtonText={setModalButtonText}
-                    setModalText={setModalText}
-                    setModalTitleText={setModalTitleText}
                     handleAssignOwner={handleAssignOwner}
                     getExcelTemplate={getExcelTemplate}
                     uploadExcelFile={uploadExcelFile}
+                    getCompanies={getCompanies}
+                    getCompaniesByServiceType={getCompaniesByServiceType}
                 />
 
             </div>
@@ -323,9 +292,6 @@ const AdminPanel = () => {
             <div>
                 {isAdminModalOpen &&
                     <NotificationModal
-                        setIsAdminModalOpen={setIsAdminModalOpen}
-                        apartmentRequests={apartmentRequests}
-                        companyRequests={companyRequests}
                         handleAcceptApartmentRequest={handleAcceptApartmentRequest}
                         handleRejectApartmentRequest={handleRejectApartmentRequest}
                         handleAcceptCompanyRequest={handleAcceptCompanyRequest}
@@ -348,9 +314,6 @@ const AdminPanel = () => {
 
                 {isRemovalModalOpen && (
                     <RemovalModal
-                        targetId={targetId}
-                        isRemovalModalOpen={isRemovalModalOpen}
-                        setIsRemovalModalOpen={setIsRemovalModalOpen}
                         handleRemoveFunction={handleRemoval}
                         text={modalText}
                         buttonText={modalButtonText}

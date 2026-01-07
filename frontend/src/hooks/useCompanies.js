@@ -8,6 +8,8 @@ import {AdminModalContext} from "../context/admin/AdminModalContext.jsx";
 
 import {useContext} from "react";
 import {ResidentPageContext} from "../context/resident/ResidentPageContext.jsx";
+import {ResidentCompanyContext} from "../context/resident/ResidentCompanyContext.jsx";
+import {ResidentBuildingContext} from "../context/resident/ResidentBuildingContext.jsx";
 
 export const useCompanies = () =>{
 
@@ -42,10 +44,14 @@ export const useCompanies = () =>{
         setModalButtonText,setModalTitleText
     } = useContext(AdminModalContext);
 
+    const{
+        ownersBuildingId
+    } = useContext(ResidentBuildingContext);
+
     const {
-        ownersBuildingId, setCompaniesInBuilding,
-        selectedCompanyId, setSelectedCompany,
-    } = useContext(ResidentPageContext);
+        setCompaniesInBuilding, selectedCompanyId,
+        setSelectedCompany,
+    } = useContext(ResidentCompanyContext);
 
     const getCompanies = async (page = 0) => {
         setLoadingCompanies(true);
@@ -191,16 +197,53 @@ export const useCompanies = () =>{
     }
 
     const getCompanyByBuildingIdAndServiceType = async (buildingId, serviceType) => {
+
         try {
+            const params = new URLSearchParams({
+                serviceType: serviceType
+            });
             const response = await apiServices.get(
-                `/resident/company/getByBuildingIdAndServiceType/${buildingId}`,
-                { serviceType: serviceType }
+                `${RESIDENT_COMPANY_API_PATH}/getByBuildingIdAndServiceType/${buildingId}?${params.toString()}`
             );
-
             setCompaniesInBuilding(response);
-
         } catch (error) {
             console.error(error.message);
+        }
+    }
+
+    const getCompaniesByServiceType = async (serviceType, page = 0) => {
+        setLoadingCompanies(true);
+        try {
+            const params = new URLSearchParams({
+                serviceType: serviceType,
+                page: page.toString(),
+                size: pageSize.toString(),
+                sortBy: 'id',
+                direction: 'ASC'
+            });
+
+            const url = `${ADMIN_COMPANY_API_PATH}/getByServiceType?${params.toString()}`;
+            const response = await apiServices.get(url);
+
+            if (response && response.content) {
+                setCompanies(response.content);
+                setCompaniesCurrentPage(response.number);
+                setCompaniesTotalPages(response.totalPages);
+                setCompaniesTotalElements(response.totalElements);
+            } else {
+                setCompanies([]);
+                setCompaniesCurrentPage(0);
+                setCompaniesTotalPages(0);
+                setCompaniesTotalElements(0);
+            }
+        } catch (error) {
+            console.error(error.message);
+            setCompanies([]);
+            setCompaniesCurrentPage(0);
+            setCompaniesTotalPages(0);
+            setCompaniesTotalElements(0);
+        } finally {
+            setLoadingCompanies(false);
         }
     }
 
@@ -208,7 +251,7 @@ export const useCompanies = () =>{
         getCompanies, handleGetPendingCompanyRequests,
         handleAcceptCompanyRequest, handleRejectCompanyRequest,
         handleRemoveCompanyFromSystem, getCompanyByBuildingId,
-        getCompanyById,getCompanyByBuildingIdAndServiceType
+        getCompanyById,getCompanyByBuildingIdAndServiceType,getCompaniesByServiceType
     }
 
 }

@@ -4,6 +4,8 @@ import apiServices from "../services/ApiServices.js";
 
 import {ResidentPageContext} from "../context/resident/ResidentPageContext.jsx";
 import {PaginationContext} from "../context/general/PaginationContext.jsx";
+import {ResidentReportContext} from "../context/resident/ResidentReportContext.jsx";
+import {ResidentUserContext} from "../context/resident/ResidentUserContext.jsx";
 
 export const useReports = () =>{
 
@@ -11,10 +13,13 @@ export const useReports = () =>{
 
     const GET_PUBLIC_REPORTS = `${SHARED_API_PATH}/getAllPublicSubmitted`
 
+    const{
+        residentGroupId
+    } = useContext(ResidentUserContext);
+
     const {
-        setPublicReports, residentGroupId,
-        sendPublicReportData, setInProgressReports,
-    } = useContext(ResidentPageContext);
+        setPublicReports, setInProgressReports,
+    } = useContext(ResidentReportContext);
 
     const {
         setCurrentPage, setTotalPages,

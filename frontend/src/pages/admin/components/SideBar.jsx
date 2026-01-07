@@ -1,15 +1,28 @@
+import {useContext} from "react";
+
 import {FaBuilding} from "react-icons/fa6";
 import {MdBusinessCenter} from "react-icons/md";
 
 import BuildingsList from "./BuildingsList.jsx";
 
 import "./component-styles/SideBar.css"
+import {AdminUserContext} from "../../../context/admin/AdminUserContext.jsx";
+import {AdminPanelContext} from "../../../context/admin/AdminPanelContext.jsx";
+import {BuildingContext} from "../../../context/admin/BuildingContext.jsx";
 
-const SideBar = ({authenticatedAdminUserName, currentView,
-                     setCurrentView, handleAddBuilding,
-                     buildings, getApartments, selectedBuilding,
-                     getCompanies
-}) =>{
+const SideBar = ({handleAddBuilding, getApartments, getCompanies}) =>{
+
+    const {
+        currentView, setCurrentView,
+    } = useContext(AdminPanelContext);
+
+    const {
+        authenticatedAdminUserName
+    } = useContext(AdminUserContext);
+
+    const{
+        buildings, selectedBuilding
+    } = useContext(BuildingContext);
 
     return(
         <div className="sidebar">

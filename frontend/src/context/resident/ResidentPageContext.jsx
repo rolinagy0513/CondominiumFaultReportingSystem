@@ -33,7 +33,7 @@ export const ResidentPageProvider = ({ children }) => {
         reportType: 'ELECTRICITY'
     })
 
-    const{selectedServiceType, setSelectedServiceType} = useState(null);
+    const[selectedServiceType, setSelectedServiceType] = useState("ALL");
 
     const [residentGroupId, setResidentGroupId] = useState(() =>
         localStorage.getItem("residentGroupId")

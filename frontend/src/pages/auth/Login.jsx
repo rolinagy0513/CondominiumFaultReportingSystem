@@ -14,6 +14,7 @@ import loginImage from "../../assets/building.png";
 
 import "./styles/Login.css"
 import {AdminUserContext} from "../../context/admin/AdminUserContext.jsx";
+import {ResidentUserContext} from "../../context/resident/ResidentUserContext.jsx";
 
 
 const Login = () =>{
@@ -32,7 +33,7 @@ const Login = () =>{
     const { loginFormData, setLoginFormData} = useContext(AuthContext);
     const {setAdminGroupId, setAuthenticatedAdminId, setAuthenticatedAdminUserName} = useContext(AdminUserContext);
     const { setAuthenticatedUserId, setAuthenticatedUserName } = useContext(UserContext);
-    const { setResidentGroupId, setAuthenticatedResidentId, setAuthenticatedResidentUserName} = useContext(ResidentPageContext);
+    const { setResidentGroupId, setAuthenticatedResidentId, setAuthenticatedResidentUserName} = useContext(ResidentUserContext);
 
     const resetForm = () =>{
         setLoginFormData({

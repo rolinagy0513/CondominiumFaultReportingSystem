@@ -9,6 +9,7 @@ import {AdminPanelContext} from "../context/admin/AdminPanelContext.jsx";
 
 import {useContext} from "react";
 import {ResidentPageContext} from "../context/resident/ResidentPageContext.jsx";
+import {ResidentApartmentContext} from "../context/resident/ResidentApartmentContext.jsx";
 
 export const useApartments = (
 ) =>{
@@ -56,7 +57,7 @@ export const useApartments = (
     const {
         setOwnersApartment,
         setOwnersApartmentId
-    } = useContext(ResidentPageContext);
+    } = useContext(ResidentApartmentContext);
 
     const getApartments = async(buildingId, page = 0) => {
         setLoadingApartments(true);

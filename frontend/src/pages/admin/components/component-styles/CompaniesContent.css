@@ -156,7 +156,7 @@
     opacity: 0.5;
 }
 
-/* Responsive Design for CompaniesContent */
+
 @media (max-width: 768px) {
     .companies-list {
         grid-template-columns: 1fr;

@@ -1,9 +1,32 @@
+import {useContext} from "react";
+
 import { IoNotifications } from "react-icons/io5";
 import { IoLogOutSharp } from "react-icons/io5";
 
-import "./component-styles/TopHeader.css"
+import {AdminPanelContext} from "../../../context/admin/AdminPanelContext.jsx";
 
-const TopHeader = ({currentView, selectedBuilding, handleLogout, setIsAdminModalOpen, newNotification, setNewNotification}) =>{
+import "./component-styles/TopHeader.css"
+import {BuildingContext} from "../../../context/admin/BuildingContext.jsx";
+import {AdminModalContext} from "../../../context/admin/AdminModalContext.jsx";
+import {NotificationContext} from "../../../context/admin/NotificationContext.jsx";
+
+const TopHeader = ({handleLogout}) =>{
+
+    const {
+        currentView
+    } = useContext(AdminPanelContext);
+
+    const{
+        selectedBuilding
+    } = useContext(BuildingContext);
+
+    const {
+        setIsAdminModalOpen
+    } = useContext(AdminModalContext);
+
+    const{
+        newNotification, setNewNotification
+    } = useContext(NotificationContext);
 
     const openNotificationModal = () =>{
         setIsAdminModalOpen(true)

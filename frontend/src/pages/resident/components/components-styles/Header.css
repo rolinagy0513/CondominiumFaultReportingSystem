@@ -8,6 +8,27 @@
     box-shadow: 0 10px 25px rgba(26, 54, 93, 0.2);
     margin-bottom: 24px;
     color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.resident-page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.resident-page-header-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    z-index: 1;
 }
 
 .resident-page-header-left h2 {
@@ -15,18 +36,148 @@
     font-size: 28px;
     font-weight: 700;
     letter-spacing: -0.5px;
+    background: linear-gradient(90deg, #fff, #cbd5e0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .resident-page-welcome-text {
     margin: 8px 0 0 0;
     opacity: 0.9;
     font-size: 14px;
+    color: #e2e8f0;
+}
+
+.resident-page-header-middle {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+}
+
+.resident-page-header-middle h1 {
+    margin: 0;
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: linear-gradient(45deg, #fff 30%, #60a5fa 70%, #93c5fd 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    position: relative;
+    padding: 10px 20px;
+    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    animation: titleGlow 3s ease-in-out infinite alternate;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-right: 30px;
+    border-radius: 16px;
+    background-color: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.resident-page-header-middle h1::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 100%);
+    border-radius: 16px;
+    z-index: -1;
+}
+
+.resident-page-header-middle h1::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 2px;
+    background: linear-gradient(90deg,
+    transparent,
+    rgba(255, 255, 255, 0.5),
+    transparent);
+    border-radius: 1px;
+    opacity: 0.7;
+    filter: blur(1px);
+}
+
+.resident-page-header-middle h1 {
+    font-size: 36px;
+    color: #93c5fd;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    animation: iconFloat 3s ease-in-out infinite alternate;
+    position: relative;
+}
+
+.resident-page-header-middle h1 ::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: radial-gradient(circle, rgba(147, 197, 253, 0.3) 0%, transparent 70%);
+    z-index: -1;
+    border-radius: 50%;
+    animation: iconPulse 3s ease-in-out infinite;
+}
+
+@keyframes titleGlow {
+    0% {
+        text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3),
+        0 0 20px rgba(96, 165, 250, 0.2);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
+        0 0 30px rgba(96, 165, 250, 0.1);
+    }
+    100% {
+        text-shadow: 0 4px 25px rgba(0, 0, 0, 0.4),
+        0 0 40px rgba(96, 165, 250, 0.4),
+        0 0 60px rgba(96, 165, 250, 0.2);
+        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2),
+        0 0 50px rgba(96, 165, 250, 0.2),
+        inset 0 0 20px rgba(255, 255, 255, 0.05);
+    }
+}
+
+@keyframes iconFloat {
+    0% {
+        transform: translateY(0px) rotate(0deg);
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+    100% {
+        transform: translateY(-5px) rotate(5deg);
+        filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
+    }
+}
+
+@keyframes iconPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.3;
+    }
 }
 
 .resident-page-header-right {
+    flex: 1;
     display: flex;
     gap: 12px;
     align-items: center;
+    justify-content: flex-end;
+    z-index: 1;
 }
 
 .resident-page-header-action-btn {
@@ -43,12 +194,14 @@
     background: rgba(255, 255, 255, 0.1);
     color: white;
     backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .resident-page-header-action-btn:hover {
     transform: translateY(-2px);
     background: rgba(255, 255, 255, 0.2);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 .resident-page-header-icon {
@@ -76,29 +229,73 @@
     border-radius: 10px;
     min-width: 18px;
     text-align: center;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
 }
 
 .resident-page-logout-btn {
-    background: rgba(239, 68, 68, 0.9);
+    background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+@media (max-width: 1024px) {
+    .resident-page-header-middle h1 {
+        font-size: 36px;
+        letter-spacing: 1.5px;
+        padding: 8px 16px;
+        gap: 12px;
+    }
+
 }
 
 @media (max-width: 768px) {
     .resident-page-header {
         padding: 16px 20px;
         flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
+        align-items: center;
+        gap: 24px;
+    }
+
+    .resident-page-header-left,
+    .resident-page-header-middle,
+    .resident-page-header-right {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .resident-page-header-left {
+        align-items: center;
+        order: 1;
+    }
+
+    .resident-page-header-middle {
+        order: 2;
+    }
+
+    .resident-page-header-middle h1 {
+        font-size: 32px;
+        letter-spacing: 1px;
+        padding: 8px 16px;
+        gap: 10px;
+        justify-content: center;
     }
 
     .resident-page-header-right {
-        width: 100%;
-        justify-content: flex-end;
+        order: 3;
+        justify-content: center;
     }
 }
 
 @media (max-width: 480px) {
     .resident-page-header-left h2 {
         font-size: 24px;
+    }
+
+    .resident-page-header-middle h1 {
+        font-size: 28px;
+        flex-direction: column;
+        gap: 8px;
+        padding: 12px;
     }
 
     .resident-page-header-action-btn {

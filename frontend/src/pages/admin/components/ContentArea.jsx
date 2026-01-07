@@ -1,26 +1,65 @@
-import {useState} from "react";
+import {useContext} from "react";
+
 import AddBuildingForm from "./AddBuildingForm.jsx";
 import BuildingsContent from "./BuildingsContent.jsx";
 import ApartmentsContent from "./ApartmentsContent.jsx";
 import CompaniesContent from "./CompaniesContent.jsx";
+
+import {AdminPanelContext} from "../../../context/admin/AdminPanelContext.jsx";
+import {BuildingContext} from "../../../context/admin/BuildingContext.jsx";
+import {ApartmentContext} from "../../../context/admin/ApartmentContext.jsx";
+import {CompanyContext} from "../../../context/admin/CompanyContext.jsx";
+import {PaginationContext} from "../../../context/general/PaginationContext.jsx";
+import {AdminModalContext} from "../../../context/admin/AdminModalContext.jsx";
+import {AddBuildingContext} from "../../../context/admin/AddBuildingContext.jsx";
+import {FeedbackContext} from "../../../context/general/FeedbackContext.jsx";
+
 import "./component-styles/ContentArea.css"
 
 const ContentArea = ({
-                         currentView, buildings,
-                         handleBackToBuildings, apartments,
-                         currentPage, pageSize,
-                         totalElements, loadingApartments,
-                         handlePageChange, totalPages,
+                         handleBackToBuildings, handlePageChange,
                          handleInputChange, addBuilding,
-                         addBuildingFormData, isLoading,
-                         message, companies,
-                         loadingCompanies, handleCompaniesPageChange,
-                         companiesCurrentPage, companiesTotalPages,
-                         companiesTotalElements, setTargetId,
-                         setIsRemovalModalOpen,setRemovalType,
-                         setModalText, setModalButtonText, setModalTitleText,
-                         handleAssignOwner, getExcelTemplate, uploadExcelFile
+                         handleCompaniesPageChange, handleAssignOwner,
+                         getExcelTemplate, uploadExcelFile,
+                         getCompanies, getCompaniesByServiceType
                      }) => {
+
+    const{
+        buildings,
+    } = useContext(BuildingContext);
+
+    const{
+        apartments,
+        loadingApartments,
+    } = useContext(ApartmentContext);
+
+    const{
+        companies,
+        loadingCompanies, companiesCurrentPage,
+        companiesTotalPages, companiesTotalElements,
+    } = useContext(CompanyContext);
+
+    const {
+        currentView,
+    } = useContext(AdminPanelContext);
+
+    const {
+        currentPage, totalPages,
+        totalElements, pageSize
+    } = useContext(PaginationContext);
+
+    const {
+        setIsRemovalModalOpen, setTargetId,
+        setModalText, setRemovalType,
+        setModalButtonText, setModalTitleText
+    } = useContext(AdminModalContext);
+
+    const {
+        addBuildingFormData,
+    } = useContext(AddBuildingContext);
+
+
+    const {isLoading, message} = useContext(FeedbackContext);
 
     const removeResidentAction = (apartmentId) => {
         setRemovalType("apartment")
@@ -72,6 +111,8 @@ const ContentArea = ({
                     removeCompanyAction={removeCompanyAction}
                     companiesTotalPages={companiesTotalPages}
                     handleCompaniesPageChange={handleCompaniesPageChange}
+                    getCompanies={getCompanies}
+                    getCompaniesByServiceType={getCompaniesByServiceType}
                 />
             ) : (
                 <div className="add-building-content">

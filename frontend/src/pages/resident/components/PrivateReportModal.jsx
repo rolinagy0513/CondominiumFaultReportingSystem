@@ -1,6 +1,7 @@
 import {useContext} from "react";
 
-import {ResidentPageContext} from "../../../context/resident/ResidentPageContext.jsx";
+import {ResidentCompanyContext} from "../../../context/resident/ResidentCompanyContext.jsx";
+import {ResidentReportContext} from "../../../context/resident/ResidentReportContext.jsx";
 
 import "./components-styles/ReportModal.css"
 
@@ -14,11 +15,21 @@ const PrivateReportModal = ({handleSubmitPrivateReport}) =>{
         }));
     }
 
+    // const {
+    //     selectedCompanyId, setSelectedCompanyId,
+    //     companiesInBuilding, privateReportFormData,
+    //     setPrivateReportData, setShowPrivateReportForm
+    // } = useContext(ResidentPageContext);
+
     const {
-        selectedCompanyId, setSelectedCompanyId,
-        companiesInBuilding, privateReportFormData,
-        setPrivateReportData, setShowPrivateReportForm
-    } = useContext(ResidentPageContext);
+        companiesInBuilding, setSelectedCompanyId,
+        selectedCompanyId,
+    } = useContext(ResidentCompanyContext);
+
+    const{
+        privateReportFormData, setPrivateReportData,
+        setShowPrivateReportForm
+    } = useContext(ResidentReportContext);
 
     return(
         <div className="resident-page-modal-overlay">

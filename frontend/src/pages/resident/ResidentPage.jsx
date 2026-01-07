@@ -4,9 +4,6 @@ import {useNavigate} from "react-router-dom";
 import apiServices from "../../services/ApiServices.js";
 import websocketServices from "../../services/WebsocketServices.js";
 
-import {ResidentPageContext} from "../../context/resident/ResidentPageContext.jsx";
-import {PaginationContext} from "../../context/general/PaginationContext.jsx";
-
 import {useApartments} from "../../hooks/useApartments.js";
 import {useBuildings} from "../../hooks/useBuildings.js";
 import {useCompanies} from "../../hooks/useCompanies.js";
@@ -18,6 +15,13 @@ import MainContent from "./components/MainContent.jsx";
 import PublicReportModal from "./components/PublicReportModal.jsx";
 import PrivateReportModal from "./components/PrivateReportModal.jsx";
 
+import {PaginationContext} from "../../context/general/PaginationContext.jsx";
+import {ResidentUserContext} from "../../context/resident/ResidentUserContext.jsx";
+import {ResidentApartmentContext} from "../../context/resident/ResidentApartmentContext.jsx";
+import {ResidentBuildingContext} from "../../context/resident/ResidentBuildingContext.jsx";
+import {ResidentCompanyContext} from "../../context/resident/ResidentCompanyContext.jsx";
+import {ResidentReportContext} from "../../context/resident/ResidentReportContext.jsx";
+
 import "./style/ResidentPage.css"
 
 const ResidentPage = () => {
@@ -26,17 +30,41 @@ const ResidentPage = () => {
     const SOCK_URL = import.meta.env.VITE_API_WEBSOCKET_BASE_URL;
     const LOGOUT_URL = `${AUTH_API_PATH}/logout`;
 
+    // const {
+    //     residentGroupId,
+    //     authenticatedResidentId,
+    //     ownersApartmentId,ownersBuildingId,
+    //     selectedCompanyId, setSelectedCompanyId,
+    //     privateReportFormData, setPrivateReportData,
+    //     showPrivateReportForm, setShowPrivateReportForm,
+    //     showReportForm, setShowReportForm,
+    //     reportFormData, setReportFormData,
+    //     selectedServiceType
+    // } = useContext(ResidentPageContext);
+
     const {
-        residentGroupId,
-        authenticatedResidentId,
-        ownersApartmentId,ownersBuildingId,
+        residentGroupId, authenticatedResidentId
+    } = useContext(ResidentUserContext);
+
+    const{
+        ownersApartmentId
+    } = useContext(ResidentApartmentContext);
+
+    const{
+        ownersBuildingId
+    } = useContext(ResidentBuildingContext);
+
+    const{
         selectedCompanyId, setSelectedCompanyId,
+        selectedServiceType
+    } = useContext(ResidentCompanyContext);
+
+    const {
         privateReportFormData, setPrivateReportData,
         showPrivateReportForm, setShowPrivateReportForm,
         showReportForm, setShowReportForm,
         reportFormData, setReportFormData,
-        selectedServiceType
-    } = useContext(ResidentPageContext);
+    } = useContext(ResidentReportContext);
 
     const {
         currentPage,

@@ -23,6 +23,7 @@ export const CompanyProvider = ({ children }) => {
     const [companiesCurrentPage, setCompaniesCurrentPage] = useState(0);
     const [companiesTotalPages, setCompaniesTotalPages] = useState(0);
     const [companiesTotalElements, setCompaniesTotalElements] = useState(0);
+    const [selectedServiceType, setSelectedServiceType] = useState("ALL");
 
     return (
         <CompanyContext.Provider value={{
@@ -30,6 +31,7 @@ export const CompanyProvider = ({ children }) => {
             companiesCurrentPage, setCompaniesCurrentPage,
             companiesTotalPages, setCompaniesTotalPages,
             companiesTotalElements, setCompaniesTotalElements,
+            selectedServiceType, setSelectedServiceType,
         }}>
             {children}
         </CompanyContext.Provider>

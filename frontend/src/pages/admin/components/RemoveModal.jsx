@@ -1,20 +1,21 @@
+import {useContext} from "react";
+
+import {AdminModalContext} from "../../../context/admin/AdminModalContext.jsx";
+
 import "./component-styles/RemoveModal.css"
 
 const RemovalModal = ({
-                          targetId,
-                          isRemovalModalOpen,
-                          setIsRemovalModalOpen,
                           handleRemoveFunction,
                           text, buttonText,
                           titleText
                       }) => {
 
+    const {
+        isRemovalModalOpen, setIsRemovalModalOpen,
+        targetId,
+    } = useContext(AdminModalContext);
+
     if (!isRemovalModalOpen) return null;
-
-    console.log("THERE IS THE ID INSIDE REMOVE MODAL")
-    console.log(targetId);
-
-    console.log(buttonText)
 
     const handleBackdropClick = (e) => {
         if (e.target === e.currentTarget) {
