@@ -28,42 +28,12 @@ const CompanyRequest = () => {
         formData, setFormData,
         notification, setNotification,
         requestSent, setRequestSent,
-        isConnected, setIsConnected,
-        serviceTypeOptions
+        setIsConnected, serviceTypeOptions
     } = useContext(CompanyRequestContext);
 
-    // const {
-    //     buildings, setBuildings,
-    //     selectedBuilding, setSelectedBuilding,
-    // } = useContext(RoleSelectionContext);
 
-    // const [showPendingView, setShowPendingView] = useState(false);
-
-    // const [formData, setFormData] = useState({
-    //     companyName: '',
-    //     companyEmail: '',
-    //     companyPhoneNumber: '',
-    //     companyAddress: '',
-    //     companyIntroduction: '',
-    //     serviceType: ''
-    // });
-
-    // const [notification, setNotification] = useState(null);
-    // const [requestSent, setRequestSent] = useState(false);
-    // const [isConnected, setIsConnected] = useState(false);
     const subscriptionRef = useRef(null);
     const currentUserIdRef = useRef(null);
-
-    // const serviceTypeOptions = [
-    //     { value: '', label: 'Select Service Type' },
-    //     { value: 'ELECTRICIAN', label: 'Electrician' },
-    //     { value: 'PLUMBER', label: 'Plumber' },
-    //     { value: 'CLEANING', label: 'Cleaning' },
-    //     { value: 'SECURITY', label: 'Security' },
-    //     { value: 'ELEVATOR_MAINTENANCE', label: 'Elevator Maintenance' },
-    //     { value: 'GARDENING', label: 'Gardening' },
-    //     { value: 'OTHER', label: 'Other' }
-    // ];
 
     useEffect(() => {
         getAllBuildings();
@@ -233,6 +203,16 @@ const CompanyRequest = () => {
 
         if (success) {
             setShowPendingView(true);
+
+            setFormData({
+                companyName: '',
+                companyEmail: '',
+                companyPhoneNumber: '',
+                companyAddress: '',
+                companyIntroduction: '',
+                serviceType: ''
+            });
+
         } else {
             console.error('Failed to send company request');
             setRequestSent(false);

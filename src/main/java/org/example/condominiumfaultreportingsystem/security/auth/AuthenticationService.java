@@ -131,6 +131,7 @@ public class AuthenticationService {
   public AuthenticationResponse authenticate(AuthenticationRequest request, HttpServletResponse response) {
 
       Long groupId = null;
+      String groupIdentifier = "";
 
     try {
       authenticationManager.authenticate(
@@ -177,6 +178,7 @@ public class AuthenticationService {
 
       Group group = groupOpt.get();
       groupId = group.getId();
+      groupIdentifier = group.getGroupName();
 
     }
 
@@ -190,6 +192,7 @@ public class AuthenticationService {
 
       Group group = groupOpt.get();
       groupId = group.getId();
+      groupIdentifier = group.getGroupName();
 
     }
 
@@ -201,6 +204,7 @@ public class AuthenticationService {
             .user(mapToUserResponseDto(user))
             .role(user.getRole())
             .groupId(groupId)
+            .groupIdentifier(groupIdentifier)
             .activeApartmentRequest(activeApartmentRequest)
             .activeCompanyRequest(activeCompanyRequest)
             .mustChangePassword(user.isMustChangePassword())

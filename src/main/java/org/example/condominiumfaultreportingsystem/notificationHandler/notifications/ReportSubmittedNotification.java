@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.condominiumfaultreportingsystem.notificationHandler.NotificationType;
 import org.example.condominiumfaultreportingsystem.report.ReportType;
 
 @Data
@@ -15,5 +16,7 @@ public class ReportSubmittedNotification {
     private String message;
     private ReportType reportType;
     private String companyName;
+
+    private NotificationType type;
 
 }

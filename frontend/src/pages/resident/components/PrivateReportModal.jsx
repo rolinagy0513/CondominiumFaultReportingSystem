@@ -15,12 +15,6 @@ const PrivateReportModal = ({handleSubmitPrivateReport}) =>{
         }));
     }
 
-    // const {
-    //     selectedCompanyId, setSelectedCompanyId,
-    //     companiesInBuilding, privateReportFormData,
-    //     setPrivateReportData, setShowPrivateReportForm
-    // } = useContext(ResidentPageContext);
-
     const {
         companiesInBuilding, setSelectedCompanyId,
         selectedCompanyId,
@@ -79,6 +73,7 @@ const PrivateReportModal = ({handleSubmitPrivateReport}) =>{
                                 <option value="HEATING">🔥 Heating</option>
                                 <option value="GARBAGE_COLLECTION">🗑️ Garbage</option>
                                 <option value="SECURITY">🔒 Security</option>
+                                <option value="GARDENING">🌳 Gardening</option>
                                 <option value="OTHER">📋 Other</option>
                             </select>
                         </div>

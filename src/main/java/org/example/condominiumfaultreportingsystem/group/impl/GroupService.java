@@ -110,6 +110,7 @@ public class GroupService implements IGroupService {
             groupRepository.save(newGroup);
             return mapToDto(newGroup);
 
+
         }catch (DataIntegrityViolationException ex){
 
             Group group = groupRepository.findWithUsersByGroupName(uniqueKey)

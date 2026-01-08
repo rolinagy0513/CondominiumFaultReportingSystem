@@ -124,6 +124,9 @@ const Login = () =>{
 
             if (response.role === RESIDENT_ROLE && !response.mustChangePassword){
 
+                console.log("IDE IDE IDE")
+                console.log(response);
+
                 localStorage.setItem("residentGroupId",response.groupId);
                 localStorage.setItem("authenticatedResidentId",response.user.id);
                 localStorage.setItem("authenticatedResidentUserName",response.user.userName);

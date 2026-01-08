@@ -70,6 +70,7 @@ const MainContent = ({
         HEATING: "🔥",
         GARBAGE_COLLECTION: "🗑️",
         SECURITY: "🔒",
+        GARDENING: "🌳",
         OTHER: "📋"
     };
 

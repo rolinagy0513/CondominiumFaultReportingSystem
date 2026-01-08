@@ -30,18 +30,6 @@ const ResidentPage = () => {
     const SOCK_URL = import.meta.env.VITE_API_WEBSOCKET_BASE_URL;
     const LOGOUT_URL = `${AUTH_API_PATH}/logout`;
 
-    // const {
-    //     residentGroupId,
-    //     authenticatedResidentId,
-    //     ownersApartmentId,ownersBuildingId,
-    //     selectedCompanyId, setSelectedCompanyId,
-    //     privateReportFormData, setPrivateReportData,
-    //     showPrivateReportForm, setShowPrivateReportForm,
-    //     showReportForm, setShowReportForm,
-    //     reportFormData, setReportFormData,
-    //     selectedServiceType
-    // } = useContext(ResidentPageContext);
-
     const {
         residentGroupId, authenticatedResidentId
     } = useContext(ResidentUserContext);
@@ -90,12 +78,7 @@ const ResidentPage = () => {
         getInProgressReport,
     } = useReports()
 
-    const subscriptionRefs = useRef({
-        requestResponse: null,
-        removal: null,
-        notification: null,
-        groupTopic: null
-    });
+    const subscriptionRef = useRef(null);
 
     useEffect(() => {
         handleGetApartmentByOwnerId();
@@ -126,45 +109,41 @@ const ResidentPage = () => {
     }, [ownersBuildingId, selectedServiceType]);
 
     useEffect(() => {
-        if (!authenticatedResidentId || !residentGroupId) {
-            console.log("⚠️ Missing authentication or group info, skipping WebSocket setup");
+        if (!residentGroupId) {
+            console.log("⚠️ Missing group info, skipping WebSocket setup");
             return;
         }
 
         websocketServices.connect(SOCK_URL, {
             onConnect: () => {
                 console.log("✅ Resident WebSocket connected successfully");
-
-                const userQueues = [
-                    { key: 'requestResponse', path: '/user/queue/request-response' },
-                    { key: 'removal', path: '/user/queue/removal' },
-                    { key: 'notification', path: '/user/queue/notification' }
-                ];
-
-                userQueues.forEach(({ key, path }) => {
-                    subscriptionRefs.current[key] = websocketServices.subscribe(
-                        path,
-                        handleNotification
-                    );
-                });
+                console.log("📋 Resident Group ID:", residentGroupId);
 
                 const groupTopic = `/topic/group/${residentGroupId}`;
-                subscriptionRefs.current.groupTopic = websocketServices.subscribe(
+                console.log("🔌 Subscribing to group topic:", groupTopic);
+
+                //Itt csak a group van ide be kell adni majd a user-eket is ami meg azért nem ment mert nem próbáltam rendesen ki.
+                subscriptionRef.current = websocketServices.subscribe(
                     groupTopic,
-                    handleNotification
+                    (message) => {
+                        console.log("📬 Received on group topic:", message);
+                        handleNotification(message);
+                    }
                 );
+
+                if (subscriptionRef.current) {
+                    console.log("✅ Successfully subscribed to group topic");
+                } else {
+                    console.error("❌ Failed to subscribe to group topic");
+                }
             },
             onDisconnect: () => {
                 console.log("🔌 Resident WebSocket disconnected");
-                Object.keys(subscriptionRefs.current).forEach(key => {
-                    subscriptionRefs.current[key] = null;
-                });
+                subscriptionRef.current = null;
             },
             onError: (error) => {
                 console.error("❌ WebSocket error:", error);
-                Object.keys(subscriptionRefs.current).forEach(key => {
-                    subscriptionRefs.current[key] = null;
-                });
+                subscriptionRef.current = null;
             },
             reconnectDelay: 5000,
             heartbeatIncoming: 4000,
@@ -173,29 +152,52 @@ const ResidentPage = () => {
         });
 
         return () => {
-            Object.keys(subscriptionRefs.current).forEach(key => {
-                if (subscriptionRefs.current[key]) {
-                    subscriptionRefs.current[key].unsubscribe();
-                    subscriptionRefs.current[key] = null;
-                }
-            });
+            if (subscriptionRef.current) {
+                subscriptionRef.current.unsubscribe();
+                subscriptionRef.current = null;
+            }
             websocketServices.disconnect();
         };
-    }, [authenticatedResidentId, residentGroupId]);
+    }, [residentGroupId]);
 
 
-    const handleNotification = (notification) => {
-        console.log("📬 Resident received notification:", notification);
-    };
+    // const handleNotification = (notification) => {
+    //     console.log("📬 Resident received notification:", notification);
+    //
+    //     switch (notification.type) {
+    //         case "COMPANY_REMOVAL":
+    //             alert("The company left notification alert: " + notification.message);
+    //             if (ownersBuildingId) {
+    //                 getCompanyByBuildingId(ownersBuildingId);
+    //             }
+    //             break;
+    //
+    //         case "USER_REMOVAL":
+    //             alert("The user left notification alert: " + notification.message);
+    //             // Note: This will only show for other users leaving, not for yourself
+    //             // since your own removal notification goes to /user/{id}/queue/removal
+    //             break;
+    //
+    //         case "PUBLIC_REPORT_CAME":
+    //             alert("New public report notification: " + notification.message);
+    //             getAllPublicReports(currentPage);
+    //             break;
+    //
+    //         case "WELCOME":
+    //             alert("Welcome notification: " + notification.message);
+    //             break;
+    //
+    //         default:
+    //             console.warn("Unknown notification type:", notification.type);
+    //     }
+    // };
 
     const handleLogout = async () => {
         try {
-            Object.keys(subscriptionRefs.current).forEach(key => {
-                if (subscriptionRefs.current[key]) {
-                    subscriptionRefs.current[key].unsubscribe();
-                    subscriptionRefs.current[key] = null;
-                }
-            });
+            if (subscriptionRef.current) {
+                subscriptionRef.current.unsubscribe();
+                subscriptionRef.current = null;
+            }
 
             websocketServices.disconnect();
 

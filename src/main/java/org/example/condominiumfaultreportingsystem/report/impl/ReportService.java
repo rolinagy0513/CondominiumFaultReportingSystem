@@ -322,22 +322,6 @@ public class ReportService implements IReportService{
 
     }
 
-//    public List<ReportDTO> getInProgressReport(){
-//
-//        UserDTO currentUser = userService.getCurrentUser();
-//
-//        Optional<List<Report>> reportOpt = reportRepository.findReportByUser(currentUser.getId(), ReportStatus.IN_PROGRESS);
-//
-//        if (reportOpt.isEmpty()){
-//            throw new ReportNotFoundException();
-//        }
-//
-//        List<Report> reports = reportOpt.get();
-//
-//        return reports.stream().map(this::mapToDto).toList();
-//
-//    }
-
     public List<ReportWithCompanyDTO> getInProgressReport(){
 
         UserDTO currentUser = userService.getCurrentUser();

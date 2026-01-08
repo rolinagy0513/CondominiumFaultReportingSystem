@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.condominiumfaultreportingsystem.notificationHandler.NotificationType;
 import org.example.condominiumfaultreportingsystem.report.ReportType;
 
 import java.time.LocalDateTime;
@@ -18,5 +19,7 @@ public class NewReportCameNotification {
     private ReportType reportType;
     private String userName;
     private LocalDateTime submittedAt;
+
+    private NotificationType type;
 
 }

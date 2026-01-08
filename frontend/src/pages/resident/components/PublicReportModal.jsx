@@ -59,6 +59,7 @@ const PublicReportModal = ({handleSubmitPublicReport}) =>{
                                 <option value="HEATING">🔥 Heating</option>
                                 <option value="GARBAGE_COLLECTION">🗑️ Garbage</option>
                                 <option value="SECURITY">🔒 Security</option>
+                                <option value="GARDENING">🌳 Gardening</option>
                                 <option value="OTHER">📋 Other</option>
                             </select>
                         </div>

@@ -24,7 +24,9 @@ public class NotificationService {
 
     private final SimpMessagingTemplate messagingTemplate;
 
-    public void sendCompanyRequestAcceptedNotification(CompanyRequest companyRequest, GroupDTO companyGroup){
+    public void sendCompanyRequestAcceptedNotification(CompanyRequest companyRequest, GroupDTO companyGroup) {
+        log.info("METHOD: sendCompanyRequestAcceptedNotification | Preparing ACCEPTED company request notification for requesterId={}",
+                companyRequest.getRequesterId());
 
         CompanyNotification notificationForUser = CompanyNotification.builder()
                 .senderName("SYSTEM")
@@ -37,6 +39,7 @@ public class NotificationService {
 
         String userIdString = companyRequest.getRequesterId().toString();
         messagingTemplate.convertAndSendToUser(userIdString, "/queue/request-response", notificationForUser);
+        log.info("METHOD: sendCompanyRequestAcceptedNotification | SENT RESPONSE notification to userId={}", userIdString);
 
         WelcomeCompanyNotification welcomeNotification = WelcomeCompanyNotification.builder()
                 .companyName(companyRequest.getCompanyName())
@@ -47,9 +50,12 @@ public class NotificationService {
 
         String groupDestination = companyGroup.getGroupName();
         messagingTemplate.convertAndSend("/topic/group/" + groupDestination, welcomeNotification);
+        log.info("METHOD: sendCompanyRequestAcceptedNotification | SENT WELCOME notification to group={}", groupDestination);
     }
 
-    public void sendCompanyRequestRejectedNotification(CompanyRequest companyRequest){
+    public void sendCompanyRequestRejectedNotification(CompanyRequest companyRequest) {
+        log.info("METHOD: sendCompanyRequestRejectedNotification | Preparing REJECTED company request notification for requesterId={}",
+                companyRequest.getRequesterId());
 
         CompanyNotification notificationForUser = CompanyNotification.builder()
                 .senderName("SYSTEM")
@@ -61,41 +67,43 @@ public class NotificationService {
                 .build();
 
         String userIdString = companyRequest.getRequesterId().toString();
-        messagingTemplate.convertAndSendToUser(userIdString,"/queue/request-response",notificationForUser);
-
+        messagingTemplate.convertAndSendToUser(userIdString, "/queue/request-response", notificationForUser);
+        log.info("METHOD: sendCompanyRequestRejectedNotification | SENT RESPONSE notification to userId={}", userIdString);
     }
 
-    public void sendCompanyRemovedNotification(Company company, Long userId, List<Group> groups){
+    public void sendCompanyRemovedNotification(Company company, Long userId, List<Group> groups) {
+        log.info("METHOD: sendCompanyRemovedNotification | Removing company={} for userId={}",
+                company.getName(), userId);
 
         CompanyNotification notificationForUser = CompanyNotification.builder()
                 .senderName("SYSTEM")
                 .companyName(company.getName())
                 .companyEmail(company.getEmail())
                 .serviceType(company.getServiceType())
-                .message("Your company has been removed from the system. You no longer have access to the company related features.")
-                .type(NotificationType.REMOVAL)
+                .message("Your company has been removed from the system.")
+                .type(NotificationType.COMPANY_REMOVAL)
                 .build();
 
         String userIdString = userId.toString();
-        messagingTemplate.convertAndSendToUser(userIdString,"/queue/removal",notificationForUser);
+        messagingTemplate.convertAndSendToUser(userIdString, "/queue/removal", notificationForUser);
+        log.info("METHOD: sendCompanyRemovedNotification | SENT COMPANY_REMOVAL to userId={}", userIdString);
 
         CompanyLeftNotification notificationForGroup = CompanyLeftNotification.builder()
                 .companyName(company.getName())
                 .serviceType(company.getServiceType())
                 .message("The company: " + company.getName() + " has left the system")
-                .type(NotificationType.MEMBER_LEFT)
+                .type(NotificationType.COMPANY_REMOVAL)
                 .build();
 
-        for (Group group : groups){
-
-            String groupDestination = group.getGroupName();
-            messagingTemplate.convertAndSend("/topic/group/" + groupDestination, notificationForGroup);
-
+        for (Group group : groups) {
+            messagingTemplate.convertAndSend("/topic/group/" + group.getGroupName(), notificationForGroup);
+            log.info("METHOD: sendCompanyRemovedNotification | SENT COMPANY_REMOVAL to group={}", group.getGroupName());
         }
-
     }
 
-    public void sendApartmentRequestAcceptedNotification(ApartmentRequest request, Apartment apartment, GroupDTO usersGroup){
+    public void sendApartmentRequestAcceptedNotification(ApartmentRequest request, Apartment apartment, GroupDTO usersGroup) {
+        log.info("METHOD: sendApartmentRequestAcceptedNotification | Accepting apartment request for requesterId={}",
+                request.getRequesterId());
 
         ApartmentNotification notificationForUser = ApartmentNotification.builder()
                 .senderName("SYSTEM")
@@ -110,7 +118,7 @@ public class NotificationService {
 
         String userIdString = request.getRequesterId().toString();
         messagingTemplate.convertAndSendToUser(userIdString, "/queue/request-response", notificationForUser);
-        log.info("SENT");
+        log.info("METHOD: sendApartmentRequestAcceptedNotification | SENT RESPONSE to userId={}", userIdString);
 
         WelcomeUserNotification welcomeNotification = WelcomeUserNotification.builder()
                 .senderName(request.getRequesterName())
@@ -119,11 +127,14 @@ public class NotificationService {
                 .type(NotificationType.WELCOME)
                 .build();
 
-        String groupDestination = usersGroup.getGroupName();
-        messagingTemplate.convertAndSend("/topic/group/" + groupDestination, welcomeNotification);
+        messagingTemplate.convertAndSend("/topic/group/" + usersGroup.getGroupName(), welcomeNotification);
+        log.info("METHOD: sendApartmentRequestAcceptedNotification | SENT WELCOME to group={}",
+                usersGroup.getGroupName());
     }
 
-    public void sendApartmentRequestRejectedNotification(ApartmentRequest request, Apartment apartment){
+    public void sendApartmentRequestRejectedNotification(ApartmentRequest request, Apartment apartment) {
+        log.info("METHOD: sendApartmentRequestRejectedNotification | Rejecting apartment request for requesterId={}",
+                request.getRequesterId());
 
         ApartmentNotification notificationForUser = ApartmentNotification.builder()
                 .senderName("SYSTEM")
@@ -137,10 +148,12 @@ public class NotificationService {
 
         String userIdString = request.getRequesterId().toString();
         messagingTemplate.convertAndSendToUser(userIdString, "/queue/request-response", notificationForUser);
-
+        log.info("METHOD: sendApartmentRequestRejectedNotification | SENT RESPONSE to userId={}", userIdString);
     }
 
-    public void sendUserLeftNotification(Apartment apartment, User userThatLeft, Group group){
+    public void sendUserLeftNotification(Apartment apartment, User userThatLeft, Group group) {
+        log.info("METHOD: sendUserLeftNotification | User={} leaving apartment={}",
+                userThatLeft.getId(), apartment.getApartmentNumber());
 
         ApartmentNotification notificationForUser = ApartmentNotification.builder()
                 .senderName("SYSTEM")
@@ -149,76 +162,81 @@ public class NotificationService {
                 .floor(apartment.getFloor())
                 .apartmentStatus(apartment.getStatus())
                 .buildingNumber(apartment.getBuilding().getBuildingNumber())
-                .message("You has been removed from the apartment.")
+                .message("You have been removed from the apartment.")
+                .type(NotificationType.USER_REMOVAL)
                 .build();
 
-        String userIdString = userThatLeft.getId().toString();
-        messagingTemplate.convertAndSendToUser(userIdString, "/queue/removal", notificationForUser);
+        messagingTemplate.convertAndSendToUser(userThatLeft.getId().toString(), "/queue/removal", notificationForUser);
+        log.info("METHOD: sendUserLeftNotification | SENT USER_REMOVAL to userId={}", userThatLeft.getId());
 
         UserLeftNotification notificationForGroup = UserLeftNotification.builder()
                 .userName(userThatLeft.getName())
                 .apartmentNumber(apartment.getApartmentNumber())
-                .message(userThatLeft.getName() + " has left from the " + apartment.getApartmentNumber() + " apartment")
-                .type(NotificationType.REMOVAL)
+                .message(userThatLeft.getName() + " has left the apartment")
+                .type(NotificationType.USER_REMOVAL)
                 .build();
 
-        String groupDestination = group.getGroupName();
-
-        messagingTemplate.convertAndSend("/topic/group/" + groupDestination, notificationForGroup);
+        messagingTemplate.convertAndSend("/topic/group/" + group.getGroupName(), notificationForGroup);
+        log.info("METHOD: sendUserLeftNotification | SENT USER_REMOVAL to group={}", group.getGroupName());
     }
 
-    public void sendNewPublicReportCameNotification(String groupName, String userName, Report report){
+    public void sendNewPublicReportCameNotification(String groupName, String userName, Report report) {
+        log.info("METHOD: sendNewPublicReportCameNotification | New PUBLIC report from user={} to group={}",
+                userName, groupName);
 
-        NewReportCameNotification newReportCameNotification = NewReportCameNotification.builder()
+        NewReportCameNotification notification = NewReportCameNotification.builder()
                 .message("New report came")
                 .reportType(report.getReportType())
                 .userName(userName)
                 .submittedAt(report.getCreatedAt())
+                .type(NotificationType.PUBLIC_REPORT_CAME)
                 .build();
 
-        messagingTemplate.convertAndSend("/topic/group/" + groupName, newReportCameNotification);
+        messagingTemplate.convertAndSend("/topic/group/" + groupName, notification);
+        log.info("METHOD: sendNewPublicReportCameNotification | SENT PUBLIC_REPORT_CAME to group={}", groupName);
     }
 
-    public void sendNewPrivateReportCameNotification(Long companyId, String userName, Report report){
+    public void sendNewPrivateReportCameNotification(Long companyId, String userName, Report report) {
+        log.info("METHOD: sendNewPrivateReportCameNotification | New PRIVATE report for companyId={}", companyId);
 
-        NewReportCameNotification newReportCameNotification = NewReportCameNotification.builder()
+        NewReportCameNotification notification = NewReportCameNotification.builder()
                 .message("New report came")
                 .reportType(report.getReportType())
                 .userName(userName)
                 .submittedAt(report.getCreatedAt())
+                .type(NotificationType.PRIVATE_REPORT_CAME)
                 .build();
 
-        String companyIdString = companyId.toString();
-
-        messagingTemplate.convertAndSendToUser(companyIdString, "/queue/notification", newReportCameNotification);
-
+        messagingTemplate.convertAndSendToUser(companyId.toString(), "/queue/notification", notification);
+        log.info("METHOD: sendNewPrivateReportCameNotification | SENT PRIVATE_REPORT_CAME to companyId={}", companyId);
     }
 
-    public void sendReportSubmittedNotification(Long residentId, Company company, Report report){
+    public void sendReportSubmittedNotification(Long residentId, Company company, Report report) {
+        log.info("METHOD: sendReportSubmittedNotification | Report accepted by company={} for residentId={}",
+                company.getName(), residentId);
 
-        ReportSubmittedNotification reportSubmittedNotification = ReportSubmittedNotification.builder()
+        ReportSubmittedNotification notification = ReportSubmittedNotification.builder()
                 .message("A company has selected your report.")
                 .reportType(report.getReportType())
                 .companyName(company.getName())
+                .type(NotificationType.REPORT_ACCEPTED)
                 .build();
 
-        String residentIdString = residentId.toString();
-
-        messagingTemplate.convertAndSendToUser(residentIdString,"/queue/notification", reportSubmittedNotification);
+        messagingTemplate.convertAndSendToUser(residentId.toString(), "/queue/notification", notification);
+        log.info("METHOD: sendReportSubmittedNotification | SENT REPORT_ACCEPTED to residentId={}", residentId);
     }
 
-    public void sendFeedbackNotification(Feedback feedback, Long companyId){
+    public void sendFeedbackNotification(Feedback feedback, Long companyId) {
+        log.info("METHOD: sendFeedbackNotification | New feedback for companyId={} from={}",
+                companyId, feedback.getReviewerEmail());
 
-        FeedbackNotification feedbackNotification = FeedbackNotification.builder()
+        FeedbackNotification notification = FeedbackNotification.builder()
                 .senderEmail(feedback.getReviewerEmail())
                 .rating(feedback.getRating())
                 .message("A new feedback has came!")
                 .build();
 
-        String companyIdString = companyId.toString();
-
-        messagingTemplate.convertAndSendToUser(companyIdString,"queue/notification", feedbackNotification);
-
+        messagingTemplate.convertAndSendToUser(companyId.toString(), "/queue/notification", notification);
+        log.info("METHOD: sendFeedbackNotification | SENT FEEDBACK notification to companyId={}", companyId);
     }
-
 }

@@ -40,23 +40,6 @@ const ResidentRequest = () => {
         isConnected, setIsConnected
     } = useContext(ResidentRequestContext);
 
-    // const{
-    //     buildings, setBuildings,
-    //     selectedBuilding, setSelectedBuilding,
-    //     apartments, setApartments,
-    //     loadingApartments, setLoadingApartments,
-    //     currentPage, setCurrentPage,
-    //     totalPages, setTotalPages,
-    //     totalElements, setTotalElements,
-    //     pageSize,
-    //     showPendingView, setShowPendingView,
-    // } = useContext(RoleSelectionContext);
-
-    // const [notification, setNotification] = useState(null);
-    // const [requestSent, setRequestSent] = useState(false);
-    // const [selectedApartmentId, setSelectedApartmentId] = useState(null);
-    // const [isConnected, setIsConnected] = useState(false);
-
     const subscriptionRef = useRef(null);
     const currentUserIdRef = useRef(null);
 
