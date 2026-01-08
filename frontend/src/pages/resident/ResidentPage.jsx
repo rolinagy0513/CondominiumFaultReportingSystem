@@ -30,8 +30,12 @@ const ResidentPage = () => {
     const SOCK_URL = import.meta.env.VITE_API_WEBSOCKET_BASE_URL;
     const LOGOUT_URL = `${AUTH_API_PATH}/logout`;
 
+    useEffect(()=>{
+        console.log(residentGroupIdentifier)
+    },[])
+
     const {
-        residentGroupId, authenticatedResidentId
+        residentGroupId, residentGroupIdentifier
     } = useContext(ResidentUserContext);
 
     const{
@@ -109,7 +113,7 @@ const ResidentPage = () => {
     }, [ownersBuildingId, selectedServiceType]);
 
     useEffect(() => {
-        if (!residentGroupId) {
+        if (!residentGroupIdentifier) {
             console.log("⚠️ Missing group info, skipping WebSocket setup");
             return;
         }
@@ -117,12 +121,11 @@ const ResidentPage = () => {
         websocketServices.connect(SOCK_URL, {
             onConnect: () => {
                 console.log("✅ Resident WebSocket connected successfully");
-                console.log("📋 Resident Group ID:", residentGroupId);
+                console.log("📋 Resident Group Identifier:", residentGroupIdentifier);
 
-                const groupTopic = `/topic/group/${residentGroupId}`;
+                const groupTopic = `/topic/group/${residentGroupIdentifier}`;
                 console.log("🔌 Subscribing to group topic:", groupTopic);
 
-                //Itt csak a group van ide be kell adni majd a user-eket is ami meg azért nem ment mert nem próbáltam rendesen ki.
                 subscriptionRef.current = websocketServices.subscribe(
                     groupTopic,
                     (message) => {
@@ -158,39 +161,37 @@ const ResidentPage = () => {
             }
             websocketServices.disconnect();
         };
-    }, [residentGroupId]);
+    }, [residentGroupIdentifier]);
 
 
-    // const handleNotification = (notification) => {
-    //     console.log("📬 Resident received notification:", notification);
-    //
-    //     switch (notification.type) {
-    //         case "COMPANY_REMOVAL":
-    //             alert("The company left notification alert: " + notification.message);
-    //             if (ownersBuildingId) {
-    //                 getCompanyByBuildingId(ownersBuildingId);
-    //             }
-    //             break;
-    //
-    //         case "USER_REMOVAL":
-    //             alert("The user left notification alert: " + notification.message);
-    //             // Note: This will only show for other users leaving, not for yourself
-    //             // since your own removal notification goes to /user/{id}/queue/removal
-    //             break;
-    //
-    //         case "PUBLIC_REPORT_CAME":
-    //             alert("New public report notification: " + notification.message);
-    //             getAllPublicReports(currentPage);
-    //             break;
-    //
-    //         case "WELCOME":
-    //             alert("Welcome notification: " + notification.message);
-    //             break;
-    //
-    //         default:
-    //             console.warn("Unknown notification type:", notification.type);
-    //     }
-    // };
+    const handleNotification = (notification) => {
+        console.log("📬 Resident received notification:", notification);
+
+        switch (notification.type) {
+            case "COMPANY_REMOVAL":
+                alert("The company left notification alert: " + notification.message);
+                if (ownersBuildingId) {
+                    getCompanyByBuildingId(ownersBuildingId);
+                }
+                break;
+
+            case "USER_REMOVAL":
+                alert("The user left notification alert: " + notification.message);
+                break;
+
+            case "PUBLIC_REPORT_CAME":
+                alert("New public report notification: " + notification.message);
+                getAllPublicReports(currentPage);
+                break;
+
+            case "WELCOME":
+                alert("Welcome notification: " + notification.message);
+                break;
+
+            default:
+                console.warn("Unknown notification type:", notification.type);
+        }
+    };
 
     const handleLogout = async () => {
         try {

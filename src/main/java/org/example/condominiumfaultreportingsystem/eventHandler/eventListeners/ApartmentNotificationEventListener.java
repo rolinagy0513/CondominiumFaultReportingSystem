@@ -41,13 +41,14 @@ public class ApartmentNotificationEventListener {
         }
     }
 
-//    public void handleUserJoinedEvent(UserJoinedEvent event){
-//        try{
-//            notificationService
-//        }catch (Exception e){
-//            log.error("Failed to send the user joined event to: {}", event.getGroup().getId());
-//        }
-//    }
+@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handleUserJoinedEvent(UserJoinedEvent event){
+        try{
+            notificationService.sendUserJoinedNotification(event.getApartment(), event.getUser(), event.getGroup());
+        }catch (Exception e){
+            log.error("Failed to send the user joined event to: {}", event.getGroup().getId());
+        }
+    }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleUserLeftEvent(UserLeftEvent event){

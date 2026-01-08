@@ -16,11 +16,16 @@ export const ResidentUserProvider = ({ children }) => {
         localStorage.getItem("authenticatedResidentUserName")
     );
 
+    const  [residentGroupIdentifier, setResidentGroupIdentifier] = useState(()=>
+        localStorage.getItem("authenticatedResidentGroupIdentifier")
+    );
+
     return (
         <ResidentUserContext.Provider value={{
             residentGroupId, setResidentGroupId,
             authenticatedResidentId, setAuthenticatedResidentId,
-            authenticatedResidentUserName, setAuthenticatedResidentUserName
+            authenticatedResidentUserName, setAuthenticatedResidentUserName,
+            residentGroupIdentifier, setResidentGroupIdentifier
         }}>
             {children}
         </ResidentUserContext.Provider>

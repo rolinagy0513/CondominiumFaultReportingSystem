@@ -1,6 +1,5 @@
- - A websocket azért nem ment mert nem a groupId-t kell használni hanem a gropupname-et ami egy külön String az adress és a number-ból alkotva
-   az auth response-ban már ott van csak el kell menteni localStorage-ba és state-ba is majd a residentPage-et áttírni hogy használja azt
-   az után mennie kell ennek is de szétt lett kúrva nincs benne a sima user subscribe paths(azt vissza kell adni)
+ - Meg kell hívni a többi websocketes endpoint-ot is beleértve a saját users queue-t is, meg  kell hívni a function-okat ha jönnek hogy
+   fetchelje le újra a list-et. Adni valami design-t ne csak alert legyen
 
  -  Motification a websocket-en keresztül pl ha kivan dobva a user vagy ha új jön vagy ha új report jön vagy ha efogadják a reportot
  - Meg kell csinálni az email-t is ami kiküldi majd a notification-t

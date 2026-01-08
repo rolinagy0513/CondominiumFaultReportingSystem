@@ -218,7 +218,7 @@ public class BulkUserRegistrationService {
         apartment.setStatus(ApartmentStatus.OCCUPIED);
         apartmentRepository.save(apartment);
 
-        groupService.addUserToGroup(data.getBuildingNumber(), data.getBuildingAddress(), user);
+        groupService.addUserToGroup(data.getBuildingNumber(), data.getBuildingAddress(), user, apartment);
 
         cacheService.evictAAllApartmentsByBuildingCache();
         cacheService.evictAllApartmentByFloorAndBuildingCache();

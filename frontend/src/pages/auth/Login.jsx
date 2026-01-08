@@ -33,7 +33,7 @@ const Login = () =>{
     const { loginFormData, setLoginFormData} = useContext(AuthContext);
     const {setAdminGroupId, setAuthenticatedAdminId, setAuthenticatedAdminUserName} = useContext(AdminUserContext);
     const { setAuthenticatedUserId, setAuthenticatedUserName } = useContext(UserContext);
-    const { setResidentGroupId, setAuthenticatedResidentId, setAuthenticatedResidentUserName} = useContext(ResidentUserContext);
+    const { setResidentGroupId, setAuthenticatedResidentId, setAuthenticatedResidentUserName, setResidentGroupIdentifier} = useContext(ResidentUserContext);
 
     const resetForm = () =>{
         setLoginFormData({
@@ -124,23 +124,21 @@ const Login = () =>{
 
             if (response.role === RESIDENT_ROLE && !response.mustChangePassword){
 
-                console.log("IDE IDE IDE")
-                console.log(response);
-
                 localStorage.setItem("residentGroupId",response.groupId);
                 localStorage.setItem("authenticatedResidentId",response.user.id);
                 localStorage.setItem("authenticatedResidentUserName",response.user.userName);
+                localStorage.setItem("authenticatedResidentGroupIdentifier", response.groupIdentifier);
 
                 console.log("📊 [LOGIN] Resident login - stored data:");
                 console.log("  - residentGroupId:", localStorage.getItem("residentGroupId"));
                 console.log("  - authenticatedResidentId:", localStorage.getItem("authenticatedResidentId"));
                 console.log("  - authenticatedResidentUserName:", localStorage.getItem("authenticatedResidentUserName"));
+                console.log("  - authenticatedResidentGroupIdentifier:", localStorage.getItem("authenticatedResidentGroupIdentifier"));
 
                 setResidentGroupId(response.groupId);
                 setAuthenticatedResidentId(response.user.id);
                 setAuthenticatedResidentUserName(response.user.userName);
-
-                console.log(response)
+                setResidentGroupIdentifier(response.groupIdentifier);
 
                 navigate("/resident-page")
             }

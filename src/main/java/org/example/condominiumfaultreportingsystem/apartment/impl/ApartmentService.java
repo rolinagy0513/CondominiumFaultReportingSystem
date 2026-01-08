@@ -12,6 +12,7 @@ import org.example.condominiumfaultreportingsystem.apartment.ApartmentStatus;
 import org.example.condominiumfaultreportingsystem.apartment.IApartmentService;
 import org.example.condominiumfaultreportingsystem.building.Building;
 import org.example.condominiumfaultreportingsystem.cache.CacheService;
+import org.example.condominiumfaultreportingsystem.eventHandler.events.UserLeftEvent;
 import org.example.condominiumfaultreportingsystem.exception.*;
 import org.example.condominiumfaultreportingsystem.group.impl.GroupService;
 import org.example.condominiumfaultreportingsystem.security.user.Role;
@@ -19,6 +20,7 @@ import org.example.condominiumfaultreportingsystem.security.user.User;
 import org.example.condominiumfaultreportingsystem.security.user.UserRepository;
 import org.example.condominiumfaultreportingsystem.security.user.UserService;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -44,6 +46,7 @@ public class ApartmentService implements IApartmentService {
     private final GroupService groupService;
     private final CacheService cacheService;
     private final UserRepository userRepository;
+
 
     public ApartmentDTO getApartmentWithOwnerId(){
 
@@ -204,7 +207,7 @@ public class ApartmentService implements IApartmentService {
         Integer buildingNumber = apartmentToAdd.getBuilding().getBuildingNumber();
         String buildingAddress = apartmentToAdd.getBuilding().getAddress();
 
-        groupService.addUserToGroup(buildingNumber,buildingAddress, userToAdd);
+        groupService.addUserToGroup(buildingNumber,buildingAddress, userToAdd, apartmentToAdd);
 
         userService.promoteUserToResident(currentUser.getId(), userToAdd.getId());
 

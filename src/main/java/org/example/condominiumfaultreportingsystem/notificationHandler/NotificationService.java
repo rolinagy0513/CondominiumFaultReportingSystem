@@ -151,6 +151,18 @@ public class NotificationService {
         log.info("METHOD: sendApartmentRequestRejectedNotification | SENT RESPONSE to userId={}", userIdString);
     }
 
+    public void sendUserJoinedNotification(Apartment apartment, User userThatJoined, Group group){
+
+        UserJoinedNotification notificationForGroup = UserJoinedNotification.builder()
+                .userName(userThatJoined.getName())
+                .apartmentNumber(apartment.getApartmentNumber())
+                .message(userThatJoined.getName() + " has joined the building")
+                .type(NotificationType.WELCOME)
+                .build();
+
+        messagingTemplate.convertAndSend("/topic/group/" + group.getGroupName(), notificationForGroup);
+    }
+
     public void sendUserLeftNotification(Apartment apartment, User userThatLeft, Group group) {
         log.info("METHOD: sendUserLeftNotification | User={} leaving apartment={}",
                 userThatLeft.getId(), apartment.getApartmentNumber());
@@ -172,7 +184,7 @@ public class NotificationService {
         UserLeftNotification notificationForGroup = UserLeftNotification.builder()
                 .userName(userThatLeft.getName())
                 .apartmentNumber(apartment.getApartmentNumber())
-                .message(userThatLeft.getName() + " has left the apartment")
+                .message(userThatLeft.getName() + " has left the building")
                 .type(NotificationType.USER_REMOVAL)
                 .build();
 

@@ -231,7 +231,7 @@ public class CompanyRequestService implements ICompanyRequestService {
         cacheService.evictCompanyByBuildingIdAndServiceTypeCache(buildingId, serviceType);
         cacheService.evictAllCompaniesCache();
 
-        GroupDTO companyGroup = groupService.addUserToGroup(companyRequest.getBuildingNumber(), companyRequest.getBuildingAddress(), user);
+        GroupDTO companyGroup = groupService.addUserToGroup(companyRequest.getBuildingNumber(), companyRequest.getBuildingAddress(), user, null);
 
         eventPublisher.publishEvent(
                 new CompanyRequestAcceptedEvent(companyRequest, companyGroup)

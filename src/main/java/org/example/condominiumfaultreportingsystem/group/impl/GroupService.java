@@ -8,6 +8,7 @@ import org.example.condominiumfaultreportingsystem.apartment.Apartment;
 import org.example.condominiumfaultreportingsystem.company.Company;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyRemovedEvent;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyRequestAcceptedEvent;
+import org.example.condominiumfaultreportingsystem.eventHandler.events.UserJoinedEvent;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.UserLeftEvent;
 import org.example.condominiumfaultreportingsystem.exception.GroupNotFoundException;
 import org.example.condominiumfaultreportingsystem.exception.UserNotFoundException;
@@ -72,7 +73,7 @@ public class GroupService implements IGroupService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public GroupDTO addUserToGroup(Integer buildingNumber, String buildingAddress, User userToAdd){
+    public GroupDTO addUserToGroup(Integer buildingNumber, String buildingAddress, User userToAdd, Apartment usersApartment){
 
         if (userToAdd.getGroups() == null){
             userToAdd.setGroups(new ArrayList<>());
@@ -96,6 +97,10 @@ public class GroupService implements IGroupService {
 
             groupRepository.save(existingGroup);
 
+            eventPublisher.publishEvent(
+                    new UserJoinedEvent(usersApartment, userToAdd, existingGroup)
+            );
+
             return mapToDto(existingGroup);
 
         }
@@ -108,8 +113,12 @@ public class GroupService implements IGroupService {
         try{
 
             groupRepository.save(newGroup);
-            return mapToDto(newGroup);
 
+            eventPublisher.publishEvent(
+                    new UserJoinedEvent(usersApartment, userToAdd, newGroup)
+            );
+
+            return mapToDto(newGroup);
 
         }catch (DataIntegrityViolationException ex){
 

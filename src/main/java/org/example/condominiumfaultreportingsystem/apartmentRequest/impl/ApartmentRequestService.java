@@ -225,7 +225,7 @@ public class ApartmentRequestService implements IApartmentRequestService {
         Integer buildingNumber = apartment.getBuilding().getBuildingNumber();
         String buildingAddress = apartment.getBuilding().getAddress();
 
-        GroupDTO usersGroup = groupService.addUserToGroup(buildingNumber,buildingAddress, userToAdd);
+        GroupDTO usersGroup = groupService.addUserToGroup(buildingNumber,buildingAddress, userToAdd, apartment);
 
         userService.promoteUserToResident(currentAdmin.getId(),userToAdd.getId());
 
