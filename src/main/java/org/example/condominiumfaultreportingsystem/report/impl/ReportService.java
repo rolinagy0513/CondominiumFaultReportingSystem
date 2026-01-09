@@ -350,6 +350,34 @@ public class ReportService implements IReportService{
 
     }
 
+    public List<ReportWithCompanyDTO> getCompletedReportsForUser(){
+
+        UserDTO currentUser = userService.getCurrentUser();
+
+        Optional<List<Report>> reportOpt = reportRepository.findReportByUser(currentUser.getId(), ReportStatus.DONE);
+
+        if (reportOpt.isEmpty()){
+            throw new ReportNotFoundException();
+        }
+
+        List<Report> reports = reportOpt.get();
+
+        return  reports.stream().map(report -> ReportWithCompanyDTO.builder()
+                .senderName(report.getUser().getName())
+                .reportPrivacy(report.getReportPrivacy())
+                .name(report.getName())
+                .issueDescription(report.getIssueDescription())
+                .comment(report.getComment())
+                .roomNumber(report.getRoomNumber())
+                .floor(report.getFloor())
+                .companyName(report.getCompanyName())
+                .createdAt(report.getCreatedAt())
+                .reportStatus(report.getReportStatus())
+                .reportType(report.getReportType())
+                .build()).toList();
+
+    }
+
     public ReportDTO getReportById(Long reportId){
 
         UserDTO currentUser = userService.getCurrentUser();

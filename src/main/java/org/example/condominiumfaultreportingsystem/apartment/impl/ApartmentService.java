@@ -2,18 +2,19 @@ package org.example.condominiumfaultreportingsystem.apartment.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.condominiumfaultreportingsystem.DTO.ApartmentDTO;
-import org.example.condominiumfaultreportingsystem.DTO.RemovalDTO;
-import org.example.condominiumfaultreportingsystem.DTO.UserDTO;
-import org.example.condominiumfaultreportingsystem.DTO.UserWithRoleDTO;
+import org.example.condominiumfaultreportingsystem.DTO.*;
 import org.example.condominiumfaultreportingsystem.apartment.Apartment;
 import org.example.condominiumfaultreportingsystem.apartment.ApartmentRepository;
 import org.example.condominiumfaultreportingsystem.apartment.ApartmentStatus;
 import org.example.condominiumfaultreportingsystem.apartment.IApartmentService;
 import org.example.condominiumfaultreportingsystem.building.Building;
 import org.example.condominiumfaultreportingsystem.cache.CacheService;
+import org.example.condominiumfaultreportingsystem.eventHandler.events.ApartmentRequestAcceptedEvent;
+import org.example.condominiumfaultreportingsystem.eventHandler.events.UserJoinedEvent;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.UserLeftEvent;
 import org.example.condominiumfaultreportingsystem.exception.*;
+import org.example.condominiumfaultreportingsystem.group.Group;
+import org.example.condominiumfaultreportingsystem.group.GroupRepository;
 import org.example.condominiumfaultreportingsystem.group.impl.GroupService;
 import org.example.condominiumfaultreportingsystem.security.user.Role;
 import org.example.condominiumfaultreportingsystem.security.user.User;
@@ -47,6 +48,8 @@ public class ApartmentService implements IApartmentService {
     private final CacheService cacheService;
     private final UserRepository userRepository;
 
+    private final ApplicationEventPublisher eventPublisher;
+    private final GroupRepository groupRepository;
 
     public ApartmentDTO getApartmentWithOwnerId(){
 
@@ -207,12 +210,21 @@ public class ApartmentService implements IApartmentService {
         Integer buildingNumber = apartmentToAdd.getBuilding().getBuildingNumber();
         String buildingAddress = apartmentToAdd.getBuilding().getAddress();
 
-        groupService.addUserToGroup(buildingNumber,buildingAddress, userToAdd, apartmentToAdd);
+        //ez is azért hátha így jobban megy a notification sending
+       GroupDTO groupDTO =  groupService.addUserToGroup(buildingNumber,buildingAddress, userToAdd, apartmentToAdd);
+
+       Group group = groupRepository.findById(groupDTO.getGroupId())
+                       .orElseThrow(GroupNotFoundException::new);
 
         userService.promoteUserToResident(currentUser.getId(), userToAdd.getId());
 
         apartmentToAdd.setOwner(userToAdd);
         apartmentToAdd.setStatus(ApartmentStatus.OCCUPIED);
+
+        //et új hátha jobban megy a notification sending
+        eventPublisher.publishEvent(
+                new UserJoinedEvent(apartmentToAdd, userToAdd, group)
+        );
 
         cacheService.evictAAllApartmentsByBuildingCache();
         cacheService.evictAllApartmentByFloorAndBuildingCache();

@@ -1,5 +1,6 @@
- - Meg kell hívni a többi websocketes endpoint-ot is beleértve a saját users queue-t is, meg  kell hívni a function-okat ha jönnek hogy
-   fetchelje le újra a list-et. Adni valami design-t ne csak alert legyen
+ - Le kell tesztelni és meg kell hívni a completed reports-ot a page-en hogy majd ott tudjon feedback-et adni a user
+ -
+ - Adni valami design-t ne csak alert legyen a notification-nál
 
  -  Motification a websocket-en keresztül pl ha kivan dobva a user vagy ha új jön vagy ha új report jön vagy ha efogadják a reportot
  - Meg kell csinálni az email-t is ami kiküldi majd a notification-t

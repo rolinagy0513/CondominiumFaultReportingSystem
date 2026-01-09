@@ -90,4 +90,10 @@ public class ReportController {
         return reportService.getInProgressReport();
     }
 
+    @GetMapping("/resident/report/getCompletedReportsForUser")
+    public List<ReportWithCompanyDTO> getCompletedReportsForUser(
+    ){
+        return reportService.getCompletedReportsForUser();
+    }
+
 }

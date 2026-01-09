@@ -46,6 +46,8 @@ const ResidentPage = () => {
         ownersBuildingId
     } = useContext(ResidentBuildingContext);
 
+    const ownersBuildingIdRef = useRef(ownersBuildingId);
+
     const{
         selectedCompanyId, setSelectedCompanyId,
         selectedServiceType
@@ -83,6 +85,8 @@ const ResidentPage = () => {
     } = useReports()
 
     const subscriptionRef = useRef(null);
+    const removalSubscriptionRef = useRef(null);
+    const notificationSubscriptionRef = useRef(null);
 
     useEffect(() => {
         handleGetApartmentByOwnerId();
@@ -113,8 +117,10 @@ const ResidentPage = () => {
     }, [ownersBuildingId, selectedServiceType]);
 
     useEffect(() => {
-        if (!residentGroupIdentifier) {
-            console.log("⚠️ Missing group info, skipping WebSocket setup");
+        const authenticatedResidentId = localStorage.getItem("authenticatedResidentId");
+
+        if (!residentGroupIdentifier || !authenticatedResidentId) {
+            console.log("⚠️ Missing group or user info, skipping WebSocket setup");
             return;
         }
 
@@ -122,6 +128,7 @@ const ResidentPage = () => {
             onConnect: () => {
                 console.log("✅ Resident WebSocket connected successfully");
                 console.log("📋 Resident Group Identifier:", residentGroupIdentifier);
+                console.log("👤 Authenticated Resident ID:", authenticatedResidentId);
 
                 const groupTopic = `/topic/group/${residentGroupIdentifier}`;
                 console.log("🔌 Subscribing to group topic:", groupTopic);
@@ -139,14 +146,52 @@ const ResidentPage = () => {
                 } else {
                     console.error("❌ Failed to subscribe to group topic");
                 }
+
+                const removalQueue = `/user/${authenticatedResidentId}/queue/removal`;
+                console.log("🔌 Subscribing to removal queue:", removalQueue);
+
+                removalSubscriptionRef.current = websocketServices.subscribe(
+                    removalQueue,
+                    (message) => {
+                        console.log("📬 Received on removal queue:", message);
+                        handleNotification(message);
+                    }
+                );
+
+                if (removalSubscriptionRef.current) {
+                    console.log("✅ Successfully subscribed to removal queue");
+                } else {
+                    console.error("❌ Failed to subscribe to removal queue");
+                }
+
+                const notificationQueue = `/user/${authenticatedResidentId}/queue/notification`;
+                console.log("🔌 Subscribing to notification queue:", notificationQueue);
+
+                notificationSubscriptionRef.current = websocketServices.subscribe(
+                    notificationQueue,
+                    (message) => {
+                        console.log("📬 Received on notification queue:", message);
+                        handleNotification(message);
+                    }
+                );
+
+                if (notificationSubscriptionRef.current) {
+                    console.log("✅ Successfully subscribed to notification queue");
+                } else {
+                    console.error("❌ Failed to subscribe to notification queue");
+                }
             },
             onDisconnect: () => {
                 console.log("🔌 Resident WebSocket disconnected");
                 subscriptionRef.current = null;
+                removalSubscriptionRef.current = null;
+                notificationSubscriptionRef.current = null;
             },
             onError: (error) => {
                 console.error("❌ WebSocket error:", error);
                 subscriptionRef.current = null;
+                removalSubscriptionRef.current = null;
+                notificationSubscriptionRef.current = null;
             },
             reconnectDelay: 5000,
             heartbeatIncoming: 4000,
@@ -155,9 +200,18 @@ const ResidentPage = () => {
         });
 
         return () => {
+
             if (subscriptionRef.current) {
                 subscriptionRef.current.unsubscribe();
                 subscriptionRef.current = null;
+            }
+            if (removalSubscriptionRef.current) {
+                removalSubscriptionRef.current.unsubscribe();
+                removalSubscriptionRef.current = null;
+            }
+            if (notificationSubscriptionRef.current) {
+                notificationSubscriptionRef.current.unsubscribe();
+                notificationSubscriptionRef.current = null;
             }
             websocketServices.disconnect();
         };
@@ -176,7 +230,8 @@ const ResidentPage = () => {
                 break;
 
             case "USER_REMOVAL":
-                alert("The user left notification alert: " + notification.message);
+                alert("You have been removed from the apartment: " + notification.message);
+                handleLogout();
                 break;
 
             case "PUBLIC_REPORT_CAME":
@@ -186,6 +241,15 @@ const ResidentPage = () => {
 
             case "WELCOME":
                 alert("Welcome notification: " + notification.message);
+                if (ownersBuildingIdRef.current) {
+                    getCompanyByBuildingId(ownersBuildingIdRef.current);
+                }
+                break;
+
+            case "REPORT_ACCEPTED":
+                alert("Your report has been accepted by: " + notification.companyName);
+                getAllPublicReports(currentPage);
+                getInProgressReport();
                 break;
 
             default:
@@ -198,6 +262,14 @@ const ResidentPage = () => {
             if (subscriptionRef.current) {
                 subscriptionRef.current.unsubscribe();
                 subscriptionRef.current = null;
+            }
+            if (removalSubscriptionRef.current) {
+                removalSubscriptionRef.current.unsubscribe();
+                removalSubscriptionRef.current = null;
+            }
+            if (notificationSubscriptionRef.current) {
+                notificationSubscriptionRef.current.unsubscribe();
+                notificationSubscriptionRef.current = null;
             }
 
             websocketServices.disconnect();

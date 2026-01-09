@@ -19,6 +19,7 @@ public interface IReportService {
     CompletableFuture<Page<ReportDTO>> getAllPublicSubmittedReportsInGroup(Long groupId, Integer page, Integer size, String sortBy, String direction);
     CompletableFuture<Page<ReportDTO>> getAllPrivateSubmittedReportsForCompany(Long companyId, Integer page, Integer size, String sortBy, String direction);
     List<ReportWithCompanyDTO> getInProgressReport();
+    List<ReportWithCompanyDTO> getCompletedReportsForUser();
     ReportDTO getReportById(Long reportId);
 
 }
