@@ -1,7 +1,11 @@
  - Tesztelni kell, hogy a backend ki e küldi a report completed notification-t ha igen akkor meg kell nézni hogy a frontend reagál e rá
- - Overall rating bekerül majd a company modal-ba ahol a feedback -ek is lesznek
- - Adni valami design-t ne csak alert legyen a notification-nál
  - A company a main content-nél legyen expandolható és ha rámegyek egy modal-ban írja ki a statjait és a feedback-et is
+ - Overall rating bekerül majd a company modal-ba ahol a feedback -ek is lesznek
+
+ - Adni valami design-t ne csak alert legyen a notification-nál
+
  - Elkezdeni a company dashboard-ot is
- - Send feedback and pay page + új state a report-nál payed.
+
+ - Send feedback and pay page + új enum a report-nál payed.
+
  - Meg kell csinálni az email-t is ami kiküldi majd a notification-t
