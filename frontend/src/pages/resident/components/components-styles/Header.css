@@ -113,7 +113,7 @@
 
 .resident-page-header-middle h1 {
     font-size: 36px;
-    color: #93c5fd;
+    color: #ffffff;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
     animation: iconFloat 3s ease-in-out infinite alternate;
     position: relative;
@@ -130,45 +130,6 @@
     z-index: -1;
     border-radius: 50%;
     animation: iconPulse 3s ease-in-out infinite;
-}
-
-@keyframes titleGlow {
-    0% {
-        text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3),
-        0 0 20px rgba(96, 165, 250, 0.2);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
-        0 0 30px rgba(96, 165, 250, 0.1);
-    }
-    100% {
-        text-shadow: 0 4px 25px rgba(0, 0, 0, 0.4),
-        0 0 40px rgba(96, 165, 250, 0.4),
-        0 0 60px rgba(96, 165, 250, 0.2);
-        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2),
-        0 0 50px rgba(96, 165, 250, 0.2),
-        inset 0 0 20px rgba(255, 255, 255, 0.05);
-    }
-}
-
-@keyframes iconFloat {
-    0% {
-        transform: translateY(0px) rotate(0deg);
-        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-    }
-    100% {
-        transform: translateY(-5px) rotate(5deg);
-        filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
-    }
-}
-
-@keyframes iconPulse {
-    0%, 100% {
-        transform: scale(1);
-        opacity: 0.5;
-    }
-    50% {
-        transform: scale(1.2);
-        opacity: 0.3;
-    }
 }
 
 .resident-page-header-right {
@@ -234,6 +195,44 @@
 
 .resident-page-logout-btn {
     background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.resident-page-header-completeReport-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.resident-page-header-completeReport-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgb(43, 82, 142) 0%, rgb(26, 54, 93) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.resident-page-header-completeReport-btn:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
     border-color: rgba(255, 255, 255, 0.3);
 }
 

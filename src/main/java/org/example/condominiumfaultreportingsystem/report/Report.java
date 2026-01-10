@@ -53,6 +53,8 @@ public class Report {
     private Long companyId;
     private String companyName;
 
+    private double cost;
+
     @OneToOne(mappedBy = "report", cascade = CascadeType.ALL)
     private Feedback feedback;
 

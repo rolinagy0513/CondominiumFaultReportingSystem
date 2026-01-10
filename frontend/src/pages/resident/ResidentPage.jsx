@@ -23,6 +23,7 @@ import {ResidentCompanyContext} from "../../context/resident/ResidentCompanyCont
 import {ResidentReportContext} from "../../context/resident/ResidentReportContext.jsx";
 
 import "./style/ResidentPage.css"
+import CompletedReportModal from "./components/CompletedReportModal.jsx";
 
 const ResidentPage = () => {
     const navigate = useNavigate();
@@ -58,6 +59,7 @@ const ResidentPage = () => {
         showPrivateReportForm, setShowPrivateReportForm,
         showReportForm, setShowReportForm,
         reportFormData, setReportFormData,
+        completeReportModalOpen, setCompleteReportModalOpen
     } = useContext(ResidentReportContext);
 
     const {
@@ -82,16 +84,22 @@ const ResidentPage = () => {
         sendPublicReport,
         sendPrivateReport,
         getInProgressReport,
+        getCompletedReportsForUser,
     } = useReports()
 
     const subscriptionRef = useRef(null);
     const removalSubscriptionRef = useRef(null);
     const notificationSubscriptionRef = useRef(null);
 
+    // useEffect(() => {
+    //     getCompletedReportsForUser();
+    // }, [completeReportModalOpen]);
+
     useEffect(() => {
         handleGetApartmentByOwnerId();
         getAllPublicReports(0);
         getInProgressReport();
+        getCompletedReportsForUser()
     }, []);
 
     useEffect(() => {
@@ -252,6 +260,11 @@ const ResidentPage = () => {
                 getInProgressReport();
                 break;
 
+            case "REPORT_COMPLETED":
+                alert("Your report has been completed by: " + notification.companyName);
+                getCompletedReportsForUser();
+                break;
+
             default:
                 console.warn("Unknown notification type:", notification.type);
         }
@@ -361,6 +374,11 @@ const ResidentPage = () => {
                     handleSubmitPrivateReport={handleSubmitPrivateReport}
                 />
             )}
+
+            {completeReportModalOpen &&(
+                <CompletedReportModal/>
+            )}
+
         </div>
     );
 };

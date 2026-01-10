@@ -10,4 +10,5 @@ public enum NotificationType {
     PUBLIC_REPORT_CAME,
     PRIVATE_REPORT_CAME,
     REPORT_ACCEPTED,
+    REPORT_COMPLETED
 }

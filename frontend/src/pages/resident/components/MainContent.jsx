@@ -19,13 +19,6 @@ const MainContent = ({
                          setShowPrivateReportForm
                      }) =>{
 
-    // const {
-    //     ownersApartment, ownersBuilding,
-    //     companiesInBuilding, publicReports,inProgressReports,
-    //     setSelectedCompanyId,
-    //     selectedServiceType, setSelectedServiceType,
-    // } = useContext(ResidentPageContext);
-
     const {
         ownersApartment
     } = useContext(ResidentApartmentContext);

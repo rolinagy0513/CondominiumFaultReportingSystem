@@ -238,6 +238,19 @@ public class NotificationService {
         log.info("METHOD: sendReportSubmittedNotification | SENT REPORT_ACCEPTED to residentId={}", residentId);
     }
 
+    public void sendReportCompletedNotification(Long residentId, Report report){
+
+        ReportCompletedNotification notification = ReportCompletedNotification.builder()
+                .reportName(report.getName())
+                .companyName(report.getCompanyName())
+                .cost(report.getCost())
+                .message("Your report has been completed pay and give a feedback at the completed reports menu!")
+                .type(NotificationType.REPORT_COMPLETED)
+                .build();
+
+        messagingTemplate.convertAndSendToUser(residentId.toString(), "/queue/notification", notification);
+    }
+
     public void sendFeedbackNotification(Feedback feedback, Long companyId) {
         log.info("METHOD: sendFeedbackNotification | New feedback for companyId={} from={}",
                 companyId, feedback.getReviewerEmail());

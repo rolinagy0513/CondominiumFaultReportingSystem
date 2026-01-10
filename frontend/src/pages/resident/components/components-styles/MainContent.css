@@ -670,6 +670,100 @@
     font-size: 13px;
 }
 
+/* Enhanced Company Rating Styles */
+.resident-page-company-rating {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e2e8f0;
+    min-height: 24px;
+}
+
+.resident-page-rating-stars {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.resident-page-rating-star {
+    font-size: 18px;
+    line-height: 1;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.resident-page-star-filled {
+    color: #fbbf24;
+    text-shadow: 0 0 3px rgba(251, 191, 36, 0.3);
+}
+
+.resident-page-star-empty {
+    color: #e2e8f0;
+}
+
+.resident-page-rating-star:hover {
+    transform: scale(1.2);
+}
+
+.resident-page-rating-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1e293b;
+    background: #f8fafc;
+    padding: 2px 8px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    min-width: 40px;
+    text-align: center;
+}
+
+.resident-page-no-rating {
+    font-size: 13px;
+    color: #94a3b8;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    background: #f8fafc;
+    border-radius: 10px;
+    border: 1px dashed #cbd5e1;
+}
+
+.resident-page-no-rating::before {
+    content: "★";
+    color: #cbd5e1;
+    font-size: 14px;
+}
+
+/* Hover effect for the entire rating section */
+.resident-page-company-rating:hover .resident-page-star-filled {
+    text-shadow: 0 0 5px rgba(251, 191, 36, 0.5);
+}
+
+.resident-page-company-rating:hover .resident-page-rating-value {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+/* Responsive adjustments for rating */
+@media (max-width: 768px) {
+    .resident-page-rating-star {
+        font-size: 16px;
+    }
+
+    .resident-page-rating-value {
+        font-size: 13px;
+        padding: 1px 6px;
+    }
+
+    .resident-page-no-rating {
+        font-size: 12px;
+        padding: 3px 10px;
+    }
+}
+
 /* Responsive Styles for MainContent */
 
 /* Tablet screens (max-width: 1024px) */

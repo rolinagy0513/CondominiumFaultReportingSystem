@@ -1,16 +1,16 @@
-import {useContext} from "react";
+import {useContext, useState} from "react";
 
 import {IoLogOut} from "react-icons/io5";
 
 import {ResidentUserContext} from "../../../context/resident/ResidentUserContext.jsx";
 
 import "./components-styles/Header.css"
+import {ResidentReportContext} from "../../../context/resident/ResidentReportContext.jsx";
 
 const Header = ({handleLogout}) =>{
 
-    // const {authenticatedResidentUserName} = useContext(ResidentPageContext);
-
     const {authenticatedResidentUserName} = useContext(ResidentUserContext);
+    const {setCompleteReportModalOpen} = useContext(ResidentReportContext);
 
      return(
          <div className="resident-page-header">
@@ -18,11 +18,16 @@ const Header = ({handleLogout}) =>{
                  <h2>Resident Dashboard</h2>
                  <p className="resident-page-welcome-text">Welcome back, {authenticatedResidentUserName || "Resident"}</p>
              </div>
-             <div className="resident-pahe-header-middle">
+             <div className="resident-page-header-middle">
                  <h1>HomeLink 🏢</h1>
 
              </div>
              <div className="resident-page-header-right">
+
+                 <button className="resident-page-header-completeReport-btn" onClick={()=> setCompleteReportModalOpen(true)}>
+                     Completed Reports
+                 </button>
+
                  <button
                      className="resident-page-header-action-btn resident-page-logout-btn"
                      onClick={handleLogout}
@@ -30,6 +35,7 @@ const Header = ({handleLogout}) =>{
                      <IoLogOut className="resident-page-header-icon" />
                      Logout
                  </button>
+
              </div>
          </div>
      )

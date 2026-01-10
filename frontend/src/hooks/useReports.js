@@ -19,6 +19,7 @@ export const useReports = () =>{
 
     const {
         setPublicReports, setInProgressReports,
+        setCompletedReports,
     } = useContext(ResidentReportContext);
 
     const {
@@ -104,6 +105,15 @@ export const useReports = () =>{
         }
     }
 
-    return{ getAllPublicReports, sendPublicReport, sendPrivateReport, getInProgressReport}
+    const getCompletedReportsForUser = async () =>{
+        try{
+            const response = await apiServices.get("api/resident/report/getCompletedReportsForUser")
+            setCompletedReports(response);
+        }catch (error){
+            console.error(error.message)
+        }
+    }
+
+    return{ getAllPublicReports, sendPublicReport, sendPrivateReport, getInProgressReport, getCompletedReportsForUser}
 
 }

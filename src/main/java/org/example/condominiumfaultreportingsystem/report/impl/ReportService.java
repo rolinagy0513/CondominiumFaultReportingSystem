@@ -10,6 +10,7 @@ import org.example.condominiumfaultreportingsystem.company.CompanyRepository;
 import org.example.condominiumfaultreportingsystem.company.ServiceType;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.NewPrivateReportCameEvent;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.NewPublicReportCameEvent;
+import org.example.condominiumfaultreportingsystem.eventHandler.events.ReportCompletedEvent;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.ReportSubmittedEvent;
 import org.example.condominiumfaultreportingsystem.exception.*;
 import org.example.condominiumfaultreportingsystem.group.Group;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.text.html.Option;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -229,12 +231,16 @@ public class ReportService implements IReportService{
         }
 
         report.setReportStatus(ReportStatus.DONE);
+        report.setCost(cost);
         reportRepository.save(report);
 
         cacheService.evictPrivateReportsCache(companyId);
         cacheService.evictAllPublicReportsByStatusCache();
         cacheService.evictAllPrivateReportsByStatusCache();
 
+        eventPublisher.publishEvent(
+                new ReportCompletedEvent(user.getId(), report)
+        );
 
         return CompleteReportDTO.builder()
                 .companyName(company.getName())
@@ -350,7 +356,7 @@ public class ReportService implements IReportService{
 
     }
 
-    public List<ReportWithCompanyDTO> getCompletedReportsForUser(){
+    public List<CompletedReportDataDTO> getCompletedReportsForUser(){
 
         UserDTO currentUser = userService.getCurrentUser();
 
@@ -362,18 +368,13 @@ public class ReportService implements IReportService{
 
         List<Report> reports = reportOpt.get();
 
-        return  reports.stream().map(report -> ReportWithCompanyDTO.builder()
-                .senderName(report.getUser().getName())
-                .reportPrivacy(report.getReportPrivacy())
-                .name(report.getName())
-                .issueDescription(report.getIssueDescription())
-                .comment(report.getComment())
-                .roomNumber(report.getRoomNumber())
-                .floor(report.getFloor())
+        return  reports.stream().map(report -> CompletedReportDataDTO.builder()
+                .residentName(report.getUser().getName())
                 .companyName(report.getCompanyName())
-                .createdAt(report.getCreatedAt())
-                .reportStatus(report.getReportStatus())
-                .reportType(report.getReportType())
+                .reportName(report.getName())
+                .roomNumber(report.getRoomNumber())
+                .floorNumber(report.getFloor())
+                .cost(report.getCost())
                 .build()).toList();
 
     }

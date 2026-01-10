@@ -91,7 +91,7 @@ public class ReportController {
     }
 
     @GetMapping("/resident/report/getCompletedReportsForUser")
-    public List<ReportWithCompanyDTO> getCompletedReportsForUser(
+    public List<CompletedReportDataDTO> getCompletedReportsForUser(
     ){
         return reportService.getCompletedReportsForUser();
     }
