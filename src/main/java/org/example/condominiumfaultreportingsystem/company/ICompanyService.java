@@ -1,6 +1,7 @@
 package org.example.condominiumfaultreportingsystem.company;
 
 import org.example.condominiumfaultreportingsystem.DTO.CompanyDTO;
+import org.example.condominiumfaultreportingsystem.DTO.CompanyWithFeedbacksDTO;
 import org.example.condominiumfaultreportingsystem.DTO.RemovalDTO;
 import org.springframework.data.domain.Page;
 
@@ -11,7 +12,7 @@ import java.util.concurrent.CompletableFuture;
 public interface ICompanyService {
 
     CompletableFuture<Page<CompanyDTO>> getAllCompanies(Integer page, Integer size, String sortBy, String direction);
-    CompanyDTO getCompanyById(Long companyId);
+    CompanyWithFeedbacksDTO getCompanyById(Long companyId);
     CompletableFuture<List<CompanyDTO>> getCompaniesByBuildingId(Long buildingId);
     CompletableFuture<Page<CompanyDTO>> getCompaniesByServiceType(ServiceType serviceType, Integer page, Integer size, String sortBy, String direction);
     CompletableFuture<List<CompanyDTO>> getCompaniesByBuildingIdAndServiceType(Long buildingId, ServiceType serviceType);

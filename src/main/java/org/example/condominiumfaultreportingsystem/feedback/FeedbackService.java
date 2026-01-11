@@ -25,10 +25,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-//Le kell tesztelni, hogy el e menti a feedback-et
-//Talán frontend vagy email vagy valami más
-//Esetleg a fizetéshez valami page-et, hogy eléoször lehessen fizetni majd utánna feedback
-
 @Service
 @RequiredArgsConstructor
 public class FeedbackService {
@@ -84,6 +80,9 @@ public class FeedbackService {
 
         companyRepository.save(company);
         feedbackRepository.save(newFeedback);
+
+        report.setReportStatus(ReportStatus.PAYED);
+        reportRepository.save(report);
 
         eventPublisher.publishEvent(
                 new NewFeedbackCameEvent(newFeedback, company.getId())

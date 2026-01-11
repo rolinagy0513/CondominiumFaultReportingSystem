@@ -2,6 +2,7 @@ package org.example.condominiumfaultreportingsystem.company;
 
 import lombok.RequiredArgsConstructor;
 import org.example.condominiumfaultreportingsystem.DTO.CompanyDTO;
+import org.example.condominiumfaultreportingsystem.DTO.CompanyWithFeedbacksDTO;
 import org.example.condominiumfaultreportingsystem.DTO.RemovalDTO;
 import org.example.condominiumfaultreportingsystem.company.impl.CompanyService;
 import org.springframework.data.domain.Page;
@@ -34,7 +35,7 @@ public class CompanyController {
     }
 
     @GetMapping("/resident/company/getById/{companyId}")
-    public CompanyDTO getCompanyById(
+    public CompanyWithFeedbacksDTO getCompanyById(
             @PathVariable Long companyId
     ){
         return companyService.getCompanyById(companyId);

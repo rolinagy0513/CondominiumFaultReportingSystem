@@ -1,9 +1,7 @@
 package org.example.condominiumfaultreportingsystem.company.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.example.condominiumfaultreportingsystem.DTO.CompanyDTO;
-import org.example.condominiumfaultreportingsystem.DTO.RemovalDTO;
-import org.example.condominiumfaultreportingsystem.DTO.UserWithRoleDTO;
+import org.example.condominiumfaultreportingsystem.DTO.*;
 import org.example.condominiumfaultreportingsystem.building.Building;
 import org.example.condominiumfaultreportingsystem.building.BuildingRepository;
 import org.example.condominiumfaultreportingsystem.cache.CacheService;
@@ -14,6 +12,7 @@ import org.example.condominiumfaultreportingsystem.company.ServiceType;
 import org.example.condominiumfaultreportingsystem.exception.CompanyNotFoundException;
 import org.example.condominiumfaultreportingsystem.exception.CompanyNotFoundInBuildingException;
 import org.example.condominiumfaultreportingsystem.exception.InvalidRoleException;
+import org.example.condominiumfaultreportingsystem.feedback.Feedback;
 import org.example.condominiumfaultreportingsystem.group.impl.GroupService;
 import org.example.condominiumfaultreportingsystem.security.user.Role;
 import org.example.condominiumfaultreportingsystem.security.user.User;
@@ -71,12 +70,32 @@ public class CompanyService implements ICompanyService {
         return CompletableFuture.completedFuture(dtoPage);
     }
 
-    public CompanyDTO getCompanyById(Long companyId){
+    public CompanyWithFeedbacksDTO getCompanyById(Long companyId){
 
-        Company company = companyRepository.findById(companyId)
+        Company company = companyRepository.findCompanyWithFeedbacks(companyId)
                 .orElseThrow(()-> new CompanyNotFoundException(companyId));
 
-        return mapToDto(company);
+        List<Feedback> feedbacks = company.getFeedbacks();
+
+        List<FeedbackDTO> feedbackDTOList = feedbacks.stream().map(feedback -> FeedbackDTO.builder()
+                .rating(feedback.getRating())
+                .message(feedback.getMessage())
+                .createdAt(feedback.getCreatedAt())
+                .reviewerEmail(feedback.getReviewerEmail())
+                .build()).toList();
+
+        return CompanyWithFeedbacksDTO.builder()
+                .id(company.getId())
+                .name(company.getName())
+                .email(company.getEmail())
+                .phoneNumber(company.getPhoneNumber())
+                .address(company.getAddress())
+                .overallRating(company.getOverallRating())
+                .companyIntroduction(company.getCompanyIntroduction())
+                .serviceType(company.getServiceType())
+                .feedbacks(feedbackDTOList)
+                .build();
+
     }
 
     @Async("asyncExecutor")
