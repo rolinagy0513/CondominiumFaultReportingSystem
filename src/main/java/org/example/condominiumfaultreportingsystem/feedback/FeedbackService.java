@@ -52,7 +52,7 @@ public class FeedbackService {
 
         Report report = reportOpt.get();
 
-        Optional<Feedback> feedbackOpt = feedbackRepository.getFeedbackByReportId(report.getId());
+        Optional<Feedback> feedbackOpt = feedbackRepository.getFeedbackByReportId(report.getId(), currentUserEmail);
 
         if (feedbackOpt.isPresent()){
             throw new CanNotSendFeedbackException("You already sent a feedback for this report");

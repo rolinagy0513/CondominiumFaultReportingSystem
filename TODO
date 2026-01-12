@@ -1,7 +1,4 @@
- - Tesztelni kell, hogy a backend ki e küldi a report completed notification-t ha igen akkor meg kell nézni hogy a frontend reagál e rá
- - A company a main content-nél legyen expandolható és ha rámegyek egy modal-ban írja ki a statjait és a feedback-et is (A method meg van!)
- - Overall rating bekerül majd a company modal-ba ahol a feedback -ek is lesznek
-
+ - Loading state a pdf letöltésnél
  - Adni valami design-t ne csak alert legyen a notification-nál
 
  - Elkezdeni a company dashboard-ot is

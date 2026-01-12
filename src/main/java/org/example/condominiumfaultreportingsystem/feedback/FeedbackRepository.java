@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
 
-    @Query("SELECT f FROM Feedback f WHERE f.report.id = :reportId")
-    Optional<Feedback> getFeedbackByReportId(@Param("reportId") Long reportId);
+    @Query("SELECT f FROM Feedback f WHERE f.report.id = :reportId AND f.reviewerEmail = :residentEmail")
+    Optional<Feedback> getFeedbackByReportId(@Param("reportId") Long reportId, @Param("residentEmail") String residentEmail);
 
 }

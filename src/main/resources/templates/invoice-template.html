@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8"/>
+  <style>
+    @page {
+      size: A4;
+      margin: 25mm;
+    }
+
+    body {
+      font-family: 'Times New Roman', serif;
+      color: #000;
+      line-height: 1.4;
+      margin: 0;
+      padding: 0;
+      font-size: 12pt;
+    }
+
+    .invoice-container {
+      max-width: 100%;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 3px double #000;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 28pt;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+
+    .invoice-meta {
+      margin-top: 15px;
+      font-size: 11pt;
+    }
+
+    .section-title {
+      font-size: 14pt;
+      font-weight: bold;
+      margin: 25px 0 10px 0;
+      padding: 5px 0;
+      border-bottom: 2px solid #000;
+    }
+
+    .info-section {
+      margin-bottom: 30px;
+    }
+
+    .info-row {
+      margin-bottom: 8px;
+      padding: 3px 0;
+    }
+
+    .info-row:nth-child(even) {
+      background: #f5f5f5;
+      padding-left: 5px;
+    }
+
+    .info-label {
+      font-weight: bold;
+      display: inline-block;
+      width: 180px;
+    }
+
+    .info-value {
+      display: inline-block;
+    }
+
+    .two-column {
+      width: 100%;
+      margin-bottom: 30px;
+    }
+
+    .column {
+      width: 48%;
+      display: inline-block;
+      vertical-align: top;
+    }
+
+    .column-left {
+      margin-right: 3%;
+    }
+
+    .service-details {
+      padding: 15px;
+      border: 1px solid #000;
+      margin-bottom: 30px;
+    }
+
+    .service-row {
+      margin-bottom: 10px;
+    }
+
+    .total-section {
+      text-align: right;
+      margin: 40px 0 30px 0;
+      padding: 20px;
+      border: 2px solid #000;
+      background: repeating-linear-gradient(
+              45deg,
+              transparent,
+              transparent 10px,
+              #f9f9f9 10px,
+              #f9f9f9 20px
+      );
+    }
+
+    .total-label {
+      font-size: 14pt;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .total-amount {
+      font-size: 24pt;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .status-box {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 30px;
+      border: 3px solid #000;
+      font-weight: bold;
+      font-size: 14pt;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 50px;
+      padding-top: 20px;
+      border-top: 1px solid #000;
+      font-size: 10pt;
+      color: #333;
+    }
+
+    .footer p {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+<div class="invoice-container">
+  <div class="header">
+    <h1>INVOICE</h1>
+    <div class="invoice-meta">
+      <strong>Invoice Number:</strong> ${invoiceNumber}<br/>
+      <strong>Payment Date:</strong> ${payedAt}
+    </div>
+  </div>
+
+  <div class="two-column">
+    <div class="column column-left">
+      <div class="section-title">BILL TO</div>
+      <div class="info-section">
+        <div class="info-row">
+          <span class="info-label">Customer Name:</span>
+          <span class="info-value">${customerName}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Building Number:</span>
+          <span class="info-value">${buildingNumber}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Room Number:</span>
+          <span class="info-value">${roomNumber}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="column">
+      <div class="section-title">SERVICE PROVIDER</div>
+      <div class="info-section">
+        <div class="info-row">
+          <span class="info-label">Company:</span>
+          <span class="info-value">${companyName}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">SERVICE DETAILS</div>
+  <div class="service-details">
+    <div class="service-row">
+      <span class="info-label">Report Name:</span>
+      <span class="info-value">${reportName}</span>
+    </div>
+    <div class="service-row">
+      <span class="info-label">Description:</span>
+      <span class="info-value">Condominium maintenance and repair services</span>
+    </div>
+  </div>
+
+  <div class="total-section">
+    <div class="total-label">TOTAL AMOUNT</div>
+    <div class="total-amount">$${cost}</div>
+    <div class="status-box">PAID</div>
+  </div>
+
+  <div class="footer">
+    <p>Thank you for your business.</p>
+    <p>This invoice is computer-generated and valid without signature.</p>
+  </div>
+</div>
+</body>
+</html>

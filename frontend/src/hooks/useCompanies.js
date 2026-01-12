@@ -50,7 +50,7 @@ export const useCompanies = () =>{
 
     const {
         setCompaniesInBuilding, selectedCompanyId,
-        setSelectedCompany,
+        setSelectedCompany, setExpandedCompany
     } = useContext(ResidentCompanyContext);
 
     const getCompanies = async (page = 0) => {
@@ -247,11 +247,23 @@ export const useCompanies = () =>{
         }
     }
 
+    const getCompanyWithFeedbacks = async (companyId) =>{
+
+        try{
+            const response = await apiServices.get(`/api/resident/company/getById/${companyId}`)
+            setExpandedCompany(response);
+        }catch (error){
+            console.error(error.message);
+        }
+
+    }
+
     return{
         getCompanies, handleGetPendingCompanyRequests,
         handleAcceptCompanyRequest, handleRejectCompanyRequest,
         handleRemoveCompanyFromSystem, getCompanyByBuildingId,
-        getCompanyById,getCompanyByBuildingIdAndServiceType,getCompaniesByServiceType
+        getCompanyById,getCompanyByBuildingIdAndServiceType,getCompaniesByServiceType,
+        getCompanyWithFeedbacks,
     }
 
 }

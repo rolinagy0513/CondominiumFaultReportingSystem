@@ -1,4 +1,4 @@
-package org.example.condominiumfaultreportingsystem.DTO;
+package org.example.condominiumfaultreportingsystem.pdf;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,27 +6,25 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.condominiumfaultreportingsystem.company.ServiceType;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CompletedReportDataDTO {
+public class InvoiceData {
 
-    private Long reportId;
+    private String invoiceNumber;
 
-    private String residentName;
-
-    private String companyName;
-    private String companyEmail;
-    private ServiceType serviceType;
-
-    private String reportName;
-
-    private Integer floorNumber;
+    private String customerName;
+    private Integer buildingNumber;
     private Integer roomNumber;
 
+    private String companyName;
+    private String reportName;
+
     private Double cost;
+
+    private LocalDateTime payedAt;
 
 }

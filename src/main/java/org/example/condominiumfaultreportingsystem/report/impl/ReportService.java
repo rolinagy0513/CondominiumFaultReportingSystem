@@ -219,8 +219,13 @@ public class ReportService implements IReportService{
             throw new UserNotPartOfCompanyException();
         }
 
-        Report report = reportRepository.findById(reportId)
-                .orElseThrow(ReportNotFoundException::new);
+        Optional<Report> reportOpt = reportRepository.getReportByIdWithUser(reportId);
+
+        if (reportOpt.isEmpty()){
+            throw new ReportNotFoundException();
+        }
+
+        Report report = reportOpt.get();
 
         if (!report.getReportStatus().equals(ReportStatus.IN_PROGRESS)){
             throw new InvalidReportStatusException(ReportStatus.IN_PROGRESS);
@@ -238,8 +243,10 @@ public class ReportService implements IReportService{
         cacheService.evictAllPublicReportsByStatusCache();
         cacheService.evictAllPrivateReportsByStatusCache();
 
+        Long residentId = report.getUser().getId();
+
         eventPublisher.publishEvent(
-                new ReportCompletedEvent(user.getId(), report)
+                new ReportCompletedEvent(residentId, report)
         );
 
         return CompleteReportDTO.builder()
@@ -369,6 +376,7 @@ public class ReportService implements IReportService{
         List<Report> reports = reportOpt.get();
 
         return  reports.stream().map(report -> CompletedReportDataDTO.builder()
+                .reportId(report.getId())
                 .residentName(report.getUser().getName())
                 .companyName(report.getCompanyName())
                 .reportName(report.getName())

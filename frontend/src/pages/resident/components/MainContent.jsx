@@ -30,6 +30,7 @@ const MainContent = ({
     const {
         companiesInBuilding, setSelectedCompanyId,
         selectedServiceType, setSelectedServiceType,
+        setExpandedCompanyId, setCompanyModalOpen
     } = useContext(ResidentCompanyContext);
 
     const {
@@ -85,6 +86,11 @@ const MainContent = ({
         if (text.length <= maxLength) return text;
         return text.substr(0, maxLength) + '...';
     };
+
+    const handleOpenCompanyModal = (companyId) =>{
+        setExpandedCompanyId(companyId);
+        setCompanyModalOpen(true);
+    }
 
     return(
         <div className="resident-page-main-content">
@@ -303,35 +309,21 @@ const MainContent = ({
                                     </div>
                                     <div className="resident-page-company-contact">
                                         <div className="resident-page-contact-item">
-                                            <span className="resident-page-contact-label">Phone</span>
-                                            <span className="resident-page-contact-value">{company.phoneNumber}</span>
-                                        </div>
-                                        <div className="resident-page-contact-item">
                                             <span className="resident-page-contact-label">Email</span>
                                             <span className="resident-page-contact-value resident-page-email">{company.email}</span>
+                                        </div>
+                                        <div className="resident-page-contact-item">
+                                            <span className="resident-page-contact-label">Phone</span>
+                                            <span className="resident-page-contact-value">{company.phoneNumber}</span>
                                         </div>
                                         <div className="resident-page-company-address-item">
                                             <span>Address</span>
                                             <span>{company.address}</span>
                                         </div>
-                                        {company.companyIntroduction && (
-                                            <div className="resident-page-company-introduction-item">
-                                                <span>Introduction</span>
-                                                <span>{company.companyIntroduction}</span>
-                                            </div>
-                                        )}
                                     </div>
-                                    {company.overallRating && (
-                                        <div className="resident-page-company-rating">
-                                            <div className="resident-page-rating-stars">
-                                                {'★'.repeat(Math.floor(company.overallRating))}
-                                                {'☆'.repeat(5 - Math.floor(company.overallRating))}
-                                            </div>
-                                            <span className="resident-page-rating-value">
-                                            {company.overallRating.toFixed(1)}
-                                        </span>
-                                        </div>
-                                    )}
+                                    <button className="residemt-page-compnaySection-viewMore" onClick={()=> handleOpenCompanyModal(company.id)}>
+                                        View More
+                                    </button>
                                     <button
                                         className="resident-page-companySection-privateReport"
                                         onClick={() => {

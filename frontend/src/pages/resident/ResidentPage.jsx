@@ -24,6 +24,7 @@ import {ResidentReportContext} from "../../context/resident/ResidentReportContex
 
 import "./style/ResidentPage.css"
 import CompletedReportModal from "./components/CompletedReportModal.jsx";
+import CompanyModal from "./components/CompanyModal.jsx";
 
 const ResidentPage = () => {
     const navigate = useNavigate();
@@ -36,7 +37,7 @@ const ResidentPage = () => {
     },[])
 
     const {
-        residentGroupId, residentGroupIdentifier
+        residentGroupIdentifier
     } = useContext(ResidentUserContext);
 
     const{
@@ -51,7 +52,8 @@ const ResidentPage = () => {
 
     const{
         selectedCompanyId, setSelectedCompanyId,
-        selectedServiceType
+        selectedServiceType, expandedCompanyId,
+        companyModalOpen, expandedCompany
     } = useContext(ResidentCompanyContext);
 
     const {
@@ -59,7 +61,7 @@ const ResidentPage = () => {
         showPrivateReportForm, setShowPrivateReportForm,
         showReportForm, setShowReportForm,
         reportFormData, setReportFormData,
-        completeReportModalOpen, setCompleteReportModalOpen
+        completeReportModalOpen,
     } = useContext(ResidentReportContext);
 
     const {
@@ -76,7 +78,8 @@ const ResidentPage = () => {
 
     const{
         getCompanyByBuildingId,
-        getCompanyByBuildingIdAndServiceType
+        getCompanyByBuildingIdAndServiceType,
+        getCompanyWithFeedbacks
     } = useCompanies()
 
     const {
@@ -91,9 +94,11 @@ const ResidentPage = () => {
     const removalSubscriptionRef = useRef(null);
     const notificationSubscriptionRef = useRef(null);
 
-    // useEffect(() => {
-    //     getCompletedReportsForUser();
-    // }, [completeReportModalOpen]);
+    useEffect(() => {
+        if(companyModalOpen && expandedCompanyId){
+            getCompanyWithFeedbacks(expandedCompanyId);
+        }
+    }, [companyModalOpen, expandedCompanyId]);
 
     useEffect(() => {
         handleGetApartmentByOwnerId();
@@ -263,6 +268,7 @@ const ResidentPage = () => {
             case "REPORT_COMPLETED":
                 alert("Your report has been completed by: " + notification.companyName);
                 getCompletedReportsForUser();
+                getInProgressReport();
                 break;
 
             default:
@@ -377,6 +383,10 @@ const ResidentPage = () => {
 
             {completeReportModalOpen &&(
                 <CompletedReportModal/>
+            )}
+
+            {companyModalOpen && (
+                <CompanyModal/>
             )}
 
         </div>

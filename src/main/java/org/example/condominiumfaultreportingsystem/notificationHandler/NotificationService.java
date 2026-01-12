@@ -235,10 +235,12 @@ public class NotificationService {
                 .build();
 
         messagingTemplate.convertAndSendToUser(residentId.toString(), "/queue/notification", notification);
-        log.info("METHOD: sendReportSubmittedNotification | SENT REPORT_ACCEPTED to residentId={}", residentId);
+
     }
 
     public void sendReportCompletedNotification(Long residentId, Report report){
+
+        log.info(" FASZ  The send report completed came notification was sent to the resident with the if of: {}", residentId);
 
         ReportCompletedNotification notification = ReportCompletedNotification.builder()
                 .reportName(report.getName())

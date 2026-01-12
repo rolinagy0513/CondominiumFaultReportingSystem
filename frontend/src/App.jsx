@@ -22,6 +22,7 @@ import {ResidentBuildingProvider} from "./context/resident/ResidentBuildingConte
 import {ResidentCompanyProvider} from "./context/resident/ResidentCompanyContext.jsx";
 import {ResidentReportProvider} from "./context/resident/ResidentReportContext.jsx";
 import {ResidentUserProvider} from "./context/resident/ResidentUserContext.jsx";
+import {InvoiceProvider} from "./context/invoice/InvoiceContext.jsx";
 
 function App() {
 
@@ -48,9 +49,11 @@ function App() {
                                                                                <ResidentCompanyProvider>
                                                                                    <ResidentReportProvider>
                                                                                        <ResidentUserProvider>
-                                                                                           <AuthRoutes/>
-                                                                                           <MainRoutes/>
-                                                                                           <AdminRoutes/>
+                                                                                           <InvoiceProvider>
+                                                                                               <AuthRoutes/>
+                                                                                               <MainRoutes/>
+                                                                                               <AdminRoutes/>
+                                                                                           </InvoiceProvider>
                                                                                        </ResidentUserProvider>
                                                                                    </ResidentReportProvider>
                                                                                </ResidentCompanyProvider>
