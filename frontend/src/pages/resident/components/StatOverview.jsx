@@ -12,11 +12,6 @@ import "./components-styles/StatOverview.css"
 
 const StatOverview = () =>{
 
-    // const {
-    //     ownersApartment, ownersBuilding,
-    //     companiesInBuilding, publicReports,
-    // } = useContext(ResidentPageContext);
-
     const {
         ownersApartment
     } = useContext(ResidentApartmentContext);
@@ -49,7 +44,7 @@ const StatOverview = () =>{
                     <FaBuilding />
                 </div>
                 <div className="resident-page-stat-info">
-                    <h3>Building</h3>
+                    <h3>Building Number</h3>
                     <p>{ownersBuilding?.buildingNumber || "N/A"}</p>
                 </div>
             </div>

@@ -14,6 +14,8 @@ import StatOverview from "./components/StatOverview.jsx";
 import MainContent from "./components/MainContent.jsx";
 import PublicReportModal from "./components/PublicReportModal.jsx";
 import PrivateReportModal from "./components/PrivateReportModal.jsx";
+import CompletedReportModal from "./components/CompletedReportModal.jsx";
+import CompanyModal from "./components/CompanyModal.jsx";
 
 import {PaginationContext} from "../../context/general/PaginationContext.jsx";
 import {ResidentUserContext} from "../../context/resident/ResidentUserContext.jsx";
@@ -21,10 +23,10 @@ import {ResidentApartmentContext} from "../../context/resident/ResidentApartment
 import {ResidentBuildingContext} from "../../context/resident/ResidentBuildingContext.jsx";
 import {ResidentCompanyContext} from "../../context/resident/ResidentCompanyContext.jsx";
 import {ResidentReportContext} from "../../context/resident/ResidentReportContext.jsx";
+import {ResidentNotificationContext} from "../../context/resident/ResidentNotificationContext.jsx";
 
 import "./style/ResidentPage.css"
-import CompletedReportModal from "./components/CompletedReportModal.jsx";
-import CompanyModal from "./components/CompanyModal.jsx";
+import ReportStatusChangeNotification from "./components/ReportStatusChangeNotification.jsx";
 
 const ResidentPage = () => {
     const navigate = useNavigate();
@@ -67,6 +69,14 @@ const ResidentPage = () => {
     const {
         currentPage,
     } = useContext(PaginationContext);
+
+    const {
+        isWelcomeNotificationOpen, setIsWelcomeNotificationOpen,
+        isRemovalNotificationOpen, setIsRemovalNotificationOpen,
+        isNewReportNotificationOpen, setIsNewReportNotificationOpen,
+        isStatusChangeNotificationOpen, setIsStatusChangeNotificationOpen,
+        notificationMessage, setNotificationMessage
+    } = useContext(ResidentNotificationContext);
 
     const {
         handleGetApartmentByOwnerId
@@ -235,8 +245,11 @@ const ResidentPage = () => {
         console.log("📬 Resident received notification:", notification);
 
         switch (notification.type) {
+
             case "COMPANY_REMOVAL":
                 alert("The company left notification alert: " + notification.message);
+                setNotificationMessage(notification.message);
+                setIsRemovalNotificationOpen(true)
                 if (ownersBuildingId) {
                     getCompanyByBuildingId(ownersBuildingId);
                 }
@@ -244,29 +257,39 @@ const ResidentPage = () => {
 
             case "USER_REMOVAL":
                 alert("You have been removed from the apartment: " + notification.message);
+                setNotificationMessage(notification.message);
+                setIsRemovalNotificationOpen(true)
                 handleLogout();
                 break;
 
             case "PUBLIC_REPORT_CAME":
                 alert("New public report notification: " + notification.message);
+                setNotificationMessage(notification.message);
+                setIsNewReportNotificationOpen(true);
                 getAllPublicReports(currentPage);
                 break;
 
             case "WELCOME":
                 alert("Welcome notification: " + notification.message);
-                if (ownersBuildingIdRef.current) {
-                    getCompanyByBuildingId(ownersBuildingIdRef.current);
+                setNotificationMessage(notification.message);
+                setIsWelcomeNotificationOpen(true)
+                if (ownersBuildingId) {
+                    getCompanyByBuildingId(ownersBuildingId);
                 }
                 break;
 
             case "REPORT_ACCEPTED":
                 alert("Your report has been accepted by: " + notification.companyName);
+                setNotificationMessage(notification.message);
+                // setIsStatusChangeNotificationOpen(true)
                 getAllPublicReports(currentPage);
                 getInProgressReport();
                 break;
 
             case "REPORT_COMPLETED":
                 alert("Your report has been completed by: " + notification.companyName);
+                setNotificationMessage(notification.message);
+                // setIsStatusChangeNotificationOpen(true);
                 getCompletedReportsForUser();
                 getInProgressReport();
                 break;
@@ -387,6 +410,10 @@ const ResidentPage = () => {
 
             {companyModalOpen && (
                 <CompanyModal/>
+            )}
+
+            {isStatusChangeNotificationOpen &&(
+                <ReportStatusChangeNotification/>
             )}
 
         </div>

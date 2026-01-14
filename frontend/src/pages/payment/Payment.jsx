@@ -1,17 +1,15 @@
 import {useContext, useState} from "react";
+import {useNavigate} from "react-router-dom";
 
 import { FaCreditCard, FaUser, FaCalendarAlt, FaLock, FaMapMarkerAlt, FaFileInvoiceDollar } from "react-icons/fa"
 import { BsFillCreditCard2FrontFill } from "react-icons/bs"
 
-
 import {InvoiceContext} from "../../context/invoice/InvoiceContext.jsx";
 
-import "./styles/Payment.css"
-import {useCompanies} from "../../hooks/useCompanies.js";
 import {usePDF} from "../../hooks/usePDF.js";
-import {useNavigate} from "react-router-dom";
 import {useReports} from "../../hooks/useReports.js";
 
+import "./styles/Payment.css"
 
 const Payment = () => {
 
@@ -69,8 +67,6 @@ const Payment = () => {
 
             await downloadPDF(invoiceData);
 
-            alert("Invoice downloaded successfully! No actual payment was processed.");
-
             setInvoiceNumber("")
             setCustomerName("")
             setBuildingNumber(0)
@@ -81,13 +77,12 @@ const Payment = () => {
 
             getCompletedReportsForUser();
 
-            navigate("/resident-page")
-
         } catch (error) {
             console.error("Failed to generate invoice:", error);
             alert("Failed to generate invoice. Please try again.");
         } finally {
             setIsProcessing(false);
+            navigate("/resident-page")
         }
     };
 
@@ -260,8 +255,8 @@ const Payment = () => {
                             className="payment-button"
                             onClick={handlePayment}
                         >
-                            <span>Pay and Download Invoice</span>
-                            <span className="button-amount">$146.78</span>
+                            <span>{isProcessing ? "Downloading" : "Pay and Download Invoice"}</span>
+                            <span className="button-amount">€{cost}</span>
                             <div className="button-arrow">→</div>
                         </button>
 

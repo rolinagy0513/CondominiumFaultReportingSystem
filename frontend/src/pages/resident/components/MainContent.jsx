@@ -62,6 +62,7 @@ const MainContent = ({
         WATER_SUPPLY: "💧",
         SEWAGE: "🚽",
         HEATING: "🔥",
+        ELEVATOR: "🛗 ",
         GARBAGE_COLLECTION: "🗑️",
         SECURITY: "🔒",
         GARDENING: "🌳",
@@ -103,7 +104,7 @@ const MainContent = ({
                     {ownersApartment ? (
                         <div className="resident-page-info-grid">
                             <div className="resident-page-info-item">
-                                <span className="resident-page-info-label">Number</span>
+                                <span className="resident-page-info-label">Room Number</span>
                                 <span className="resident-page-info-value">{ownersApartment.apartmentNumber}</span>
                             </div>
                             <div className="resident-page-info-item">

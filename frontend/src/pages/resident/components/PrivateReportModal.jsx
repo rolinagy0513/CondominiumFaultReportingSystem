@@ -71,6 +71,7 @@ const PrivateReportModal = ({handleSubmitPrivateReport}) =>{
                                 <option value="WATER_SUPPLY">💧 Water Supply</option>
                                 <option value="SEWAGE">🚽 Sewage</option>
                                 <option value="HEATING">🔥 Heating</option>
+                                <option value="ELEVATOR">🛗 Elevator</option>
                                 <option value="GARBAGE_COLLECTION">🗑️ Garbage</option>
                                 <option value="SECURITY">🔒 Security</option>
                                 <option value="GARDENING">🌳 Gardening</option>

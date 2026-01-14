@@ -3,9 +3,9 @@ import {useContext, useState} from "react";
 import {IoLogOut} from "react-icons/io5";
 
 import {ResidentUserContext} from "../../../context/resident/ResidentUserContext.jsx";
+import {ResidentReportContext} from "../../../context/resident/ResidentReportContext.jsx";
 
 import "./components-styles/Header.css"
-import {ResidentReportContext} from "../../../context/resident/ResidentReportContext.jsx";
 
 const Header = ({handleLogout}) =>{
 

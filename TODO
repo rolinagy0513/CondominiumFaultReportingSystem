@@ -1,8 +1,6 @@
- - Loading state a pdf letöltésnél
- - Adni valami design-t ne csak alert legyen a notification-nál
+ - Adni valami design-t ne csak alert legyen a notification-nál (Report status change-nél van valami de bugol és nem megy úgy ahogy kellene
+    nincs text és az alert valamiért feljön még mindig pedig ki lett törölve.)
 
  - Elkezdeni a company dashboard-ot is
-
- - Send feedback and pay page + új enum a report-nál payed.
 
  - Meg kell csinálni az email-t is ami kiküldi majd a notification-t

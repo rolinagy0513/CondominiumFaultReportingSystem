@@ -23,6 +23,7 @@ import {ResidentCompanyProvider} from "./context/resident/ResidentCompanyContext
 import {ResidentReportProvider} from "./context/resident/ResidentReportContext.jsx";
 import {ResidentUserProvider} from "./context/resident/ResidentUserContext.jsx";
 import {InvoiceProvider} from "./context/invoice/InvoiceContext.jsx";
+import {ResidentNotificationProvider} from "./context/resident/ResidentNotificationContext.jsx";
 
 function App() {
 
@@ -50,9 +51,11 @@ function App() {
                                                                                    <ResidentReportProvider>
                                                                                        <ResidentUserProvider>
                                                                                            <InvoiceProvider>
-                                                                                               <AuthRoutes/>
-                                                                                               <MainRoutes/>
-                                                                                               <AdminRoutes/>
+                                                                                               <ResidentNotificationProvider>
+                                                                                                   <AuthRoutes/>
+                                                                                                   <MainRoutes/>
+                                                                                                   <AdminRoutes/>
+                                                                                               </ResidentNotificationProvider>
                                                                                            </InvoiceProvider>
                                                                                        </ResidentUserProvider>
                                                                                    </ResidentReportProvider>
