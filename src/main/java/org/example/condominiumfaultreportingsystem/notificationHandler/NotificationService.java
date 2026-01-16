@@ -181,15 +181,18 @@ public class NotificationService {
         messagingTemplate.convertAndSendToUser(userThatLeft.getId().toString(), "/queue/removal", notificationForUser);
         log.info("METHOD: sendUserLeftNotification | SENT USER_REMOVAL to userId={}", userThatLeft.getId());
 
-        UserLeftNotification notificationForGroup = UserLeftNotification.builder()
-                .userName(userThatLeft.getName())
+        ApartmentNotification notificationForGroup = ApartmentNotification.builder()
+                .senderName("SYSTEM")
+                .apartmentId(apartment.getId())
                 .apartmentNumber(apartment.getApartmentNumber())
-                .message(userThatLeft.getName() + " has left the building")
-                .type(NotificationType.USER_REMOVAL)
+                .floor(apartment.getFloor())
+                .apartmentStatus(apartment.getStatus())
+                .buildingNumber(apartment.getBuilding().getBuildingNumber())
+                .message("A user has left the group")
+                .type(NotificationType.USER_REMOVAL_GROUP)
                 .build();
 
         messagingTemplate.convertAndSend("/topic/group/" + group.getGroupName(), notificationForGroup);
-        log.info("METHOD: sendUserLeftNotification | SENT USER_REMOVAL to group={}", group.getGroupName());
     }
 
     public void sendNewPublicReportCameNotification(String groupName, String userName, Report report) {
@@ -228,7 +231,7 @@ public class NotificationService {
                 company.getName(), residentId);
 
         ReportSubmittedNotification notification = ReportSubmittedNotification.builder()
-                .message("A company has selected your report.")
+                .message("Your report has been accepted by: " + company.getName())
                 .reportType(report.getReportType())
                 .companyName(company.getName())
                 .type(NotificationType.REPORT_ACCEPTED)
@@ -239,8 +242,6 @@ public class NotificationService {
     }
 
     public void sendReportCompletedNotification(Long residentId, Report report){
-
-        log.info(" FASZ  The send report completed came notification was sent to the resident with the if of: {}", residentId);
 
         ReportCompletedNotification notification = ReportCompletedNotification.builder()
                 .reportName(report.getName())

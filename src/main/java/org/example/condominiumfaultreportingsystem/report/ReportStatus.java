@@ -4,5 +4,6 @@ public enum ReportStatus {
     SUBMITTED,
     IN_PROGRESS,
     DONE,
-    PAYED
+    PAYED,
+    CANCELLED
 }

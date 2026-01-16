@@ -1,3 +1,5 @@
+import "./style/CompanyPage.css"
+
 const CompanyPage = () =>{
 
     return(

@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 @Builder
 public class InvoiceData {
 
+    private Long reportId;
+
     private String invoiceNumber;
 
     private String customerName;

@@ -1,0 +1,325 @@
+/* WelcomeNotification.css */
+.welcome-notification {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 10000;
+    min-width: 320px;
+    max-width: 420px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-color: #667eea;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4), 0 4px 12px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    animation: welcomeSlideIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    border: none;
+    color: white;
+    transform-origin: top left;
+    transition: all 0.3s ease;
+}
+
+.welcome-notification::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+    background-size: 200% 200%;
+    animation: shimmer 3s infinite linear;
+    pointer-events: none;
+}
+
+/* Main content container */
+.welcome-notification-content {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    gap: 15px;
+    position: relative;
+    z-index: 2;
+}
+
+/* Icon section with decorative elements */
+.welcome-icon {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    backdrop-filter: blur(4px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    animation: float 3s ease-in-out infinite;
+}
+
+.welcome-emoji {
+    font-size: 28px;
+    display: block;
+    animation: pulse 2s infinite;
+}
+
+.welcome-star {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    font-size: 18px;
+    color: #FFD700;
+    animation: spin 4s linear infinite;
+}
+
+/* Message section */
+.welcome-message {
+    flex: 1;
+}
+
+.welcome-message h4 {
+    margin: 0 0 6px 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.welcome-message p {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+/* Close button */
+.welcome-close-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-size: 20px;
+    font-weight: 300;
+    cursor: pointer;
+    padding: 4px 8px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    backdrop-filter: blur(4px);
+}
+
+.welcome-close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+}
+
+.welcome-close-btn:active {
+    transform: scale(0.95);
+}
+
+/* Progress bar */
+.welcome-progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #FFD700, #FFA500);
+    width: 100%;
+    animation: welcomeProgressBar 6s linear forwards;
+    border-radius: 0 0 16px 16px;
+    z-index: 3;
+}
+
+/* Animations */
+@keyframes welcomeSlideIn {
+    from {
+        transform: translateX(-100%) rotate(-5deg) scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0) rotate(0) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes welcomeFadeOut {
+    from {
+        transform: translateX(0) rotate(0) scale(1);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(-100%) rotate(-5deg) scale(0.8);
+        opacity: 0;
+    }
+}
+
+@keyframes welcomeProgressBar {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-5px) rotate(5deg);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% -200%;
+    }
+    100% {
+        background-position: 200% 200%;
+    }
+}
+
+/* Hover effects */
+.welcome-notification:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(102, 126, 234, 0.5), 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.welcome-notification:hover .welcome-progress-bar {
+    animation-play-state: paused;
+}
+
+/* Exit animation */
+.welcome-notification.exiting {
+    animation: welcomeFadeOut 0.3s ease-in forwards;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .welcome-notification {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        min-width: auto;
+        max-width: none;
+        margin: 0;
+        border-radius: 12px;
+    }
+
+    .welcome-notification-content {
+        padding: 16px;
+    }
+
+    .welcome-icon {
+        width: 44px;
+        height: 44px;
+    }
+
+    .welcome-emoji {
+        font-size: 24px;
+    }
+
+    @keyframes welcomeSlideIn {
+        from {
+            transform: translateY(-20px) scale(0.95);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+    }
+
+    @keyframes welcomeFadeOut {
+        from {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+        to {
+            transform: translateY(-20px) scale(0.95);
+            opacity: 0;
+        }
+    }
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+    .welcome-notification {
+        left: 8px;
+        right: 8px;
+        border-radius: 10px;
+    }
+
+    .welcome-notification-content {
+        padding: 14px;
+        gap: 12px;
+    }
+
+    .welcome-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .welcome-emoji {
+        font-size: 20px;
+    }
+
+    .welcome-message h4 {
+        font-size: 16px;
+    }
+
+    .welcome-message p {
+        font-size: 13px;
+    }
+}
+
+.welcome-notification::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #667eea, #764ba2, #FFD700, #FFA500);
+    z-index: -1;
+    filter: blur(10px);
+    opacity: 0.6;
+    border-radius: 18px;
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from {
+        opacity: 0.4;
+    }
+    to {
+        opacity: 0.7;
+    }
+}

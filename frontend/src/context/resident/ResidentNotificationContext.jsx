@@ -5,7 +5,7 @@ export const ResidentNotificationContext = createContext();
 export const ResidentNotificationProvider = ({ children }) => {
 
     const[isWelcomeNotificationOpen, setIsWelcomeNotificationOpen] = useState(false);
-    const[isRemovalNotificationOpen, setIsRemovalNotificationOpen] = useState(false);
+    const[isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen] = useState(false);
     const[isNewReportNotificationOpen, setIsNewReportNotificationOpen] = useState(false);
     const[isStatusChangeNotificationOpen, setIsStatusChangeNotificationOpen] = useState(false);
 
@@ -15,7 +15,7 @@ export const ResidentNotificationProvider = ({ children }) => {
     return (
         <ResidentNotificationContext.Provider value={{
             isWelcomeNotificationOpen, setIsWelcomeNotificationOpen,
-            isRemovalNotificationOpen, setIsRemovalNotificationOpen,
+            isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen,
             isNewReportNotificationOpen, setIsNewReportNotificationOpen,
             isStatusChangeNotificationOpen, setIsStatusChangeNotificationOpen,
             notificationMessage, setNotificationMessage

@@ -1,3 +1,5 @@
+import {useContext} from "react";
+
 import apiServices from "../services/ApiServices.js";
 import websocketServices from "../services/WebsocketServices.js";
 
@@ -6,8 +8,6 @@ import {AdminPanelContext} from "../context/admin/AdminPanelContext.jsx";
 import {PaginationContext} from "../context/general/PaginationContext.jsx";
 import {AdminModalContext} from "../context/admin/AdminModalContext.jsx";
 
-import {useContext} from "react";
-import {ResidentPageContext} from "../context/resident/ResidentPageContext.jsx";
 import {ResidentCompanyContext} from "../context/resident/ResidentCompanyContext.jsx";
 import {ResidentBuildingContext} from "../context/resident/ResidentBuildingContext.jsx";
 

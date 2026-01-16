@@ -24,7 +24,6 @@ public class PdfGeneratorController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
-        // Fixed: proper Content-Disposition for download
         headers.add("Content-Disposition", "attachment; filename=invoice_" +
                 invoiceData.getInvoiceNumber() + ".pdf");
         headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");

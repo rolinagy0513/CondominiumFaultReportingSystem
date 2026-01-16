@@ -9,13 +9,14 @@ import org.example.condominiumfaultreportingsystem.apartment.ApartmentStatus;
 import org.example.condominiumfaultreportingsystem.apartment.IApartmentService;
 import org.example.condominiumfaultreportingsystem.building.Building;
 import org.example.condominiumfaultreportingsystem.cache.CacheService;
-import org.example.condominiumfaultreportingsystem.eventHandler.events.ApartmentRequestAcceptedEvent;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.UserJoinedEvent;
-import org.example.condominiumfaultreportingsystem.eventHandler.events.UserLeftEvent;
 import org.example.condominiumfaultreportingsystem.exception.*;
 import org.example.condominiumfaultreportingsystem.group.Group;
 import org.example.condominiumfaultreportingsystem.group.GroupRepository;
 import org.example.condominiumfaultreportingsystem.group.impl.GroupService;
+import org.example.condominiumfaultreportingsystem.report.Report;
+import org.example.condominiumfaultreportingsystem.report.ReportRepository;
+import org.example.condominiumfaultreportingsystem.report.ReportStatus;
 import org.example.condominiumfaultreportingsystem.security.user.Role;
 import org.example.condominiumfaultreportingsystem.security.user.User;
 import org.example.condominiumfaultreportingsystem.security.user.UserRepository;
@@ -31,8 +32,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -50,6 +51,7 @@ public class ApartmentService implements IApartmentService {
 
     private final ApplicationEventPublisher eventPublisher;
     private final GroupRepository groupRepository;
+    private final ReportRepository reportRepository;
 
     public ApartmentDTO getApartmentWithOwnerId(){
 
@@ -210,7 +212,6 @@ public class ApartmentService implements IApartmentService {
         Integer buildingNumber = apartmentToAdd.getBuilding().getBuildingNumber();
         String buildingAddress = apartmentToAdd.getBuilding().getAddress();
 
-        //ez is azért hátha így jobban megy a notification sending
        GroupDTO groupDTO =  groupService.addUserToGroup(buildingNumber,buildingAddress, userToAdd, apartmentToAdd);
 
        Group group = groupRepository.findById(groupDTO.getGroupId())
@@ -221,7 +222,6 @@ public class ApartmentService implements IApartmentService {
         apartmentToAdd.setOwner(userToAdd);
         apartmentToAdd.setStatus(ApartmentStatus.OCCUPIED);
 
-        //et új hátha jobban megy a notification sending
         eventPublisher.publishEvent(
                 new UserJoinedEvent(apartmentToAdd, userToAdd, group)
         );
@@ -275,11 +275,33 @@ public class ApartmentService implements IApartmentService {
 
             userService.demoteResidentToUser(currentAdmin.getId(), userToRemove.getId());
 
+            Optional<List<Report>> usersSubmittedReportsOpt = reportRepository.findReportByUser(userToRemove.getId(), ReportStatus.SUBMITTED);
+            Optional<List<Report>> usersInProgressReportOpt = reportRepository.findReportByUser(userToRemove.getId(), ReportStatus.IN_PROGRESS);
+
+            if (usersSubmittedReportsOpt.isPresent()){
+
+                List<Report> userSubmittedReports = usersSubmittedReportsOpt.get();
+
+                userSubmittedReports.forEach(
+                        report -> report.setReportStatus(ReportStatus.CANCELLED)
+                );
+
+            }
+
+            if (usersInProgressReportOpt.isPresent()){
+
+                List<Report> usersInProgressReports = usersInProgressReportOpt.get();
+
+                usersInProgressReports.forEach(
+                        report -> report.setSystemMessage("[SYSTEM] : The user has been removed from the system in the process.")
+                );
+
+            }
+
             cacheService.evictAAllApartmentsByBuildingCache();
             cacheService.evictAllApartmentByFloorAndBuildingCache();
             cacheService.evictAvailableApartmentsInBuildingCache();
-
-            log.info("The user was successfully removed from the apartment and made a USER");
+            cacheService.evictAllPublicReportsByStatusCache();
 
         }catch (ObjectOptimisticLockingFailureException ex){
 

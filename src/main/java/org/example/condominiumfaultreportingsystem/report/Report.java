@@ -55,6 +55,8 @@ public class Report {
 
     private double cost;
 
+    private String systemMessage;
+
     @OneToOne(mappedBy = "report", cascade = CascadeType.ALL)
     private Feedback feedback;
 

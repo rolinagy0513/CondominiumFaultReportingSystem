@@ -27,6 +27,8 @@ import {ResidentNotificationContext} from "../../context/resident/ResidentNotifi
 
 import "./style/ResidentPage.css"
 import ReportStatusChangeNotification from "./components/ReportStatusChangeNotification.jsx";
+import WelcomeNotification from "./components/WelcomeNotification.jsx";
+import CompanyRemovalNotification from "./components/CompanyRemovalNotification.jsx";
 
 const ResidentPage = () => {
     const navigate = useNavigate();
@@ -72,7 +74,7 @@ const ResidentPage = () => {
 
     const {
         isWelcomeNotificationOpen, setIsWelcomeNotificationOpen,
-        isRemovalNotificationOpen, setIsRemovalNotificationOpen,
+        isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen,
         isNewReportNotificationOpen, setIsNewReportNotificationOpen,
         isStatusChangeNotificationOpen, setIsStatusChangeNotificationOpen,
         notificationMessage, setNotificationMessage
@@ -146,6 +148,10 @@ const ResidentPage = () => {
             console.log("⚠️ Missing group or user info, skipping WebSocket setup");
             return;
         }
+
+        console.log("NEEDED LOG");
+        console.log("The status change notification message: " + notificationMessage)
+        console.log("NEEDED LOG");
 
         websocketServices.connect(SOCK_URL, {
             onConnect: () => {
@@ -247,30 +253,24 @@ const ResidentPage = () => {
         switch (notification.type) {
 
             case "COMPANY_REMOVAL":
-                alert("The company left notification alert: " + notification.message);
                 setNotificationMessage(notification.message);
-                setIsRemovalNotificationOpen(true)
+                setIsCompanyRemovalNotificationOpen(true)
                 if (ownersBuildingId) {
                     getCompanyByBuildingId(ownersBuildingId);
                 }
                 break;
 
             case "USER_REMOVAL":
-                alert("You have been removed from the apartment: " + notification.message);
-                setNotificationMessage(notification.message);
-                setIsRemovalNotificationOpen(true)
+                alert(`${notification.message} For further information contact the admin`);
                 handleLogout();
                 break;
 
-            case "PUBLIC_REPORT_CAME":
-                alert("New public report notification: " + notification.message);
-                setNotificationMessage(notification.message);
-                setIsNewReportNotificationOpen(true);
+            case "USER_REMOVAL_GROUP":
+                alert("The message: " + notification.message)
                 getAllPublicReports(currentPage);
                 break;
 
             case "WELCOME":
-                alert("Welcome notification: " + notification.message);
                 setNotificationMessage(notification.message);
                 setIsWelcomeNotificationOpen(true)
                 if (ownersBuildingId) {
@@ -279,17 +279,15 @@ const ResidentPage = () => {
                 break;
 
             case "REPORT_ACCEPTED":
-                alert("Your report has been accepted by: " + notification.companyName);
                 setNotificationMessage(notification.message);
-                // setIsStatusChangeNotificationOpen(true)
+                setIsStatusChangeNotificationOpen(true)
                 getAllPublicReports(currentPage);
                 getInProgressReport();
                 break;
 
             case "REPORT_COMPLETED":
-                alert("Your report has been completed by: " + notification.companyName);
                 setNotificationMessage(notification.message);
-                // setIsStatusChangeNotificationOpen(true);
+                setIsStatusChangeNotificationOpen(true);
                 getCompletedReportsForUser();
                 getInProgressReport();
                 break;
@@ -414,6 +412,14 @@ const ResidentPage = () => {
 
             {isStatusChangeNotificationOpen &&(
                 <ReportStatusChangeNotification/>
+            )}
+
+            {isWelcomeNotificationOpen &&(
+                <WelcomeNotification/>
+            )}
+
+            {isCompanyRemovalNotificationOpen &&(
+                <CompanyRemovalNotification/>
             )}
 
         </div>

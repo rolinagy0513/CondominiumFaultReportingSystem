@@ -1,6 +1,10 @@
 package org.example.condominiumfaultreportingsystem.pdf;
 
 import lombok.RequiredArgsConstructor;
+import org.example.condominiumfaultreportingsystem.exception.ReportNotFoundException;
+import org.example.condominiumfaultreportingsystem.report.Report;
+import org.example.condominiumfaultreportingsystem.report.ReportRepository;
+import org.example.condominiumfaultreportingsystem.report.ReportStatus;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.xhtmlrenderer.pdf.ITextRenderer;
@@ -9,15 +13,23 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class PdfGeneratorService {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm");
+    private final ReportRepository reportRepository;
 
     public byte[] generateInvoicePdf(InvoiceData invoice) throws IOException {
         String htmlContent = loadAndPopulateTemplate(invoice);
+
+        Report report = reportRepository.findById(invoice.getReportId())
+                .orElseThrow(ReportNotFoundException::new);
+
+        report.setReportStatus(ReportStatus.PAYED);
+        reportRepository.save(report);
 
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             ITextRenderer renderer = new ITextRenderer();

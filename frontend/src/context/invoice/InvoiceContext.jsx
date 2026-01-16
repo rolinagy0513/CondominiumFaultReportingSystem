@@ -4,6 +4,8 @@ export const InvoiceContext = createContext();
 
 export const InvoiceProvider = ({ children }) => {
 
+    const[reportId, setReportId] = useState(0);
+
     const[invoiceNumber, setInvoiceNumber] = useState("");
     const[customerName, setCustomerName] = useState("");
     const[buildingNumber, setBuildingNumber] = useState(0);
@@ -17,6 +19,7 @@ export const InvoiceProvider = ({ children }) => {
 
     return (
         <InvoiceContext.Provider value={{
+            reportId, setReportId,
             invoiceNumber, setInvoiceNumber,
             customerName, setCustomerName,
             buildingNumber, setBuildingNumber,

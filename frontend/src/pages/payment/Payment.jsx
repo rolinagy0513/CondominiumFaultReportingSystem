@@ -20,7 +20,8 @@ const Payment = () => {
         cost, setInvoiceNumber,
         setCustomerName, setBuildingNumber,
         setRoomNumber, setCompanyName,
-        setReportName, setCost
+        setReportName, setCost,
+        reportId,
     } = useContext(InvoiceContext);
 
     const navigate = useNavigate();
@@ -35,6 +36,7 @@ const Payment = () => {
 
     const [isProcessing, setIsProcessing] = useState(false);
 
+    console.log("reportId:", reportId);
     console.log("invoiceNumber:", invoiceNumber);
     console.log("customerName:", customerName);
     console.log("buildingNumber:", buildingNumber);
@@ -53,6 +55,7 @@ const Payment = () => {
         try {
 
             const invoiceData = {
+                reportId: reportId,
                 invoiceNumber: invoiceNumber,
                 customerName: customerName,
                 buildingNumber: buildingNumber || 0,

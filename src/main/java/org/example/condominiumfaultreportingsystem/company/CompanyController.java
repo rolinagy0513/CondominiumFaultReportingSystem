@@ -41,6 +41,11 @@ public class CompanyController {
         return companyService.getCompanyById(companyId);
     }
 
+    @GetMapping("/company/company/getMyCompany")
+    public CompanyDTO getMyCompany(){
+        return companyService.getMyCompany();
+    }
+
     @GetMapping("/resident/company/getByBuildingId/{buildingId}")
     public CompletableFuture<List<CompanyDTO>> getCompaniesByBuildingId(
             @PathVariable Long buildingId

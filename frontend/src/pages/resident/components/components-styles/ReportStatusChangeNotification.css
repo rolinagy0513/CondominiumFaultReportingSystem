@@ -14,7 +14,6 @@
     transform-origin: top right;
 }
 
-/* Notification header */
 .report-status-changed-notification::before {
     content: '';
     position: absolute;
@@ -93,11 +92,11 @@
 }
 
 .report-status-changed-notification.info {
-    border-left-color: #2196F3;
+    border-left-color: #1a365d;
 }
 
 .report-status-changed-notification.info::before {
-    background: linear-gradient(90deg, #2196F3, #03A9F4);
+    background: linear-gradient(90deg, #1a365d, #262f3e);
 }
 
 .report-status-changed-notification.error {

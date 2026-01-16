@@ -3,6 +3,7 @@ package org.example.condominiumfaultreportingsystem.feedback;
 import lombok.RequiredArgsConstructor;
 import org.example.condominiumfaultreportingsystem.DTO.FeedbackDTO;
 import org.example.condominiumfaultreportingsystem.DTO.GiveFeedbackDTO;
+import org.example.condominiumfaultreportingsystem.feedback.impl.FeedbackService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

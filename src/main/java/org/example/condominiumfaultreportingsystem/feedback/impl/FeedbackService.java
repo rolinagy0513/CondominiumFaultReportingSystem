@@ -1,4 +1,4 @@
-package org.example.condominiumfaultreportingsystem.feedback;
+package org.example.condominiumfaultreportingsystem.feedback.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.condominiumfaultreportingsystem.DTO.FeedbackDTO;
@@ -11,6 +11,9 @@ import org.example.condominiumfaultreportingsystem.eventHandler.events.NewFeedba
 import org.example.condominiumfaultreportingsystem.exception.CanNotSendFeedbackException;
 import org.example.condominiumfaultreportingsystem.exception.CompanyNotFoundException;
 import org.example.condominiumfaultreportingsystem.exception.ReportNotFoundException;
+import org.example.condominiumfaultreportingsystem.feedback.Feedback;
+import org.example.condominiumfaultreportingsystem.feedback.FeedbackRepository;
+import org.example.condominiumfaultreportingsystem.feedback.IFeedbackService;
 import org.example.condominiumfaultreportingsystem.report.Report;
 import org.example.condominiumfaultreportingsystem.report.ReportRepository;
 import org.example.condominiumfaultreportingsystem.report.ReportStatus;
@@ -27,7 +30,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
-public class FeedbackService {
+public class FeedbackService implements IFeedbackService {
 
     private final UserService userService;
 
@@ -81,7 +84,6 @@ public class FeedbackService {
         companyRepository.save(company);
         feedbackRepository.save(newFeedback);
 
-        report.setReportStatus(ReportStatus.PAYED);
         reportRepository.save(report);
 
         eventPublisher.publishEvent(

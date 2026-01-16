@@ -17,7 +17,7 @@ export const usePDF = () => {
 
     const downloadPDF = async (invoiceData) => {
         try {
-            // Create download link
+
             const response = await fetch('/api/resident/pdf/download', {
                 method: 'POST',
                 headers: {

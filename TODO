@@ -1,6 +1,12 @@
- - Adni valami design-t ne csak alert legyen a notification-nál (Report status change-nél van valami de bugol és nem megy úgy ahogy kellene
-    nincs text és az alert valamiért feljön még mindig pedig ki lett törölve.)
+  - Elkezdeni a company dashboard-ot is(először a websocket subscriptions)
 
- - Elkezdeni a company dashboard-ot is
+    -Kell a getCompanyById
+    -Kell a feedback list (FeedbackService)
+    -Kell a get publicreports in Building
+    -Kell a Private Reports.
+
+   A design-ra van ötlet a deepseek-en
+
+ - A company kapjon valami message-t hogy ha a user elment és megkpata a system message-t kell egy event is.
 
  - Meg kell csinálni az email-t is ami kiküldi majd a notification-t

@@ -98,6 +98,27 @@ public class CompanyService implements ICompanyService {
 
     }
 
+    @Transactional
+    public CompanyDTO getMyCompany(){
+
+        UserWithRoleDTO currentUser = userService.getCurrentUserWithRole();
+
+        if (!currentUser.getRole().equals(Role.COMPANY)){
+            throw new InvalidRoleException();
+        }
+
+        Optional<Company> companyOpt = companyRepository.findCompanyWithUser(currentUser.getId());
+
+        if (companyOpt.isEmpty()){
+            throw new CompanyNotFoundException(currentUser.getId());
+        }
+
+        Company company = companyOpt.get();
+
+        return mapToDto(company);
+
+    }
+
     @Async("asyncExecutor")
     @Cacheable(value = "companiesByBuilding", key = "#buildingId")
     public CompletableFuture<List<CompanyDTO>> getCompaniesByBuildingId(Long buildingId){

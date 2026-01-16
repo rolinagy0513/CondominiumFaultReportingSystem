@@ -13,6 +13,7 @@ public interface ICompanyService {
 
     CompletableFuture<Page<CompanyDTO>> getAllCompanies(Integer page, Integer size, String sortBy, String direction);
     CompanyWithFeedbacksDTO getCompanyById(Long companyId);
+    CompanyDTO getMyCompany();
     CompletableFuture<List<CompanyDTO>> getCompaniesByBuildingId(Long buildingId);
     CompletableFuture<Page<CompanyDTO>> getCompaniesByServiceType(ServiceType serviceType, Integer page, Integer size, String sortBy, String direction);
     CompletableFuture<List<CompanyDTO>> getCompaniesByBuildingIdAndServiceType(Long buildingId, ServiceType serviceType);

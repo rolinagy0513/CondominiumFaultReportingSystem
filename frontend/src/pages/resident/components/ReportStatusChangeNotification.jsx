@@ -1,13 +1,12 @@
 import {useContext, useEffect, useState} from "react";
 import {ResidentNotificationContext} from "../../../context/resident/ResidentNotificationContext.jsx";
+
 import "./components-styles/ReportStatusChangeNotification.css"
 
 const ReportStatusChangeNotification = () => {
 
     const {notificationMessage, setIsStatusChangeNotificationOpen} = useContext(ResidentNotificationContext);
     const [isVisible, setIsVisible] = useState(true);
-
-    console.log(notificationMessage)
 
     useEffect(() => {
         const timer = setTimeout(() => {

@@ -1,13 +1,13 @@
 import {useContext, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
+import {ResidentBuildingContext} from "../../../context/resident/ResidentBuildingContext.jsx";
 import {ResidentReportContext} from "../../../context/resident/ResidentReportContext.jsx";
 import {InvoiceContext} from "../../../context/invoice/InvoiceContext.jsx";
 
 import {useFeedback} from "../../../hooks/useFeedback.js";
 
 import "./components-styles/CompletedReportModal.css"
-import {ResidentBuildingContext} from "../../../context/resident/ResidentBuildingContext.jsx";
 
 const CompletedReportModal = () => {
     const {
@@ -23,7 +23,7 @@ const CompletedReportModal = () => {
         setInvoiceNumber, setCustomerName,
         setBuildingNumber, setRoomNumber,
         setCompanyName, setReportName,
-        setCost
+        setCost, setReportId
     } = useContext(InvoiceContext);
 
     const [feedbackStates, setFeedbackStates] = useState({});
@@ -113,6 +113,7 @@ const CompletedReportModal = () => {
     };
 
     const handleProceedToPayment = (report) => {
+        setReportId(report.reportId);
         setInvoiceNumber(`INV-${Date.now()}-${Math.floor(Math.random() * 1000)}`);
         setCustomerName(report.residentName);
         setBuildingNumber(ownersBuilding?.buildingNumber || report.buildingNumber || 0);
