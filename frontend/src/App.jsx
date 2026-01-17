@@ -24,6 +24,7 @@ import {ResidentReportProvider} from "./context/resident/ResidentReportContext.j
 import {ResidentUserProvider} from "./context/resident/ResidentUserContext.jsx";
 import {InvoiceProvider} from "./context/invoice/InvoiceContext.jsx";
 import {ResidentNotificationProvider} from "./context/resident/ResidentNotificationContext.jsx";
+import {CompanyPageProvider} from "./context/company/CompanyPageContext.jsx";
 
 function App() {
 
@@ -52,9 +53,11 @@ function App() {
                                                                                        <ResidentUserProvider>
                                                                                            <InvoiceProvider>
                                                                                                <ResidentNotificationProvider>
-                                                                                                   <AuthRoutes/>
-                                                                                                   <MainRoutes/>
-                                                                                                   <AdminRoutes/>
+                                                                                                   <CompanyPageProvider>
+                                                                                                       <AuthRoutes/>
+                                                                                                       <MainRoutes/>
+                                                                                                       <AdminRoutes/>
+                                                                                                   </CompanyPageProvider>
                                                                                                </ResidentNotificationProvider>
                                                                                            </InvoiceProvider>
                                                                                        </ResidentUserProvider>

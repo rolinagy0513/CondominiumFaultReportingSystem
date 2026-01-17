@@ -56,6 +56,13 @@ public class BuildingController {
         return buildingService.getByAddress(address);
     }
 
+    @GetMapping("/company/building/getBuildingsByCompanyId/{companyId}")
+    public CompletableFuture<List<BuildingDTO>> getBuildingsByCompanyId(
+             @PathVariable Long companyId
+    ){
+        return buildingService.getBuildingsByCompanyId(companyId);
+    }
+
     @DeleteMapping("/admin/building/removeBuilding/{buildingId}")
     public BuildingDTO removeBuilding(
             @PathVariable Long buildingId

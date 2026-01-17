@@ -24,7 +24,7 @@ public class FeedbackController {
         return feedbackService.giveFeedback(giveFeedbackDTO);
     }
 
-    @GetMapping("/resident/feedback/getFeedbacksForCompany/{companyId}")
+    @GetMapping("/company/feedback/getFeedbacksForCompany/{companyId}")
     public CompletableFuture<List<FeedbackDTO>> getFeedbacksForCompany(
             @PathVariable Long companyId
     ){

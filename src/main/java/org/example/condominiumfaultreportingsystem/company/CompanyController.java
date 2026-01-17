@@ -3,6 +3,7 @@ package org.example.condominiumfaultreportingsystem.company;
 import lombok.RequiredArgsConstructor;
 import org.example.condominiumfaultreportingsystem.DTO.CompanyDTO;
 import org.example.condominiumfaultreportingsystem.DTO.CompanyWithFeedbacksDTO;
+import org.example.condominiumfaultreportingsystem.DTO.EditCompanyDataDTO;
 import org.example.condominiumfaultreportingsystem.DTO.RemovalDTO;
 import org.example.condominiumfaultreportingsystem.company.impl.CompanyService;
 import org.springframework.data.domain.Page;
@@ -44,6 +45,13 @@ public class CompanyController {
     @GetMapping("/company/company/getMyCompany")
     public CompanyDTO getMyCompany(){
         return companyService.getMyCompany();
+    }
+
+    @PutMapping("/company/company/editCompany")
+    public CompanyDTO editCompany(
+            @RequestBody EditCompanyDataDTO editCompanyDataDTO
+    ){
+        return companyService.editCompanyDetails(editCompanyDataDTO);
     }
 
     @GetMapping("/resident/company/getByBuildingId/{buildingId}")

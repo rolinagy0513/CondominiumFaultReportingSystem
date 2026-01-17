@@ -1,6 +1,7 @@
 package org.example.condominiumfaultreportingsystem.building.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.aspectj.apache.bcel.generic.RET;
 import org.example.condominiumfaultreportingsystem.DTO.BuildingDTO;
 import org.example.condominiumfaultreportingsystem.DTO.BuildingRequestDTO;
 import org.example.condominiumfaultreportingsystem.DTO.FloorOverrideDTO;
@@ -12,10 +13,7 @@ import org.example.condominiumfaultreportingsystem.building.Building;
 import org.example.condominiumfaultreportingsystem.building.BuildingRepository;
 import org.example.condominiumfaultreportingsystem.building.IBuildingService;
 import org.example.condominiumfaultreportingsystem.cache.CacheService;
-import org.example.condominiumfaultreportingsystem.exception.ApartmentNotFoundException;
-import org.example.condominiumfaultreportingsystem.exception.BuildingIsNotFoundException;
-import org.example.condominiumfaultreportingsystem.exception.BuildingIsPresentException;
-import org.example.condominiumfaultreportingsystem.exception.FloorCanNotBeNullException;
+import org.example.condominiumfaultreportingsystem.exception.*;
 import org.example.condominiumfaultreportingsystem.security.user.UserService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Async;
@@ -187,6 +185,25 @@ public class BuildingService implements IBuildingService {
         return buildings.stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Async("asyncExecutor")
+    public CompletableFuture<List<BuildingDTO>> getBuildingsByCompanyId(Long companyId){
+
+        Optional<List<Building>> buildingsOpt = buildingRepository.findByCompanyId(companyId);
+
+        if (buildingsOpt.isEmpty()){
+            throw new CompaniesBuildingsNotFoundException(companyId);
+        }
+
+        List<Building> buildings = buildingsOpt.get();
+
+        List<BuildingDTO> buildingDTOS =  buildings.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+
+
+        return CompletableFuture.completedFuture(buildingDTOS);
     }
 
     private Integer generateRoomNumber(Integer floorNumber, Integer roomNumber){

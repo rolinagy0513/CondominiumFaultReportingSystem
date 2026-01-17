@@ -8,6 +8,7 @@ import {useContext} from "react";
 import {ResidentPageContext} from "../context/resident/ResidentPageContext.jsx";
 import {ResidentBuildingContext} from "../context/resident/ResidentBuildingContext.jsx";
 import {ResidentApartmentContext} from "../context/resident/ResidentApartmentContext.jsx";
+import {CompanyPageContext} from "../context/company/CompanyPageContext.jsx";
 
 export const useBuildings = () =>{
 
@@ -42,6 +43,10 @@ export const useBuildings = () =>{
     const {
         setOwnersBuilding, setOwnersBuildingId
     } = useContext(ResidentBuildingContext);
+
+    const {
+        setUsersBuildings
+    } = useContext(CompanyPageContext);
 
     const getAllBuildings = async() => {
         try {
@@ -80,7 +85,7 @@ export const useBuildings = () =>{
 
     }
 
-    const getBuildingByApartmentId = async() => {
+    const getBuildingByApartmentId = async () => {
 
         try {
             const response = await apiServices.get(`${GET_BY_APARTMENT_ID_URL}/${ownersApartmentId}`)
@@ -91,6 +96,17 @@ export const useBuildings = () =>{
         }
     }
 
-    return {getAllBuildings, addBuilding, getBuildingByApartmentId};
+    const getBuildingsByCompanyId = async (companyId) =>{
+
+        try {
+            const response = await apiServices.get(`/api/company/building/getBuildingsByCompanyId/${companyId}`)
+            setUsersBuildings(response);
+        }catch (error){
+            console.error(error.message);
+        }
+
+    }
+
+    return {getAllBuildings, addBuilding, getBuildingByApartmentId, getBuildingsByCompanyId};
 
 }

@@ -1,6 +1,10 @@
 import apiServices from "../services/ApiServices.js";
+import {useContext} from "react";
+import {CompanyPageContext} from "../context/company/CompanyPageContext.jsx";
 
 export const useFeedback = () =>{
+
+    const { setUsersFeedbacks } = useContext(CompanyPageContext);
 
     const sendFeedback = async (reportId,rating, message) =>{
 
@@ -20,6 +24,17 @@ export const useFeedback = () =>{
 
     }
 
-    return {sendFeedback}
+    const getFeedbacksForCompany = async (companyId) =>{
+
+        try {
+            const response = await apiServices.get(`api/company/feedback/getFeedbacksForCompany/${companyId}`)
+            setUsersFeedbacks(response)
+        }catch (error){
+            console.error(error.message);
+        }
+
+    }
+
+    return {sendFeedback, getFeedbacksForCompany}
 
 }

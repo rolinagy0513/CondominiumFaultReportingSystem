@@ -545,6 +545,23 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handles CompaniesBuildingsNotFoundException.
+     * Returns HTTP 404 when the company is not in any buildings
+     *
+     * @param ex the CompaniesBuildingsNotFoundException thrown
+     * @return ResponseEntity with ApiError and HTTP 404 status
+     */
+    @ExceptionHandler(CompaniesBuildingsNotFoundException.class)
+    public ResponseEntity<ApiError> handleCompaniesBuildingsNotFoundException(CompaniesBuildingsNotFoundException ex) {
+        return new ResponseEntity<>(
+                new ApiError(ex.getMessage(),
+                        "The company with the provided id is not in any buildings.",
+                        LocalDateTime.now()),
+                HttpStatus.NOT_FOUND
+        );
+    }
+
+    /**
      * Handles DataAccessException from Spring Data.
      * Returns HTTP 500 for database operation failures with details.
      *

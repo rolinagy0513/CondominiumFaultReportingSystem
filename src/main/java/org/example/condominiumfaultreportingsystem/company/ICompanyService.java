@@ -2,6 +2,7 @@ package org.example.condominiumfaultreportingsystem.company;
 
 import org.example.condominiumfaultreportingsystem.DTO.CompanyDTO;
 import org.example.condominiumfaultreportingsystem.DTO.CompanyWithFeedbacksDTO;
+import org.example.condominiumfaultreportingsystem.DTO.EditCompanyDataDTO;
 import org.example.condominiumfaultreportingsystem.DTO.RemovalDTO;
 import org.springframework.data.domain.Page;
 
@@ -14,6 +15,7 @@ public interface ICompanyService {
     CompletableFuture<Page<CompanyDTO>> getAllCompanies(Integer page, Integer size, String sortBy, String direction);
     CompanyWithFeedbacksDTO getCompanyById(Long companyId);
     CompanyDTO getMyCompany();
+    CompanyDTO editCompanyDetails(EditCompanyDataDTO editCompanyDataDTO);
     CompletableFuture<List<CompanyDTO>> getCompaniesByBuildingId(Long buildingId);
     CompletableFuture<Page<CompanyDTO>> getCompaniesByServiceType(ServiceType serviceType, Integer page, Integer size, String sortBy, String direction);
     CompletableFuture<List<CompanyDTO>> getCompaniesByBuildingIdAndServiceType(Long buildingId, ServiceType serviceType);

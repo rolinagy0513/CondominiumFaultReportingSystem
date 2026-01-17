@@ -10,6 +10,7 @@ import {AdminModalContext} from "../context/admin/AdminModalContext.jsx";
 
 import {ResidentCompanyContext} from "../context/resident/ResidentCompanyContext.jsx";
 import {ResidentBuildingContext} from "../context/resident/ResidentBuildingContext.jsx";
+import {CompanyPageContext} from "../context/company/CompanyPageContext.jsx";
 
 export const useCompanies = () =>{
 
@@ -52,6 +53,8 @@ export const useCompanies = () =>{
         setCompaniesInBuilding, selectedCompanyId,
         setSelectedCompany, setExpandedCompany
     } = useContext(ResidentCompanyContext);
+
+    const{setUsersCompany} = useContext(CompanyPageContext);
 
     const getCompanies = async (page = 0) => {
         setLoadingCompanies(true);
@@ -258,12 +261,23 @@ export const useCompanies = () =>{
 
     }
 
+    const getMyCompany = async () =>{
+
+        try {
+            const response = await apiServices.get("api/company/company/getMyCompany")
+            setUsersCompany(response);
+        }catch (error){
+            console.error(error.message);
+        }
+
+    }
+
     return{
         getCompanies, handleGetPendingCompanyRequests,
         handleAcceptCompanyRequest, handleRejectCompanyRequest,
         handleRemoveCompanyFromSystem, getCompanyByBuildingId,
-        getCompanyById,getCompanyByBuildingIdAndServiceType,getCompaniesByServiceType,
-        getCompanyWithFeedbacks,
+        getCompanyById,getCompanyByBuildingIdAndServiceType, getCompaniesByServiceType,
+        getCompanyWithFeedbacks, getMyCompany,
     }
 
 }

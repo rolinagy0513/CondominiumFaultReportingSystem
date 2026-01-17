@@ -9,9 +9,7 @@ import org.example.condominiumfaultreportingsystem.company.Company;
 import org.example.condominiumfaultreportingsystem.company.CompanyRepository;
 import org.example.condominiumfaultreportingsystem.company.ICompanyService;
 import org.example.condominiumfaultreportingsystem.company.ServiceType;
-import org.example.condominiumfaultreportingsystem.exception.CompanyNotFoundException;
-import org.example.condominiumfaultreportingsystem.exception.CompanyNotFoundInBuildingException;
-import org.example.condominiumfaultreportingsystem.exception.InvalidRoleException;
+import org.example.condominiumfaultreportingsystem.exception.*;
 import org.example.condominiumfaultreportingsystem.feedback.Feedback;
 import org.example.condominiumfaultreportingsystem.group.impl.GroupService;
 import org.example.condominiumfaultreportingsystem.security.user.Role;
@@ -114,6 +112,38 @@ public class CompanyService implements ICompanyService {
         }
 
         Company company = companyOpt.get();
+
+        return mapToDto(company);
+
+    }
+
+    @Transactional
+    public CompanyDTO editCompanyDetails(EditCompanyDataDTO editCompanyDataDTO){
+
+        Company company = companyRepository.findById(editCompanyDataDTO.getCompanyId())
+                .orElseThrow(()-> new CompanyNotFoundException(editCompanyDataDTO.getCompanyId()));
+
+        if (editCompanyDataDTO.getCompanyName() != null){
+            company.setName(editCompanyDataDTO.getCompanyName());
+        }
+
+        if (editCompanyDataDTO.getCompanyIntroduction() != null){
+            company.setCompanyIntroduction(editCompanyDataDTO.getCompanyIntroduction());
+        }
+
+        if (editCompanyDataDTO.getCompanyAddress() != null){
+            company.setAddress(editCompanyDataDTO.getCompanyAddress());
+        }
+
+        if (editCompanyDataDTO.getPhoneNumber() != null){
+            company.setPhoneNumber(editCompanyDataDTO.getPhoneNumber());
+        }
+
+        if (editCompanyDataDTO.getServiceType() != null){
+            company.setServiceType(editCompanyDataDTO.getServiceType());
+        }
+
+        companyRepository.save(company);
 
         return mapToDto(company);
 

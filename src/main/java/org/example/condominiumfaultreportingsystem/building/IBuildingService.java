@@ -15,5 +15,6 @@ public interface IBuildingService {
     BuildingDTO getById(Long buildingId);
     BuildingDTO getByNumber(Integer buildingNumber);
     List<BuildingDTO> getByAddress(String address);
+    CompletableFuture<List<BuildingDTO>> getBuildingsByCompanyId(Long companyId);
 
 }
