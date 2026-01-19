@@ -15,6 +15,7 @@ import loginImage from "../../assets/building.png";
 import "./styles/Login.css"
 import {AdminUserContext} from "../../context/admin/AdminUserContext.jsx";
 import {ResidentUserContext} from "../../context/resident/ResidentUserContext.jsx";
+import {CompanyPageContext} from "../../context/company/CompanyPageContext.jsx";
 
 
 const Login = () =>{
@@ -29,11 +30,35 @@ const Login = () =>{
 
     const navigate = useNavigate();
 
-    const { message, setMessage, isLoading, setIsLoading } = useContext(FeedbackContext);
-    const { loginFormData, setLoginFormData} = useContext(AuthContext);
-    const {setAdminGroupId, setAuthenticatedAdminId, setAuthenticatedAdminUserName} = useContext(AdminUserContext);
-    const { setAuthenticatedUserId, setAuthenticatedUserName } = useContext(UserContext);
-    const { setResidentGroupId, setAuthenticatedResidentId, setAuthenticatedResidentUserName, setResidentGroupIdentifier} = useContext(ResidentUserContext);
+    const {
+        message, setMessage,
+        isLoading, setIsLoading
+    } = useContext(FeedbackContext);
+
+    const {
+        loginFormData, setLoginFormData
+    } = useContext(AuthContext);
+
+    const {
+        setAdminGroupId, setAuthenticatedAdminId,
+        setAuthenticatedAdminUserName
+    } = useContext(AdminUserContext);
+
+    const {
+        setAuthenticatedUserId, setAuthenticatedUserName
+    } = useContext(UserContext);
+
+    const {
+        setResidentGroupId, setAuthenticatedResidentId,
+        setAuthenticatedResidentUserName, setResidentGroupIdentifier
+    } = useContext(ResidentUserContext);
+
+    const {
+        authenticatedCompanyUserId, setAuthenticatedCompanyUserId,
+        authenticatedCompanyUserName, setAuthenticatedCompanyUserName,
+        companyGroupId, setCompanyGroupId,
+        companyGroupIdentifier, setCompanyGroupIdentifier
+    } = useContext(CompanyPageContext);
 
     const resetForm = () =>{
         setLoginFormData({
@@ -47,15 +72,20 @@ const Login = () =>{
 
         localStorage.removeItem("authenticatedUserId");
         localStorage.removeItem("authenticatedUserName");
+
         localStorage.removeItem("adminGroupId");
         localStorage.removeItem("authenticatedAdminId");
         localStorage.removeItem("authenticatedAdminUserName");
+
         localStorage.removeItem("residentGroupId");
         localStorage.removeItem("authenticatedResidentId");
         localStorage.removeItem("authenticatedResidentUserName");
+        localStorage.removeItem("authenticatedResidentGroupIdentifier");
+
         localStorage.removeItem("companyGroupId");
         localStorage.removeItem("authenticatedCompanyUserId");
         localStorage.removeItem("authenticatedCompanyUserName");
+        localStorage.removeItem("authenticatedCompanyGroupIdentifier");
 
         if (setAuthenticatedUserId) {
             setAuthenticatedUserId(null);
@@ -147,11 +177,18 @@ const Login = () =>{
                 localStorage.setItem("companyGroupId",response.groupId);
                 localStorage.setItem("authenticatedCompanyUserId",response.user.id);
                 localStorage.setItem("authenticatedCompanyUserName",response.user.userName);
+                localStorage.setItem("authenticatedCompanyGroupIdentifier", response.groupIdentifier)
 
                 console.log("📊 [LOGIN] Company login - stored data:");
                 console.log("  - companyGroupId:", localStorage.getItem("companyGroupId"));
                 console.log("  - authenticatedCompanyUserId:", localStorage.getItem("authenticatedCompanyUserId"));
                 console.log("  - authenticatedCompanyUserName:", localStorage.getItem("authenticatedCompanyUserName"));
+                console.log("  - authenticatedCompanyGroupIdentifier:", localStorage.getItem("authenticatedCompanyGroupIdentifier"));
+
+                setCompanyGroupId(response.groupId);
+                setAuthenticatedCompanyUserId(response.user.id);
+                setAuthenticatedCompanyUserName(response.user.userName);
+                setCompanyGroupIdentifier(response.groupIdentifier);
 
                 navigate("/company-page")
             }

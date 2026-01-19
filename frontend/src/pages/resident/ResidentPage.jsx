@@ -149,10 +149,6 @@ const ResidentPage = () => {
             return;
         }
 
-        console.log("NEEDED LOG");
-        console.log("The status change notification message: " + notificationMessage)
-        console.log("NEEDED LOG");
-
         websocketServices.connect(SOCK_URL, {
             onConnect: () => {
                 console.log("✅ Resident WebSocket connected successfully");

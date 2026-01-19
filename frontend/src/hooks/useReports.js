@@ -2,7 +2,6 @@ import {useContext} from "react";
 
 import apiServices from "../services/ApiServices.js";
 
-import {ResidentPageContext} from "../context/resident/ResidentPageContext.jsx";
 import {PaginationContext} from "../context/general/PaginationContext.jsx";
 import {ResidentReportContext} from "../context/resident/ResidentReportContext.jsx";
 import {ResidentUserContext} from "../context/resident/ResidentUserContext.jsx";
