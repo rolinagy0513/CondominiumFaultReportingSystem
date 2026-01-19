@@ -311,6 +311,7 @@ const ResidentPage = () => {
             websocketServices.disconnect();
 
             await apiServices.post(LOGOUT_URL);
+
             localStorage.removeItem("residentGroupId");
             localStorage.removeItem("authenticatedResidentId");
             localStorage.removeItem("authenticatedResidentUserName");

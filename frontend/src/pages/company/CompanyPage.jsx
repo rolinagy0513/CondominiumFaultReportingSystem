@@ -1,28 +1,44 @@
-import "./style/CompanyPage.css";
+import {useContext, useEffect, useRef} from "react";
+
 import { useCompanies } from "../../hooks/useCompanies.js";
-import { useContext, useEffect } from "react";
-import { CompanyPageContext } from "../../context/company/CompanyPageContext.jsx";
 import { useFeedback } from "../../hooks/useFeedback.js";
 import {useBuildings} from "../../hooks/useBuildings.js";
 import {useReports} from "../../hooks/useReports.js";
+
+import { CompanyPageContext } from "../../context/company/CompanyPageContext.jsx";
+
 import websocketServices from "../../services/WebsocketServices.js";
+
+import "./style/CompanyPage.css";
+import {ResidentReportContext} from "../../context/resident/ResidentReportContext.jsx";
 
 const CompanyPage = () => {
 
     const SOCK_URL = import.meta.env.VITE_API_WEBSOCKET_BASE_URL;
 
-    const { usersCompany, usersFeedbacks, usersBuildings, authenticatedCompanyUserId, companyGroupId, companyGroupIdentifier} = useContext(CompanyPageContext);
+    const {
+        usersCompany, usersFeedbacks, usersBuildings,
+        authenticatedCompanyUserId,
+        companyGroupIdentifier, companyId
+    } = useContext(CompanyPageContext);
+
+    const {
+        publicReports
+    } = useContext(ResidentReportContext);
+
+    const subscriptionRef = useRef(null);
+    const removalSubscriptionRef = useRef(null);
+    const notificationSubscriptionRef = useRef(null);
+    const requestResponseSubscriptionRef = useRef(null);
 
     const { getMyCompany } = useCompanies();
     const { getFeedbacksForCompany } = useFeedback();
     const { getBuildingsByCompanyId } = useBuildings();
-
-    const {
-        getAllPublicReports
-    } = useReports()
+    const { getAllPublicReports } = useReports()
 
     useEffect(() => {
         getMyCompany();
+        getAllPublicReports(0);
     }, []);
 
     useEffect(() => {
@@ -33,109 +49,69 @@ const CompanyPage = () => {
     }, [usersCompany?.id]);
 
     useEffect(() => {
-        const authenticatedResidentId = localStorage.getItem("authenticatedResidentId");
-
-        if (!residentGroupIdentifier || !authenticatedResidentId) {
+        if (!companyGroupIdentifier || !authenticatedCompanyUserId) {
             console.log("⚠️ Missing group or user info, skipping WebSocket setup");
             return;
         }
 
         websocketServices.connect(SOCK_URL, {
             onConnect: () => {
-                console.log("✅ Resident WebSocket connected successfully");
-                console.log("📋 Resident Group Identifier:", residentGroupIdentifier);
-                console.log("👤 Authenticated Resident ID:", authenticatedResidentId);
+                console.log("✅ Company WebSocket connected successfully");
 
-                const groupTopic = `/topic/group/${residentGroupIdentifier}`;
-                console.log("🔌 Subscribing to group topic:", groupTopic);
-
+                const groupTopic = `/topic/group/${companyGroupIdentifier}`;
                 subscriptionRef.current = websocketServices.subscribe(
                     groupTopic,
                     (message) => {
                         console.log("📬 Received on group topic:", message);
-                        handleNotification(message);
                     }
                 );
 
-                if (subscriptionRef.current) {
-                    console.log("✅ Successfully subscribed to group topic");
-                } else {
-                    console.error("❌ Failed to subscribe to group topic");
-                }
+                const requestResponseQueue = `/user/${authenticatedCompanyUserId}/queue/request-response`;
+                requestResponseSubscriptionRef.current = websocketServices.subscribe(
+                    requestResponseQueue,
+                    (message) => {
+                        console.log("📬 Company request response:", message);
+                    }
+                );
 
-                const removalQueue = `/user/${authenticatedResidentId}/queue/removal`;
-                console.log("🔌 Subscribing to removal queue:", removalQueue);
-
+                const removalQueue = `/user/${authenticatedCompanyUserId}/queue/removal`;
                 removalSubscriptionRef.current = websocketServices.subscribe(
                     removalQueue,
                     (message) => {
-                        console.log("📬 Received on removal queue:", message);
-                        handleNotification(message);
+                        console.log("📬 Company removal notification:", message);
                     }
                 );
 
-                if (removalSubscriptionRef.current) {
-                    console.log("✅ Successfully subscribed to removal queue");
-                } else {
-                    console.error("❌ Failed to subscribe to removal queue");
-                }
-
-                const notificationQueue = `/user/${authenticatedResidentId}/queue/notification`;
-                console.log("🔌 Subscribing to notification queue:", notificationQueue);
-
+                const notificationQueue = `/user/${companyId}/queue/notification`;
                 notificationSubscriptionRef.current = websocketServices.subscribe(
                     notificationQueue,
                     (message) => {
-                        console.log("📬 Received on notification queue:", message);
-                        handleNotification(message);
+                        console.log("📬 Company notification:", message);
+                        // handleNotification(message);
                     }
                 );
-
-                if (notificationSubscriptionRef.current) {
-                    console.log("✅ Successfully subscribed to notification queue");
-                } else {
-                    console.error("❌ Failed to subscribe to notification queue");
-                }
             },
-            onDisconnect: () => {
-                console.log("🔌 Resident WebSocket disconnected");
-                subscriptionRef.current = null;
-                removalSubscriptionRef.current = null;
-                notificationSubscriptionRef.current = null;
-            },
-            onError: (error) => {
-                console.error("❌ WebSocket error:", error);
-                subscriptionRef.current = null;
-                removalSubscriptionRef.current = null;
-                notificationSubscriptionRef.current = null;
-            },
-            reconnectDelay: 5000,
-            heartbeatIncoming: 4000,
-            heartbeatOutgoing: 4000,
-            withCredentials: true
         });
 
         return () => {
-
-            if (subscriptionRef.current) {
-                subscriptionRef.current.unsubscribe();
-                subscriptionRef.current = null;
-            }
-            if (removalSubscriptionRef.current) {
-                removalSubscriptionRef.current.unsubscribe();
-                removalSubscriptionRef.current = null;
-            }
-            if (notificationSubscriptionRef.current) {
-                notificationSubscriptionRef.current.unsubscribe();
-                notificationSubscriptionRef.current = null;
-            }
+            [subscriptionRef, requestResponseSubscriptionRef, removalSubscriptionRef, notificationSubscriptionRef]
+                .forEach(ref => {
+                    if (ref.current) {
+                        ref.current.unsubscribe();
+                        ref.current = null;
+                    }
+                });
             websocketServices.disconnect();
         };
-    }, [residentGroupIdentifier]);
+    }, [companyGroupIdentifier, authenticatedCompanyUserId]);
 
     if (!usersCompany) {
         return <p>Loading...</p>;
     }
+
+    console.log("NEEDED LOG")
+    console.log(publicReports);
+    console.log("NEEDED LOG")
 
     return (
         <div>

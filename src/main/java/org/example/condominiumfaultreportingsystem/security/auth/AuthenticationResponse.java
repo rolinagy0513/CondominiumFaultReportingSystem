@@ -35,6 +35,7 @@ public class AuthenticationResponse {
   private UserResponseDTO user;
   private Long groupId;
   private String groupIdentifier;
+  private Long companyId;
   private Role role;
   private ActiveApartmentRequest activeApartmentRequest;
   private ActiveCompanyRequest activeCompanyRequest;

@@ -1,6 +1,7 @@
 package org.example.condominiumfaultreportingsystem.company;
 
 import org.example.condominiumfaultreportingsystem.building.Building;
+import org.example.condominiumfaultreportingsystem.security.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -42,5 +43,5 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     Integer countFeedbacksByCompanyId(@Param("companyId") Long companyId);
 
 
-
+    List<Company> user(User user);
 }

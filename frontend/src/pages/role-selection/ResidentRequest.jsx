@@ -1,13 +1,15 @@
-import BuildingsList from "../admin/components/BuildingsList.jsx";
 import {useContext, useEffect, useRef, useState} from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import {RoleSelectionContext} from "../../context/role-selection/RoleSelectionContext.jsx";
+
+import BuildingsList from "../admin/components/BuildingsList.jsx";
+
+import {UserContext} from "../../context/general/UserContext.jsx";
+import {ResidentRequestContext} from "../../context/role-selection/ResidentRequestContext.jsx";
+
 import apiServices from "../../services/ApiServices.js";
 import websocketServices from "../../services/WebsocketServices.js";
-import {UserContext} from "../../context/general/UserContext.jsx";
 
 import "./styles/ResidentRequest.css"
-import {ResidentRequestContext} from "../../context/role-selection/ResidentRequestContext.jsx";
 
 const ResidentRequest = () => {
     const AUTH_API_PATH = import.meta.env.VITE_API_BASE_AUTH_URL;
@@ -37,7 +39,7 @@ const ResidentRequest = () => {
         notification, setNotification,
         requestSent, setRequestSent,
         selectedApartmentId, setSelectedApartmentId,
-        isConnected, setIsConnected
+        setIsConnected
     } = useContext(ResidentRequestContext);
 
     const subscriptionRef = useRef(null);
@@ -123,18 +125,6 @@ const ResidentRequest = () => {
 
         setNotification(response);
 
-        if (response.apartmentNumber !== undefined) {
-            if (response.message && response.message.includes("accepted")) {
-                setTimeout(() => {
-                    navigate("/resident-page");
-                }, 3000);
-            } else if (response.message && response.message.includes("rejected")) {
-                setTimeout(() => {
-                    navigate("/choose-role");
-                }, 3000);
-            }
-        }
-
         if (response.companyName) {
             if (response.message && response.message.includes("rejected")) {
                 setTimeout(() => {
@@ -161,16 +151,6 @@ const ResidentRequest = () => {
             console.error('Logout error:', error.message);
         }
     }
-
-    const handleCloseNotification = () => {
-        setNotification(null);
-
-        if (notification?.message?.includes("accepted")) {
-            navigate("/resident-dashboard");
-        } else {
-            navigate("/choose-role");
-        }
-    };
 
     const getAllBuildings = async() => {
         try {
@@ -264,8 +244,9 @@ const ResidentRequest = () => {
                     <p>{notification.message}</p>
                     <p><strong>Building:</strong> {notification.buildingNumber}</p>
                     <p><strong>Apartment:</strong> {notification.apartmentNumber}</p>
-                    <button onClick={handleCloseNotification}>
-                        {notification.message.includes("accepted") ? "Go to Resident Dashboard" : "Back to Role Selection"}
+                    <p>Please log out to access the resident features.</p>
+                    <button onClick={handleLogout}>
+                        {notification.message.includes("accepted") ? "Log out!" : "Back to Role Selection"}
                     </button>
                 </>
             );

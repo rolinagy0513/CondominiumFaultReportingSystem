@@ -10,7 +10,6 @@
  * - Manages the `authenticatedUserName` state to store the current user's userName.
  */
 
-
 import {useState, createContext, useEffect} from "react";
 import websocketServices from "../../services/WebsocketServices.js";
 
@@ -40,8 +39,18 @@ export const UserProvider = ({ children }) => {
         } else {
             console.log('🧹 [USER_CONTEXT] Clearing authenticatedUserId from localStorage');
             localStorage.removeItem("authenticatedUserId");
-            console.log('🔌 [USER_CONTEXT] User logged out - disconnecting WebSocket');
-            websocketServices.disconnect();
+
+            // ✅ FIX: Only disconnect WebSocket if NO other user types are logged in
+            const hasAdminUser = localStorage.getItem("authenticatedAdminId");
+            const hasResidentUser = localStorage.getItem("authenticatedResidentId");
+            const hasCompanyUser = localStorage.getItem("authenticatedCompanyUserId");
+
+            if (!hasAdminUser && !hasResidentUser && !hasCompanyUser) {
+                console.log('🔌 [USER_CONTEXT] No users logged in - disconnecting WebSocket');
+                websocketServices.disconnect();
+            } else {
+                console.log('⚠️ [USER_CONTEXT] Other user types still logged in - NOT disconnecting WebSocket');
+            }
         }
 
         // Log current localStorage state

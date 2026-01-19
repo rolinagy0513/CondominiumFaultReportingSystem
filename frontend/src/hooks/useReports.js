@@ -1,10 +1,11 @@
-import {useContext} from "react";
+import {useContext, useState} from "react";
 
 import apiServices from "../services/ApiServices.js";
 
 import {PaginationContext} from "../context/general/PaginationContext.jsx";
 import {ResidentReportContext} from "../context/resident/ResidentReportContext.jsx";
 import {ResidentUserContext} from "../context/resident/ResidentUserContext.jsx";
+import {CompanyPageContext} from "../context/company/CompanyPageContext.jsx";
 
 export const useReports = () =>{
 
@@ -26,10 +27,22 @@ export const useReports = () =>{
         setTotalElements, pageSize
     } = useContext(PaginationContext);
 
+    const{
+        companyGroupId
+    } = useContext(CompanyPageContext);
+
     const getAllPublicReports = async (page = 0) =>{
 
-        if (!residentGroupId) {
-            console.error("residentGroupId is not available");
+        let groupId;
+
+        if (residentGroupId) {
+            groupId = residentGroupId;
+            console.log("📋 Fetching as resident with groupId:", groupId);
+        } else if (companyGroupId) {
+            groupId = companyGroupId;
+            console.log("🏢 Fetching as company with groupId:", groupId);
+        } else {
+            console.error("No group ID available in any context");
             setPublicReports([]);
             setCurrentPage(0);
             setTotalPages(0);
@@ -39,7 +52,7 @@ export const useReports = () =>{
 
         try{
             const params = new URLSearchParams({
-                groupId: residentGroupId.toString(),
+                groupId: groupId.toString(),
                 page: page.toString(),
                 size: pageSize.toString(),
                 sortBy: 'id',

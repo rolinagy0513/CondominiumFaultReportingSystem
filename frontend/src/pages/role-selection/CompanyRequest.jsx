@@ -114,17 +114,17 @@ const CompanyRequest = () => {
 
         setNotification(response);
 
-        if (response.companyName) {
-            if (response.message && response.message.includes("accepted")) {
-                setTimeout(() => {
-                    navigate("/company-page");
-                }, 3000);
-            } else if (response.message && response.message.includes("rejected")) {
-                setTimeout(() => {
-                    navigate("/choose-role");
-                }, 3000);
-            }
-        }
+        // if (response.companyName) {
+        //     if (response.message && response.message.includes("accepted")) {
+        //         setTimeout(() => {
+        //             navigate("/company-page");
+        //         }, 3000);
+        //     } else if (response.message && response.message.includes("rejected")) {
+        //         setTimeout(() => {
+        //             navigate("/choose-role");
+        //         }, 3000);
+        //     }
+        // }
     };
 
     const handleLogout = async () => {
@@ -144,16 +144,6 @@ const CompanyRequest = () => {
             console.error('Logout error:', error.message);
         }
     }
-
-    const handleCloseNotification = () => {
-        setNotification(null);
-
-        if (notification?.message?.includes("accepted")) {
-            navigate("/company-page");
-        } else {
-            navigate("/choose-role");
-        }
-    };
 
     const getAllBuildings = async () => {
         try {
@@ -229,8 +219,9 @@ const CompanyRequest = () => {
                     <p>{notification.message}</p>
                     <p><strong>Company:</strong> {notification.companyName}</p>
                     <p><strong>Service Type:</strong> {notification.serviceType}</p>
-                    <button onClick={handleCloseNotification}>
-                        {notification.message.includes("accepted") ? "Go to Company Dashboard" : "Back to Role Selection"}
+                    <p>Please log out and log in again to access the company features.</p>
+                    <button onClick={handleLogout}>
+                        {notification.message.includes("accepted") ? "Log out" : "Back to Role Selection"}
                     </button>
                 </>
             );

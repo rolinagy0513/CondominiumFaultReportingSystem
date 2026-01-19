@@ -57,7 +57,8 @@ const Login = () =>{
         authenticatedCompanyUserId, setAuthenticatedCompanyUserId,
         authenticatedCompanyUserName, setAuthenticatedCompanyUserName,
         companyGroupId, setCompanyGroupId,
-        companyGroupIdentifier, setCompanyGroupIdentifier
+        companyGroupIdentifier, setCompanyGroupIdentifier,
+        setCompanyId
     } = useContext(CompanyPageContext);
 
     const resetForm = () =>{
@@ -178,17 +179,20 @@ const Login = () =>{
                 localStorage.setItem("authenticatedCompanyUserId",response.user.id);
                 localStorage.setItem("authenticatedCompanyUserName",response.user.userName);
                 localStorage.setItem("authenticatedCompanyGroupIdentifier", response.groupIdentifier)
+                localStorage.setItem("companyId", response.companyId);
 
                 console.log("📊 [LOGIN] Company login - stored data:");
                 console.log("  - companyGroupId:", localStorage.getItem("companyGroupId"));
                 console.log("  - authenticatedCompanyUserId:", localStorage.getItem("authenticatedCompanyUserId"));
                 console.log("  - authenticatedCompanyUserName:", localStorage.getItem("authenticatedCompanyUserName"));
                 console.log("  - authenticatedCompanyGroupIdentifier:", localStorage.getItem("authenticatedCompanyGroupIdentifier"));
+                console.log("  - companyId:", localStorage.getItem("companyId"));
 
                 setCompanyGroupId(response.groupId);
                 setAuthenticatedCompanyUserId(response.user.id);
                 setAuthenticatedCompanyUserName(response.user.userName);
                 setCompanyGroupIdentifier(response.groupIdentifier);
+                setCompanyId(response.companyId);
 
                 navigate("/company-page")
             }

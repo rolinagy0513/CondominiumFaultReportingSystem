@@ -10,12 +10,15 @@ import org.example.condominiumfaultreportingsystem.apartmentRequest.ActiveApartm
 import org.example.condominiumfaultreportingsystem.apartmentRequest.ApartmentRequest;
 import org.example.condominiumfaultreportingsystem.apartmentRequest.ApartmentRequestRepository;
 import org.example.condominiumfaultreportingsystem.apartmentRequest.impl.ApartmentRequestService;
+import org.example.condominiumfaultreportingsystem.company.Company;
+import org.example.condominiumfaultreportingsystem.company.CompanyRepository;
 import org.example.condominiumfaultreportingsystem.companyRequest.ActiveCompanyRequest;
 import org.example.condominiumfaultreportingsystem.companyRequest.CompanyRequest;
 import org.example.condominiumfaultreportingsystem.companyRequest.impl.CompanyRequestService;
 import org.example.condominiumfaultreportingsystem.exception.GroupNotFoundException;
 import org.example.condominiumfaultreportingsystem.exception.InvalidPasswordException;
 import org.example.condominiumfaultreportingsystem.exception.UserNotFoundException;
+import org.example.condominiumfaultreportingsystem.exception.UserNotPartOfCompanyException;
 import org.example.condominiumfaultreportingsystem.group.Group;
 import org.example.condominiumfaultreportingsystem.group.GroupRepository;
 import org.example.condominiumfaultreportingsystem.group.impl.GroupService;
@@ -68,6 +71,7 @@ public class AuthenticationService {
   private final CompanyRequestService companyRequestService;
 
   private final AuthenticationManager authenticationManager;
+  private final CompanyRepository companyRepository;
 
   @Value("${application.security.jwt.expiration}")
   private long jwtExpiration;
@@ -132,6 +136,7 @@ public class AuthenticationService {
 
       Long groupId = null;
       String groupIdentifier = "";
+      Long companyId = null;
 
     try {
       authenticationManager.authenticate(
@@ -185,14 +190,22 @@ public class AuthenticationService {
     if (user.getRole().equals(Role.COMPANY)){
 
       Optional<Group> groupOpt = groupRepository.findGroupByUsersId(user.getId());
+      Optional<Company> companyOpt = companyRepository.findCompanyWithUser(user.getId());
 
       if (groupOpt.isEmpty()){
         throw new GroupNotFoundException();
       }
 
+      if (companyOpt.isEmpty()){
+        throw new UserNotPartOfCompanyException();
+      }
+
       Group group = groupOpt.get();
+      Company company = companyOpt.get();
+
       groupId = group.getId();
       groupIdentifier = group.getGroupName();
+      companyId = company.getId();
 
     }
 
@@ -204,6 +217,7 @@ public class AuthenticationService {
             .user(mapToUserResponseDto(user))
             .role(user.getRole())
             .groupId(groupId)
+            .companyId(companyId)
             .groupIdentifier(groupIdentifier)
             .activeApartmentRequest(activeApartmentRequest)
             .activeCompanyRequest(activeCompanyRequest)
