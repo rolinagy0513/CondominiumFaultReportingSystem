@@ -37,8 +37,8 @@ export const CompanyPageProvider = ({children}) => {
     const [usersCompany, setUsersCompany] = useState([]);
     const [usersFeedbacks, setUsersFeedbacks] = useState([]);
     const [usersBuildings, setUsersBuildings] = useState([]);
+    const [privateReports, setPrivateReports] = useState([]);
 
-    // Sync authenticatedCompanyUserId with localStorage
     useEffect(() => {
         console.log('🔄 [COMPANY_CONTEXT] authenticatedCompanyUserId changed to:', authenticatedCompanyUserId);
 
@@ -147,6 +147,7 @@ export const CompanyPageProvider = ({children}) => {
                 authenticatedCompanyUserName, setAuthenticatedCompanyUserName,
                 companyGroupId, setCompanyGroupId,
                 companyGroupIdentifier, setCompanyGroupIdentifier,
+                privateReports, setPrivateReports
             }
         }>
             {children}

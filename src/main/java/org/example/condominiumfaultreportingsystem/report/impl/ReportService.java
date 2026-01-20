@@ -434,6 +434,7 @@ public class ReportService implements IReportService{
 
         return ReportDTO.builder()
                 .senderName(report.getUser().getName())
+                .reportId( report.getId())
                 .reportPrivacy(report.getReportPrivacy())
                 .name(report.getName())
                 .issueDescription(report.getIssueDescription())

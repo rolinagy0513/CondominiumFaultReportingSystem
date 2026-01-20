@@ -24,12 +24,14 @@ export const useReports = () =>{
 
     const {
         setCurrentPage, setTotalPages,
-        setTotalElements, pageSize
+        setTotalElements
     } = useContext(PaginationContext);
 
     const{
-        companyGroupId
+        companyGroupId,setPrivateReports
     } = useContext(CompanyPageContext);
+
+    const pageSize = 5;
 
     const getAllPublicReports = async (page = 0) =>{
 
@@ -126,6 +128,60 @@ export const useReports = () =>{
         }
     }
 
-    return{ getAllPublicReports, sendPublicReport, sendPrivateReport, getInProgressReport, getCompletedReportsForUser}
+    const getPrivateReportsForCompany = async (page = 0, companyId) =>{
+
+        try {
+
+            const params = new URLSearchParams({
+                companyId: companyId.toString(),
+                page: page.toString(),
+                size: pageSize.toString(),
+                sortBy: 'id',
+                direction: 'ASC'
+            });
+
+            const response = await apiServices.get(`api/company/report/getAllPrivateSubmitted?${params.toString()}`);
+
+
+            if (response && response.content) {
+                (setPrivateReports(response.content));
+                setCurrentPage(response.number);
+                setTotalPages(response.totalPages);
+                setTotalElements(response.totalElements);
+            } else {
+                setPrivateReports([]);
+                setCurrentPage(0);
+                setTotalPages(0);
+                setTotalElements(0);
+            }
+
+        }catch (error){
+            console.error(error.message);
+        }
+
+    }
+
+    const acceptReport = async ( reportId, companyId) =>{
+
+        console.log("IDE")
+        console.log(reportId)
+        console.log(companyId)
+
+        const data = ({
+            reportId:reportId,
+            companyId:companyId
+        })
+
+
+        try {
+            const response = await apiServices.put( "api/company/report/acceptReport", data)
+            console.log("A lofasz: " +  response);
+        }catch (error){
+            console.error(error.message);
+        }
+
+    }
+
+    return{ getAllPublicReports, sendPublicReport, sendPrivateReport, getInProgressReport, getCompletedReportsForUser, getPrivateReportsForCompany, acceptReport}
 
 }

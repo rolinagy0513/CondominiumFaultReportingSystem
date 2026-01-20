@@ -18,6 +18,7 @@ public class ReportDTO {
 
     private String senderName;
 
+    private Long reportId;
     private ReportPrivacy reportPrivacy;
 
     private String name;

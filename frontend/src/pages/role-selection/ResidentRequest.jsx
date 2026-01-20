@@ -244,7 +244,7 @@ const ResidentRequest = () => {
                     <p>{notification.message}</p>
                     <p><strong>Building:</strong> {notification.buildingNumber}</p>
                     <p><strong>Apartment:</strong> {notification.apartmentNumber}</p>
-                    <p>Please log out to access the resident features.</p>
+                    <p>{notification.message.includes("accepted") ? "Please log out to access the resident features." : "Try again or contact the admin"}</p>
                     <button onClick={handleLogout}>
                         {notification.message.includes("accepted") ? "Log out!" : "Back to Role Selection"}
                     </button>

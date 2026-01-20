@@ -113,18 +113,6 @@ const CompanyRequest = () => {
         }
 
         setNotification(response);
-
-        // if (response.companyName) {
-        //     if (response.message && response.message.includes("accepted")) {
-        //         setTimeout(() => {
-        //             navigate("/company-page");
-        //         }, 3000);
-        //     } else if (response.message && response.message.includes("rejected")) {
-        //         setTimeout(() => {
-        //             navigate("/choose-role");
-        //         }, 3000);
-        //     }
-        // }
     };
 
     const handleLogout = async () => {
@@ -219,7 +207,7 @@ const CompanyRequest = () => {
                     <p>{notification.message}</p>
                     <p><strong>Company:</strong> {notification.companyName}</p>
                     <p><strong>Service Type:</strong> {notification.serviceType}</p>
-                    <p>Please log out and log in again to access the company features.</p>
+                    <p>{notification.message.includes("accepted") ? "Please log out to access the resident features." : "Try again or contact the admin"}</p>
                     <button onClick={handleLogout}>
                         {notification.message.includes("accepted") ? "Log out" : "Back to Role Selection"}
                     </button>

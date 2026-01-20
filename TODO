@@ -1,13 +1,4 @@
-  - Meg kell nézni hogy mi baj volt a websocket sub-al és esetleg nézni valami jobb megoldást is.
-  - Szétt van bazsva az összes user-es context.
-
-  -Elkezdeni a company dashboard-ot is(először a websocket subscriptions)
-
-    - Meg kell majd a websocket subscriptiont csinálni hogy az után lehessen majd hívni a getAllPublicReport-ot ami jelenleg
-        a residentGroupId-t használja úgyhogy lehet kell neki egy másik method meg sok más state
-
-    - Kell a get publicreports in Building
-    - Kell a Private Reports.
+ - Copmplete reports
 
  - A design-ra van ötlet a deepseek-en
 
