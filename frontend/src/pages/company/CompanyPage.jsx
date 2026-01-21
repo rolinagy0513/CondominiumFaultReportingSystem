@@ -1,29 +1,23 @@
 import {useContext, useEffect, useRef, useState} from "react";
-
 import { FaFileAlt } from "react-icons/fa";
-
 import { useCompanies } from "../../hooks/useCompanies.js";
 import { useFeedback } from "../../hooks/useFeedback.js";
 import {useBuildings} from "../../hooks/useBuildings.js";
 import {useReports} from "../../hooks/useReports.js";
-
 import { CompanyPageContext } from "../../context/company/CompanyPageContext.jsx";
 import {ResidentReportContext} from "../../context/resident/ResidentReportContext.jsx";
-
-import websocketServices from "../../services/WebsocketServices.js";
-
-import "./style/CompanyPage.css";
 import {PaginationContext} from "../../context/general/PaginationContext.jsx";
+import websocketServices from "../../services/WebsocketServices.js";
+import "./style/CompanyPage.css"
 
 const CompanyPage = () => {
-
     const SOCK_URL = import.meta.env.VITE_API_WEBSOCKET_BASE_URL;
 
     const {
         usersCompany, usersFeedbacks, usersBuildings,
         authenticatedCompanyUserId,
         companyGroupIdentifier, companyId,
-        privateReports
+        privateReports, acceptedReports
     } = useContext(CompanyPageContext);
 
     const {
@@ -36,12 +30,14 @@ const CompanyPage = () => {
     const requestResponseSubscriptionRef = useRef(null);
 
     const [expandedReportId, setExpandedReportId] = useState(null);
+    const [activeReportTab, setActiveReportTab] = useState('public');
 
     const {
         currentPage, setCurrentPage,
-        totalPages
+        totalPages, currentPrivatePage,
+        setCurrentPrivatePage, totalPrivatePage,
+        setTotalPages, setTotalPrivatePage
     } = useContext(PaginationContext);
-
 
     const reportTypeIcons = {
         ELECTRICITY: "⚡",
@@ -56,10 +52,6 @@ const CompanyPage = () => {
         OTHER: "📋"
     };
 
-    console.log("NEEDED LOG")
-    console.log(privateReports);
-    console.log("NEEDED LOG");
-
     const truncateText = (text, maxLength = 100) => {
         if (text && text.length <= maxLength) return text;
         return text ? text.substr(0, maxLength) + '...' : '';
@@ -69,20 +61,26 @@ const CompanyPage = () => {
         setExpandedReportId(expandedReportId === index ? null : index);
     };
 
-    const handleReportsPageChange = (newPage) => {
+    const handlePublicReportsPageChange = (newPage) => {
         setCurrentPage(newPage);
         getAllPublicReports(newPage);
+    };
+
+    const handlePrivateReportsPageChange = (newPage) => {
+        setCurrentPrivatePage(newPage);
+        getPrivateReportsForCompany(newPage, companyId);
     };
 
     const { getMyCompany } = useCompanies();
     const { getFeedbacksForCompany } = useFeedback();
     const { getBuildingsByCompanyId } = useBuildings();
-    const { getAllPublicReports, getPrivateReportsForCompany, acceptReport} = useReports()
+    const { getAllPublicReports, getPrivateReportsForCompany, acceptReport, getAcceptedReportsForCompany} = useReports()
 
     useEffect(() => {
         getMyCompany();
         getAllPublicReports(0);
-        getPrivateReportsForCompany(0,companyId)
+        getPrivateReportsForCompany(0, companyId);
+        getAcceptedReportsForCompany(companyId);
     }, []);
 
     useEffect(() => {
@@ -153,210 +151,323 @@ const CompanyPage = () => {
         return <p>Loading...</p>;
     }
 
-    return (
-        <div className="company-page-container">
-            <div className="company-page-info-section">
-                <h2 className="company-page-company-name">{usersCompany.name}</h2>
-                <div className="company-page-info-grid">
-                    <div className="company-page-info-item">
-                        <span className="company-page-info-label">Company ID:</span>
-                        <span className="company-page-info-value">{usersCompany.id}</span>
+    // Determine which data to show based on active tab
+    const currentReports = activeReportTab === 'public' ? publicReports : privateReports;
+    const currentPageNum = activeReportTab === 'public' ? currentPage : currentPrivatePage;
+    const currentTotalPages = activeReportTab === 'public' ? totalPages : totalPrivatePage;
+    const handlePageChange = activeReportTab === 'public' ? handlePublicReportsPageChange : handlePrivateReportsPageChange;
+
+    const renderPagination = () => {
+        if (currentTotalPages <= 1) return null;
+
+        return (
+            <div className="company-page-pagination-container">
+                <div className="company-page-pagination">
+                    <button
+                        className="company-page-pagination-btn company-page-pagination-prev"
+                        onClick={() => handlePageChange(currentPageNum - 1)}
+                        disabled={currentPageNum === 0}
+                    >
+                        Previous
+                    </button>
+
+                    <div className="company-page-page-numbers">
+                        {Array.from({ length: Math.min(5, currentTotalPages) }, (_, i) => {
+                            let pageNum;
+                            if (currentTotalPages <= 5) {
+                                pageNum = i;
+                            } else if (currentPageNum <= 2) {
+                                pageNum = i;
+                            } else if (currentPageNum >= currentTotalPages - 3) {
+                                pageNum = currentTotalPages - 5 + i;
+                            } else {
+                                pageNum = currentPageNum - 2 + i;
+                            }
+                            return (
+                                <button
+                                    key={pageNum}
+                                    className={`company-page-page-number ${currentPageNum === pageNum ? 'company-page-page-active' : ''}`}
+                                    onClick={() => handlePageChange(pageNum)}
+                                >
+                                    {pageNum + 1}
+                                </button>
+                            );
+                        })}
                     </div>
-                    <div className="company-page-info-item">
-                        <span className="company-page-info-label">Email:</span>
-                        <span className="company-page-info-value">{usersCompany.email}</span>
-                    </div>
-                    <div className="company-page-info-item">
-                        <span className="company-page-info-label">Address:</span>
-                        <span className="company-page-info-value">{usersCompany.address}</span>
-                    </div>
-                    <div className="company-page-info-item">
-                        <span className="company-page-info-label">Phone:</span>
-                        <span className="company-page-info-value">{usersCompany.phoneNumber}</span>
-                    </div>
-                    <div className="company-page-info-item">
-                        <span className="company-page-info-label">Service Type:</span>
-                        <span className="company-page-info-value">{usersCompany.serviceType}</span>
-                    </div>
-                    <div className="company-page-info-item">
-                        <span className="company-page-info-label">Rating:</span>
-                        <span className="company-page-info-value">{usersCompany.overallRating}</span>
-                    </div>
-                </div>
-                <div className="company-page-description">
-                    <h3>About Us</h3>
-                    <p>{usersCompany.companyIntroduction}</p>
+
+                    <button
+                        className="company-page-pagination-btn company-page-pagination-next"
+                        onClick={() => handlePageChange(currentPageNum + 1)}
+                        disabled={currentPageNum === currentTotalPages - 1}
+                    >
+                        Next
+                    </button>
                 </div>
             </div>
+        );
+    };
 
-            {/* Public Reports Section */}
-            <div className="company-page-reports-section">
-                <div className="company-page-reports-card">
-                    <div className="company-page-card-header">
-                        <FaFileAlt className="company-page-card-icon" />
-                        <h3>Public Reports</h3>
+    const renderReportsList = (reports) => {
+        if (!reports || reports.length === 0) {
+            return (
+                <div className="company-page-empty-state">
+                    <FaFileAlt className="company-page-empty-icon" />
+                    <p>No {activeReportTab} reports available</p>
+                </div>
+            );
+        }
+
+        return (
+            <>
+                <div className="company-page-reports-list">
+                    {reports.map((report, index) => (
+                        <div
+                            key={index}
+                            className={`company-page-report-item ${expandedReportId === index ? 'company-page-report-expanded' : ''}`}
+                            onClick={() => toggleReportExpansion(index)}
+                        >
+                            <div className="company-page-report-header">
+                                <span className="company-page-report-type-icon">
+                                    {reportTypeIcons[report.reportType] || "📋"}
+                                </span>
+                                <div className="company-page-report-title">
+                                    <h4>{report.name}</h4>
+                                    <span className="company-page-report-meta">
+                                        By {report.senderName} • {report.reportType}
+                                    </span>
+                                </div>
+                                <span className="company-page-expand-icon">
+                                    {expandedReportId === index ? '−' : '+'}
+                                </span>
+                            </div>
+
+                            <div className="company-page-report-details">
+                                <p className="company-page-report-description">
+                                    {expandedReportId === index
+                                        ? report.issueDescription
+                                        : truncateText(report.issueDescription, 80)}
+                                </p>
+
+                                {expandedReportId === index && report.comment && (
+                                    <div className="company-page-report-comment">
+                                        <strong>Additional Comments:</strong>
+                                        <p>{report.comment}</p>
+                                    </div>
+                                )}
+
+                                <div className="company-page-report-footer">
+                                    {report.roomNumber && (
+                                        <span className="company-page-footer-tag">
+                                            Room: {report.roomNumber}
+                                        </span>
+                                    )}
+                                    {report.floor && (
+                                        <span className="company-page-footer-tag">
+                                            Floor: {report.floor}
+                                        </span>
+                                    )}
+                                    <span className="company-page-report-date">
+                                        {report.createdAt
+                                            ? new Date(report.createdAt).toLocaleString()
+                                            : "Recently"}
+                                    </span>
+                                    <button
+                                        className="company-page-accept-btn"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            acceptReport(report.reportId, companyId);
+                                        }}
+                                    >
+                                        Accept Report
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                {renderPagination()}
+            </>
+        );
+    };
+
+    return (
+        <div className="company-page-container">
+            {/* Header */}
+            <header className="company-page-header">
+                <h1 className="company-page-title">Company Dashboard</h1>
+            </header>
+
+            <div className="company-page-layout">
+                {/* Left Sidebar */}
+                <div className="company-page-left-sidebar">
+                    {/* Company Info Section */}
+                    <div className="company-page-info-section">
+                        <h2 className="company-page-company-name">{usersCompany.name}</h2>
+                        <div className="company-page-info-grid">
+                            <div className="company-page-info-item">
+                                <span className="company-page-info-label">Company ID:</span>
+                                <span className="company-page-info-value">{usersCompany.id}</span>
+                            </div>
+                            <div className="company-page-info-item">
+                                <span className="company-page-info-label">Email:</span>
+                                <span className="company-page-info-value">{usersCompany.email}</span>
+                            </div>
+                            <div className="company-page-info-item">
+                                <span className="company-page-info-label">Address:</span>
+                                <span className="company-page-info-value">{usersCompany.address}</span>
+                            </div>
+                            <div className="company-page-info-item">
+                                <span className="company-page-info-label">Phone:</span>
+                                <span className="company-page-info-value">{usersCompany.phoneNumber}</span>
+                            </div>
+                            <div className="company-page-info-item">
+                                <span className="company-page-info-label">Service Type:</span>
+                                <span className="company-page-info-value">{usersCompany.serviceType}</span>
+                            </div>
+                            <div className="company-page-info-item">
+                                <span className="company-page-info-label">Rating:</span>
+                                <span className="company-page-info-value">{usersCompany.overallRating}</span>
+                            </div>
+                        </div>
+                        <div className="company-page-description">
+                            <h3>About Us</h3>
+                            <p>{usersCompany.companyIntroduction}</p>
+                        </div>
                     </div>
 
-                    {publicReports && publicReports.length > 0 ? (
-                        <div>
-                            <div className="company-page-reports-list">
-                                {publicReports.map((report, index) => (
-                                    <div
-                                        key={index}
-                                        className={`company-page-report-item ${expandedReportId === index ? 'company-page-report-expanded' : ''}`}
-                                        onClick={() => toggleReportExpansion(index)}
-                                    >
-                                        <div className="company-page-report-header">
-                                        <span className="company-page-report-type-icon">
-                                            {reportTypeIcons[report.reportType] || "📋"}
-                                        </span>
-                                            <div className="company-page-report-title">
-                                                <h4>{report.name}</h4>
-                                                <span className="company-page-report-meta">
-                                                By {report.senderName} • {report.reportType}
-                                            </span>
-                                            </div>
-                                            <span className="company-page-expand-icon">
-                                            {expandedReportId === index ? '−' : '+'}
-                                        </span>
+                    {/* Feedbacks Section */}
+                    <div className="company-page-feedbacks-section">
+                        <h3>Customer Feedbacks</h3>
+                        {usersFeedbacks && usersFeedbacks.length > 0 ? (
+                            <div className="company-page-feedbacks-list">
+                                {usersFeedbacks.map(feedback => (
+                                    <div key={feedback.id} className="company-page-feedback-item">
+                                        <div className="company-page-feedback-header">
+                                            <span className="company-page-feedback-rating">⭐ {feedback.rating}/5</span>
+                                            <span className="company-page-feedback-date">{feedback.createdAt}</span>
                                         </div>
-
-                                        <div className="company-page-report-details">
-                                            <p className="company-page-report-description">
-                                                {expandedReportId === index
-                                                    ? report.issueDescription
-                                                    : truncateText(report.issueDescription, 80)}
-                                            </p>
-
-                                            {expandedReportId === index && report.comment && (
-                                                <div className="company-page-report-comment">
-                                                    <strong>Additional Comments:</strong>
-                                                    <p>{report.comment}</p>
-                                                </div>
-                                            )}
-
-                                            <div className="company-page-report-footer">
-                                                {report.roomNumber && (
-                                                    <span className="company-page-footer-tag">
-                                                    Room: {report.roomNumber}
-                                                </span>
-                                                )}
-                                                {report.floor && (
-                                                    <span className="company-page-footer-tag">
-                                                    Floor: {report.floor}
-                                                </span>
-                                                )}
-                                                <span className="company-page-report-date">
-                                                {report.createdAt
-                                                    ? new Date(report.createdAt).toLocaleString()
-                                                    : "Recently"}
-                                            </span>
-                                                <button onClick={()=> acceptReport( report.reportId, companyId)}>Accept Report</button>
-                                            </div>
+                                        <p className="company-page-feedback-message">{feedback.message}</p>
+                                        <div className="company-page-feedback-footer">
+                                            <span className="company-page-feedback-author">By: {feedback.reviewerEmail}</span>
                                         </div>
                                     </div>
                                 ))}
                             </div>
-
-                            {totalPages > 1 && (
-                                <div className="company-page-pagination">
-                                    <button
-                                        className="company-page-pagination-btn company-page-pagination-prev"
-                                        onClick={() => handleReportsPageChange(currentPage - 1)}
-                                        disabled={currentPage=== 0}
-                                    >
-                                        Previous
-                                    </button>
-
-                                    <div className="company-page-page-numbers">
-                                        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                                            let pageNum;
-                                            if (totalPages <= 5) {
-                                                pageNum = i;
-                                            } else if (currentPage <= 2) {
-                                                pageNum = i;
-                                            } else if (currentPage >= totalPages - 3) {
-                                                pageNum = totalPages - 5 + i;
-                                            } else {
-                                                pageNum = currentPage - 2 + i;
-                                            }
-                                            return (
-                                                <button
-                                                    key={pageNum}
-                                                    className={`company-page-page-number ${currentPage === pageNum ? 'company-page-page-active' : ''}`}
-                                                    onClick={() => handleReportsPageChange(pageNum)}
-                                                >
-                                                    {pageNum + 1}
-                                                </button>
-                                            );
-                                        })}
-                                    </div>
-
-                                    <button
-                                        className="company-page-pagination-btn company-page-pagination-next"
-                                        onClick={() => handleReportsPageChange(currentPage + 1)}
-                                        disabled={currentPage === totalPages - 1}
-                                    >
-                                        Next
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    ) : (
-                        <div className="company-page-empty-state">
-                            <FaFileAlt className="company-page-empty-icon" />
-                            <p>No public reports available</p>
-                        </div>
-                    )}
+                        ) : (
+                            <p className="company-page-no-feedback">No feedbacks yet</p>
+                        )}
+                    </div>
                 </div>
-            </div>
 
-            <div className="company-page-feedbacks-section">
-                <h3>Customer Feedbacks</h3>
-                {usersFeedbacks && usersFeedbacks.length > 0 ? (
-                    <div className="company-page-feedbacks-list">
-                        {usersFeedbacks.map(feedback => (
-                            <div key={feedback.id} className="company-page-feedback-item">
-                                <div className="company-page-feedback-header">
-                                    <span className="company-page-feedback-rating">⭐ {feedback.rating}/5</span>
-                                    <span className="company-page-feedback-date">{feedback.createdAt}</span>
-                                </div>
-                                <p className="company-page-feedback-message">{feedback.message}</p>
-                                <div className="company-page-feedback-footer">
-                                    <span className="company-page-feedback-author">By: {feedback.reviewerEmail}</span>
-                                </div>
+                {/* Middle Section - Reports */}
+                <div className="company-page-middle-section">
+                    <div className="company-page-reports-section">
+                        <div className="company-page-reports-card">
+                            <div className="company-page-card-header">
+                                <FaFileAlt className="company-page-card-icon" />
+                                <h3>Reports</h3>
                             </div>
-                        ))}
-                    </div>
-                ) : (
-                    <p className="company-page-no-feedback">No feedbacks yet</p>
-                )}
-            </div>
 
-
-            <div className="company-page-buildings-section">
-                <h3>Managed Buildings</h3>
-                {usersBuildings && usersBuildings.length > 0 ? (
-                    <div className="company-page-buildings-list">
-                        {usersBuildings.map(building => (
-                            <div key={building.id} className="company-page-building-item">
-                                <h4 className="company-page-building-title">Building #{building.buildingNumber}</h4>
-                                <p className="company-page-building-address">{building.address}</p>
-                                <div className="company-page-building-info">
-                                <span className="company-page-building-apartments">
-                                    Apartments: {building.numberOfApartments}
-                                </span>
-                                </div>
+                            {/* Report Type Tabs */}
+                            <div className="company-page-report-tabs">
+                                <button
+                                    className={`company-page-tab-btn ${activeReportTab === 'public' ? 'company-page-tab-active' : ''}`}
+                                    onClick={() => setActiveReportTab('public')}
+                                >
+                                    Public Reports
+                                </button>
+                                <button
+                                    className={`company-page-tab-btn ${activeReportTab === 'private' ? 'company-page-tab-active' : ''}`}
+                                    onClick={() => setActiveReportTab('private')}
+                                >
+                                    Private Reports
+                                </button>
                             </div>
-                        ))}
+
+                            {/* Reports Content Area */}
+                            <div className="company-page-reports-content">
+                                {renderReportsList(currentReports)}
+                            </div>
+                        </div>
                     </div>
-                ) : (
-                    <p className="company-page-no-buildings">No buildings managed</p>
-                )}
+                </div>
+
+                {/* Right Sidebar - Accepted Reports & Buildings */}
+                <div className="company-page-right-sidebar">
+                    {/* Accepted Reports Section */}
+                    <div className="company-page-accepted-reports-section">
+                        <div className="company-page-accepted-reports-card">
+                            <div className="company-page-card-header">
+                                <FaFileAlt className="company-page-card-icon" />
+                                <h3>Accepted Reports</h3>
+                            </div>
+
+                            <div className="company-page-accepted-reports-content">
+                                {acceptedReports && acceptedReports.length > 0 ? (
+                                    <div className="company-page-accepted-reports-list">
+                                        {acceptedReports.map((report, index) => (
+                                            <div key={index} className="company-page-accepted-report-item">
+                                                <div className="company-page-accepted-report-header">
+                                                    <span className="company-page-report-type-icon">
+                                                        {reportTypeIcons[report.reportType] || "📋"}
+                                                    </span>
+                                                    <h4 className="company-page-accepted-report-title">{report.name}</h4>
+                                                </div>
+                                                <p className="company-page-accepted-report-description">
+                                                    {truncateText(report.issueDescription, 60)}
+                                                </p>
+                                                <div className="company-page-accepted-report-footer">
+                                                    <span className="company-page-footer-tag">
+                                                        By {report.senderName}
+                                                    </span>
+                                                    <span className="company-page-accepted-report-date">
+                                                        {report.createdAt
+                                                            ? new Date(report.createdAt).toLocaleDateString()
+                                                            : "Recently"}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="company-page-empty-state">
+                                        <FaFileAlt className="company-page-empty-icon" />
+                                        <p>No accepted reports</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Buildings Section */}
+                    <div className="company-page-buildings-section">
+                        <div className="company-page-buildings-card">
+                            <h3>Managed Buildings</h3>
+                            <div className="company-page-buildings-content">
+                                {usersBuildings && usersBuildings.length > 0 ? (
+                                    <div className="company-page-buildings-list">
+                                        {usersBuildings.map(building => (
+                                            <div key={building.id} className="company-page-building-item">
+                                                <h4 className="company-page-building-title">Building #{building.buildingNumber}</h4>
+                                                <p className="company-page-building-address">{building.address}</p>
+                                                <div className="company-page-building-info">
+                                                    <span className="company-page-building-apartments">
+                                                        Apartments: {building.numberOfApartments}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p className="company-page-no-buildings">No buildings managed</p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
-
 };
 
 export default CompanyPage;

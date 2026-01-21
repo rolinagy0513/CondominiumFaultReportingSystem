@@ -48,9 +48,9 @@ public class ReportController {
         return reportService.completeReport(reportId, companyId, cost);
     }
 
-    @GetMapping("/company/report/getAcceptedReports")
-    public CompletableFuture<List<ReportDTO>> getAcceptedReports(
-        @RequestParam Long companyId
+    @GetMapping("/company/report/getAcceptedReports/{companyId}")
+    public List<ReportDTO> getAcceptedReports(
+        @PathVariable Long companyId
     ){
         return reportService.getAcceptedReportsForCompany(companyId);
     }

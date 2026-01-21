@@ -1,6 +1,7 @@
 package org.example.condominiumfaultreportingsystem.report.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.condominiumfaultreportingsystem.DTO.*;
 import org.example.condominiumfaultreportingsystem.apartment.Apartment;
 import org.example.condominiumfaultreportingsystem.apartment.ApartmentRepository;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReportService implements IReportService{
@@ -202,6 +204,7 @@ public class ReportService implements IReportService{
 
         cacheService.evictAllPublicReportsByStatusCache();
         cacheService.evictAllPrivateReportsByStatusCache();
+        cacheService.evictPrivateReportsCache(companyId);
 
         return mapToDto(report);
 
@@ -257,10 +260,8 @@ public class ReportService implements IReportService{
                 .build();
 
     }
-
-    @Async("asyncExecutor")
     @Cacheable(value = "privateReports", key = "#companyId")
-    public CompletableFuture<List<ReportDTO>> getAcceptedReportsForCompany(Long companyId){
+    public List<ReportDTO> getAcceptedReportsForCompany(Long companyId){
 
         Optional<List<Report>> reportsOpt = reportRepository.getAllAcceptedReportsForCompany(companyId, ReportStatus.IN_PROGRESS);
 
@@ -269,9 +270,9 @@ public class ReportService implements IReportService{
         }
 
         List<Report> reports = reportsOpt.get();
-        List<ReportDTO> reportDTOS = reports.stream().map(this::mapToDto).toList();
 
-        return CompletableFuture.completedFuture(reportDTOS);
+        return reports.stream().map(this::mapToDto).toList();
+
     }
 
     @Async("asyncExecutor")

@@ -24,12 +24,21 @@ export const PaginationProvider = ({ children }) => {
     const [totalElements, setTotalElements] = useState(0);
     const pageSize = 10;
 
+    const [currentPrivatePage, setCurrentPrivatePage] = useState(0);
+    const [totalPrivatePage, setTotalPrivatePage] = useState(0);
+    const [totalPrivateElements, setTotalPrivateElements] = useState(0);
+    const privatePageSize = 10;
+
     return (
         <PaginationContext.Provider value={{
             currentPage, setCurrentPage,
             totalPages, setTotalPages,
             totalElements, setTotalElements,
-            pageSize
+            pageSize,
+            currentPrivatePage, setCurrentPrivatePage,
+             totalPrivatePage, setTotalPrivatePage,
+            totalPrivateElements, setTotalPrivateElements,
+            privatePageSize
         }}>
             {children}
         </PaginationContext.Provider>

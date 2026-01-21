@@ -24,11 +24,13 @@ export const useReports = () =>{
 
     const {
         setCurrentPage, setTotalPages,
-        setTotalElements
+        setTotalElements, setCurrentPrivatePage,
+        setTotalPrivatePage
     } = useContext(PaginationContext);
 
     const{
-        companyGroupId,setPrivateReports
+        companyGroupId,setPrivateReports,
+        setAcceptedReports
     } = useContext(CompanyPageContext);
 
     const pageSize = 5;
@@ -129,9 +131,7 @@ export const useReports = () =>{
     }
 
     const getPrivateReportsForCompany = async (page = 0, companyId) =>{
-
         try {
-
             const params = new URLSearchParams({
                 companyId: companyId.toString(),
                 page: page.toString(),
@@ -142,23 +142,19 @@ export const useReports = () =>{
 
             const response = await apiServices.get(`api/company/report/getAllPrivateSubmitted?${params.toString()}`);
 
-
             if (response && response.content) {
-                (setPrivateReports(response.content));
-                setCurrentPage(response.number);
-                setTotalPages(response.totalPages);
-                setTotalElements(response.totalElements);
+                setPrivateReports(response.content);
+                setCurrentPrivatePage(response.number);
+                setTotalPrivatePage(response.totalPages);
             } else {
                 setPrivateReports([]);
-                setCurrentPage(0);
-                setTotalPages(0);
-                setTotalElements(0);
+                setCurrentPrivatePage(0);
+                setTotalPrivatePage(0);
             }
 
         }catch (error){
             console.error(error.message);
         }
-
     }
 
     const acceptReport = async ( reportId, companyId) =>{
@@ -182,6 +178,17 @@ export const useReports = () =>{
 
     }
 
-    return{ getAllPublicReports, sendPublicReport, sendPrivateReport, getInProgressReport, getCompletedReportsForUser, getPrivateReportsForCompany, acceptReport}
+    const getAcceptedReportsForCompany = async (companyId) =>{
+
+        try {
+            const response = await apiServices.get(`api/company/report/getAcceptedReports/${companyId}`)
+            setAcceptedReports(response);
+        }catch (error){
+            console.error(error.message);
+        }
+
+    }
+
+    return{ getAllPublicReports, sendPublicReport, sendPrivateReport, getInProgressReport, getCompletedReportsForUser, getPrivateReportsForCompany, acceptReport, getAcceptedReportsForCompany}
 
 }

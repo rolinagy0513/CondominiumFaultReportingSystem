@@ -12,7 +12,7 @@ public interface IReportService {
     ReportDTO sendPrivateReport(Long companyId, ReportRequestDTO reportRequestDTO);
     ReportDTO acceptReport(Long reportId, Long companyId);
     CompleteReportDTO completeReport(Long reportId, Long companyId, Double cost);
-    CompletableFuture<List<ReportDTO>> getAcceptedReportsForCompany(Long companyId);
+    List<ReportDTO> getAcceptedReportsForCompany(Long companyId);
     CompletableFuture<Page<ReportDTO>> getAllPublicSubmittedReportsInGroup(Long groupId, Integer page, Integer size, String sortBy, String direction);
     CompletableFuture<Page<ReportDTO>> getAllPrivateSubmittedReportsForCompany(Long companyId, Integer page, Integer size, String sortBy, String direction);
     List<ReportWithCompanyDTO> getInProgressReport();

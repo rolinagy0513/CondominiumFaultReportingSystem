@@ -38,6 +38,8 @@ export const CompanyPageProvider = ({children}) => {
     const [usersFeedbacks, setUsersFeedbacks] = useState([]);
     const [usersBuildings, setUsersBuildings] = useState([]);
     const [privateReports, setPrivateReports] = useState([]);
+    const [acceptedReports, setAcceptedReports] = useState([]);
+
 
     useEffect(() => {
         console.log('🔄 [COMPANY_CONTEXT] authenticatedCompanyUserId changed to:', authenticatedCompanyUserId);
@@ -102,7 +104,7 @@ export const CompanyPageProvider = ({children}) => {
             localStorage.getItem("companyGroupId"));
     }, [companyGroupId]);
 
-    // Sync companyGroupIdentifier with localStorage
+
     useEffect(() => {
         console.log('🔄 [COMPANY_CONTEXT] companyGroupIdentifier changed to:', companyGroupIdentifier);
 
@@ -118,7 +120,6 @@ export const CompanyPageProvider = ({children}) => {
             localStorage.getItem("authenticatedCompanyGroupIdentifier"));
     }, [companyGroupIdentifier]);
 
-    // Log complete context state for debugging
     useEffect(() => {
         console.log('📊 [COMPANY_CONTEXT] Complete Context State:', {
             authenticatedCompanyUserId,
@@ -147,7 +148,8 @@ export const CompanyPageProvider = ({children}) => {
                 authenticatedCompanyUserName, setAuthenticatedCompanyUserName,
                 companyGroupId, setCompanyGroupId,
                 companyGroupIdentifier, setCompanyGroupIdentifier,
-                privateReports, setPrivateReports
+                privateReports, setPrivateReports,
+                acceptedReports, setAcceptedReports
             }
         }>
             {children}
