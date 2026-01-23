@@ -1,10 +1,7 @@
 package org.example.condominiumfaultreportingsystem.company;
 
 import lombok.RequiredArgsConstructor;
-import org.example.condominiumfaultreportingsystem.DTO.CompanyDTO;
-import org.example.condominiumfaultreportingsystem.DTO.CompanyWithFeedbacksDTO;
-import org.example.condominiumfaultreportingsystem.DTO.EditCompanyDataDTO;
-import org.example.condominiumfaultreportingsystem.DTO.RemovalDTO;
+import org.example.condominiumfaultreportingsystem.DTO.*;
 import org.example.condominiumfaultreportingsystem.company.impl.CompanyService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +19,14 @@ import java.util.concurrent.CompletableFuture;
 public class CompanyController {
 
     private final CompanyService companyService;
+
+    @PostMapping("/admin/company/addCompany")
+    public CompanyDTO addCompany(
+            @RequestBody CompanyAddDTO addDTO
+            )
+    {
+        return companyService.addCompany(addDTO);
+    }
 
     @GetMapping("/admin/company/getAll")
     public CompletableFuture<Page<CompanyDTO>> getAllCompanies(

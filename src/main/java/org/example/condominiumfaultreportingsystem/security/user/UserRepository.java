@@ -2,6 +2,8 @@ package org.example.condominiumfaultreportingsystem.security.user;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.example.condominiumfaultreportingsystem.company.Company;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,4 +22,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
   List<User> findAllByIdNot(Long id);
 
     boolean existsByEmail(String email);
+
+  Long company(Company company);
 }

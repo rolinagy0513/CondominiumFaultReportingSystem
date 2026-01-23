@@ -31,6 +31,7 @@ export const AdminModalProvider = ({ children }) => {
     const[modalButtonText, setModalButtonText] = useState("");
     const[modalTitleText, setModalTitleText] = useState("");
     const[removalType, setRemovalType] = useState("");
+    const[addCompanyModalOpen, setAddCompanyModalOpen] = useState(false);
 
 
     return (
@@ -44,7 +45,8 @@ export const AdminModalProvider = ({ children }) => {
             modalText, setModalText,
             removalType, setRemovalType,
             modalButtonText, setModalButtonText,
-            modalTitleText, setModalTitleText
+            modalTitleText, setModalTitleText,
+            addCompanyModalOpen, setAddCompanyModalOpen
         }}>
             {children}
         </AdminModalContext.Provider>

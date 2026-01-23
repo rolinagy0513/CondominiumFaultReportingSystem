@@ -1,5 +1,7 @@
 package org.example.condominiumfaultreportingsystem.DTO;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +16,7 @@ public class UserWithRoleDTO {
 
     private Long id;
     private String userName;
+
     private Role role;
 
 }

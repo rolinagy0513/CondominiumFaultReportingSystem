@@ -1,6 +1,7 @@
 package org.example.condominiumfaultreportingsystem.company.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.condominiumfaultreportingsystem.DTO.*;
 import org.example.condominiumfaultreportingsystem.building.Building;
 import org.example.condominiumfaultreportingsystem.building.BuildingRepository;
@@ -9,6 +10,8 @@ import org.example.condominiumfaultreportingsystem.company.Company;
 import org.example.condominiumfaultreportingsystem.company.CompanyRepository;
 import org.example.condominiumfaultreportingsystem.company.ICompanyService;
 import org.example.condominiumfaultreportingsystem.company.ServiceType;
+import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyArrivedEvent;
+import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyRequestAcceptedEvent;
 import org.example.condominiumfaultreportingsystem.exception.*;
 import org.example.condominiumfaultreportingsystem.feedback.Feedback;
 import org.example.condominiumfaultreportingsystem.group.impl.GroupService;
@@ -17,6 +20,7 @@ import org.example.condominiumfaultreportingsystem.security.user.User;
 import org.example.condominiumfaultreportingsystem.security.user.UserRepository;
 import org.example.condominiumfaultreportingsystem.security.user.UserService;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +35,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CompanyService implements ICompanyService {
@@ -42,6 +47,55 @@ public class CompanyService implements ICompanyService {
     private final UserService userService;
     private final GroupService groupService;
     private final CacheService cacheService;
+
+    private final ApplicationEventPublisher eventPublisher;
+
+    @Transactional
+    public CompanyDTO addCompany(CompanyAddDTO addDTO){
+
+        UserWithRoleDTO currentUser = userService.getCurrentUserWithRole();
+
+        User requesterUser = userRepository.findByEmail(addDTO.getUserToAddEmail())
+                .orElseThrow(()-> new UserNotFoundException(addDTO.getUserToAddEmail()));
+
+        Building building = buildingRepository.findById(addDTO.getBuildingId())
+                .orElseThrow(()-> new BuildingIsNotFoundException(addDTO.getBuildingId()));
+
+        userService.promoteUserToCompany(currentUser.getId(), requesterUser.getId());
+
+        Company newCompany = Company.builder()
+                .name(addDTO.getName())
+                .email(addDTO.getEmail())
+                .phoneNumber(addDTO.getPhoneNumber())
+                .address(addDTO.getAddress())
+                .companyIntroduction(addDTO.getIntroduction())
+                .serviceType(addDTO.getServiceType())
+                .buildings(new ArrayList<>())
+                .user(requesterUser)
+                .build();
+
+        companyRepository.save(newCompany);
+
+        building.getCompanies().add(newCompany);
+        buildingRepository.save(building);
+
+        Long buildingId = building.getId();
+        ServiceType serviceType = newCompany.getServiceType();
+
+        cacheService.evictCompanyByBuildingCache(buildingId);
+        cacheService.evictCompanyByServiceTypeCache();
+        cacheService.evictCompanyByBuildingIdAndServiceTypeCache(buildingId, serviceType);
+        cacheService.evictAllCompaniesCache();
+
+        GroupDTO companyGroup = groupService.addUserToGroup(building.getBuildingNumber(), building.getAddress(), requesterUser, null);
+
+        eventPublisher.publishEvent(
+             new CompanyArrivedEvent(newCompany, companyGroup)
+        );
+
+        return mapToDto(newCompany);
+
+    }
 
     @Async("asyncExecutor")
     @Cacheable(value = "allCompanies")

@@ -82,6 +82,7 @@ public class ReportService implements IReportService{
                 .reportType(reportRequestDTO.getReportType())
                 .createdAt(LocalDateTime.now())
                 .companyId(null)
+                .companyName("")
                 .group(group)
                 .user(user)
                 .build();
@@ -137,6 +138,7 @@ public class ReportService implements IReportService{
                 .reportType(reportRequestDTO.getReportType())
                 .createdAt(LocalDateTime.now())
                 .companyId(companyId)
+                .companyName(company.getName())
                 .group(group)
                 .user(user)
                 .build();
@@ -184,11 +186,14 @@ public class ReportService implements IReportService{
         }
 
         if (report.getReportPrivacy() == ReportPrivacy.PUBLIC){
+
             if (report.getCompanyId() != null) {
                 throw new ReportAlreadyAcceptedException();
             }
+
             report.setCompanyId(companyId);
             report.setCompanyName(company.getName());
+
         } else {
             if (!report.getCompanyId().equals(companyId)){
                 throw new RoleValidationException("This private report belongs to another company");

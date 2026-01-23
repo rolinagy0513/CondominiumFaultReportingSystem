@@ -6,6 +6,7 @@ import {getServiceTypeDisplay} from "../../../utility/GetCompanyLogoUtility.jsx"
 import {CompanyContext} from "../../../context/admin/CompanyContext.jsx";
 
 import "./component-styles/CompaniesContent.css"
+import {AdminModalContext} from "../../../context/admin/AdminModalContext.jsx";
 
 const CompaniesContent = ({
                               handleBackToBuildings, companies,
@@ -17,6 +18,8 @@ const CompaniesContent = ({
                           }) =>{
 
     const {selectedServiceType, setSelectedServiceType} = useContext(CompanyContext);
+
+    const {setAddCompanyModalOpen} = useContext(AdminModalContext);
 
     const serviceTypes = [
         { value: "ALL", label: "All Services" },
@@ -80,6 +83,10 @@ const CompaniesContent = ({
                     Showing {companies.length > 0 ? (companiesCurrentPage * pageSize + 1) : 0} - {Math.min((companiesCurrentPage + 1) * pageSize, companiesTotalElements)} of {companiesTotalElements} companies
                 </p>
             </div>
+
+             <div className="companies-content-manual-button-container">
+                 <button className="companies-content-manual-button" onClick={()=> setAddCompanyModalOpen(true)}>Add a company manually</button>
+             </div>
 
             {loadingCompanies ? (
                 <div className="loading">Loading companies...</div>

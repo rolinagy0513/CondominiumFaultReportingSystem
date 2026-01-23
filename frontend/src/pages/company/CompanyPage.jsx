@@ -1,17 +1,33 @@
 import {useContext, useEffect, useRef, useState} from "react";
+import {useNavigate} from "react-router-dom";
+
 import { FaFileAlt } from "react-icons/fa";
+import {IoLogOut} from "react-icons/io5";
+
 import { useCompanies } from "../../hooks/useCompanies.js";
 import { useFeedback } from "../../hooks/useFeedback.js";
 import {useBuildings} from "../../hooks/useBuildings.js";
 import {useReports} from "../../hooks/useReports.js";
+
+import {getServiceTypeDisplay} from "../../utility/GetCompanyLogoUtility.jsx";
+
 import { CompanyPageContext } from "../../context/company/CompanyPageContext.jsx";
 import {ResidentReportContext} from "../../context/resident/ResidentReportContext.jsx";
 import {PaginationContext} from "../../context/general/PaginationContext.jsx";
+
 import websocketServices from "../../services/WebsocketServices.js";
+import apiServices from "../../services/ApiServices.js";
+
 import "./style/CompanyPage.css"
 
 const CompanyPage = () => {
+
+    const navigate = useNavigate();
+
     const SOCK_URL = import.meta.env.VITE_API_WEBSOCKET_BASE_URL;
+
+    const AUTH_API_PATH = import.meta.env.VITE_API_BASE_AUTH_URL;
+    const LOGOUT_URL = `${AUTH_API_PATH}/logout`;
 
     const {
         usersCompany, usersFeedbacks, usersBuildings,
@@ -71,10 +87,23 @@ const CompanyPage = () => {
         getPrivateReportsForCompany(newPage, companyId);
     };
 
-    const { getMyCompany } = useCompanies();
-    const { getFeedbacksForCompany } = useFeedback();
-    const { getBuildingsByCompanyId } = useBuildings();
-    const { getAllPublicReports, getPrivateReportsForCompany, acceptReport, getAcceptedReportsForCompany} = useReports()
+    const {
+        getMyCompany
+    } = useCompanies();
+
+    const {
+        getFeedbacksForCompany
+    } = useFeedback();
+
+    const {
+        getBuildingsByCompanyId
+    } = useBuildings();
+
+    const {
+        getAllPublicReports, getPrivateReportsForCompany,
+        acceptReport, getAcceptedReportsForCompany,
+        completeReport,
+    } = useReports()
 
     useEffect(() => {
         getMyCompany();
@@ -207,6 +236,39 @@ const CompanyPage = () => {
         );
     };
 
+
+    const handleLogout = async () => {
+        try {
+            if (subscriptionRef.current) {
+                subscriptionRef.current.unsubscribe();
+                subscriptionRef.current = null;
+            }
+            if (removalSubscriptionRef.current) {
+                removalSubscriptionRef.current.unsubscribe();
+                removalSubscriptionRef.current = null;
+            }
+            if (notificationSubscriptionRef.current) {
+                notificationSubscriptionRef.current.unsubscribe();
+                notificationSubscriptionRef.current = null;
+            }
+
+            websocketServices.disconnect();
+
+            await apiServices.post(LOGOUT_URL);
+
+            localStorage.removeItem("authenticatedCompanyUserId");
+            localStorage.removeItem("companyId");
+            localStorage.removeItem("authenticatedCompanyUserName");
+            localStorage.removeItem("companyGroupId");
+            localStorage.removeItem("authenticatedCompanyGroupIdentifier");
+
+            navigate("/");
+
+        } catch (error) {
+            console.error(error.message);
+        }
+    };
+
     const renderReportsList = (reports) => {
         if (!reports || reports.length === 0) {
             return (
@@ -216,6 +278,7 @@ const CompanyPage = () => {
                 </div>
             );
         }
+
 
         return (
             <>
@@ -294,7 +357,27 @@ const CompanyPage = () => {
         <div className="company-page-container">
             {/* Header */}
             <header className="company-page-header">
-                <h1 className="company-page-title">Company Dashboard</h1>
+                {/* Left side - Company Name */}
+                <div className="company-page-header-left">
+                    <h2>Company Dashboard</h2>
+                    <p className="company-page-company-tagline"> Welcome back, {usersCompany.name}</p>
+                </div>
+
+                {/* Middle - Dashboard Title */}
+                <div className="company-page-header-middle">
+                    <h1 className="company-page-title">
+                        HomeLink
+                        <span className="company-page-title-icon">🏢</span>
+                    </h1>
+                </div>
+
+                {/* Right side - Actions */}
+                <div className="company-page-header-right">
+                    <button className="company-page-header-action-btn company-page-logout-btn" onClick={handleLogout}>
+                        <span className="company-page-header-icon"></span>
+                        Logout  <IoLogOut className="resident-page-header-icon" />
+                    </button>
+                </div>
             </header>
 
             <div className="company-page-layout">
@@ -322,11 +405,11 @@ const CompanyPage = () => {
                             </div>
                             <div className="company-page-info-item">
                                 <span className="company-page-info-label">Service Type:</span>
-                                <span className="company-page-info-value">{usersCompany.serviceType}</span>
+                                <span className="company-page-info-value">{getServiceTypeDisplay(usersCompany.serviceType)}</span>
                             </div>
                             <div className="company-page-info-item">
-                                <span className="company-page-info-label">Rating:</span>
-                                <span className="company-page-info-value">{usersCompany.overallRating}</span>
+                                <span className="company-page-info-label">Overall Rating:</span>
+                                <span className="company-page-info-value">{usersCompany.overallRating}⭐</span>
                             </div>
                         </div>
                         <div className="company-page-description">
@@ -344,7 +427,14 @@ const CompanyPage = () => {
                                     <div key={feedback.id} className="company-page-feedback-item">
                                         <div className="company-page-feedback-header">
                                             <span className="company-page-feedback-rating">⭐ {feedback.rating}/5</span>
-                                            <span className="company-page-feedback-date">{feedback.createdAt}</span>
+                                            {/*<span className="company-page-feedback-date">{feedback.createdAt}</span>*/}
+                                            <span className="company-page-feedback-date">
+                                              {feedback.createdAt ? new Date(feedback.createdAt).toLocaleDateString('en-US', {
+                                                  year: 'numeric',
+                                                  month: 'short',
+                                                  day: 'numeric'
+                                              }) : 'N/A'}
+                                            </span>
                                         </div>
                                         <p className="company-page-feedback-message">{feedback.message}</p>
                                         <div className="company-page-feedback-footer">
@@ -374,13 +464,13 @@ const CompanyPage = () => {
                                     className={`company-page-tab-btn ${activeReportTab === 'public' ? 'company-page-tab-active' : ''}`}
                                     onClick={() => setActiveReportTab('public')}
                                 >
-                                    Public Reports
+                                    Public Reports in the Building
                                 </button>
                                 <button
                                     className={`company-page-tab-btn ${activeReportTab === 'private' ? 'company-page-tab-active' : ''}`}
                                     onClick={() => setActiveReportTab('private')}
                                 >
-                                    Private Reports
+                                    My Private Reports
                                 </button>
                             </div>
 
@@ -403,38 +493,49 @@ const CompanyPage = () => {
                             </div>
 
                             <div className="company-page-accepted-reports-content">
-                                {acceptedReports && acceptedReports.length > 0 ? (
-                                    <div className="company-page-accepted-reports-list">
-                                        {acceptedReports.map((report, index) => (
-                                            <div key={index} className="company-page-accepted-report-item">
-                                                <div className="company-page-accepted-report-header">
-                                                    <span className="company-page-report-type-icon">
-                                                        {reportTypeIcons[report.reportType] || "📋"}
-                                                    </span>
-                                                    <h4 className="company-page-accepted-report-title">{report.name}</h4>
-                                                </div>
-                                                <p className="company-page-accepted-report-description">
-                                                    {truncateText(report.issueDescription, 60)}
-                                                </p>
-                                                <div className="company-page-accepted-report-footer">
-                                                    <span className="company-page-footer-tag">
-                                                        By {report.senderName}
-                                                    </span>
-                                                    <span className="company-page-accepted-report-date">
-                                                        {report.createdAt
-                                                            ? new Date(report.createdAt).toLocaleDateString()
-                                                            : "Recently"}
-                                                    </span>
-                                                </div>
+                                {acceptedReports.map((report, index) => (
+                                    <div key={index} className="company-page-accepted-report-item">
+                                        <div className="company-page-accepted-report-header">
+                                              <span className="company-page-report-type-icon">
+                                                {reportTypeIcons[report.reportType] || "📋"}
+                                              </span>
+                                                <h4 className="company-page-accepted-report-title">{report.name}</h4>
+                                        </div>
+
+                                        <div className="company-page-accepted-report-meta">
+                                              <span className="company-page-accepted-report-type">
+                                                <span className="company-page-accepted-report-type-icon">
+                                                  {reportTypeIcons[report.reportType] || "📋"}
+                                                </span>
+                                                  {report.reportType}
+                                                </span>
+                                            <p className="company-page-accepted-report-description">
+                                                {truncateText(report.issueDescription, 60)}
+                                            </p>
+                                        </div>
+
+                                        <div className="company-page-accepted-report-footer">
+                                            <div>
+                                                <span className="company-page-footer-tag">
+                                                  By {report.senderName}
+                                                </span>
                                             </div>
-                                        ))}
+
+                                            <span className="company-page-accepted-report-date">
+                                                {report.createdAt
+                                                    ? new Date(report.createdAt).toLocaleDateString()
+                                                    : "Recently"}
+                                            </span>
+
+                                            <button
+                                                className="company-page-complete-btn"
+                                                onClick={() => completeReport(report.reportId, companyId, 10)}
+                                            >
+                                                Complete Report
+                                            </button>
+                                        </div>
                                     </div>
-                                ) : (
-                                    <div className="company-page-empty-state">
-                                        <FaFileAlt className="company-page-empty-icon" />
-                                        <p>No accepted reports</p>
-                                    </div>
-                                )}
+                                ))}
                             </div>
                         </div>
                     </div>

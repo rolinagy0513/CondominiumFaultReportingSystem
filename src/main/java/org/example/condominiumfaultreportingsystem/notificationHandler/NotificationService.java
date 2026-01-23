@@ -24,6 +24,21 @@ public class NotificationService {
 
     private final SimpMessagingTemplate messagingTemplate;
 
+    public void sendCompanyArrivedNotification(Company company, GroupDTO companyGroup){
+        log.info("METHOD: sendCompanyArrivedNotification");
+
+        WelcomeCompanyNotification welcomeNotification = WelcomeCompanyNotification.builder()
+                .companyName(company.getName())
+                .serviceType(company.getServiceType())
+                .message("A new company has joined check out their services")
+                .type(NotificationType.WELCOME)
+                .build();
+
+        String groupDestination = companyGroup.getGroupName();
+        messagingTemplate.convertAndSend("/topic/group/" + groupDestination, welcomeNotification);
+        log.info("METHOD: sendCompanyArrivedNotification | SENT WELCOME notification to group={}", groupDestination);
+    }
+
     public void sendCompanyRequestAcceptedNotification(CompanyRequest companyRequest, GroupDTO companyGroup) {
         log.info("METHOD: sendCompanyRequestAcceptedNotification | Preparing ACCEPTED company request notification for requesterId={}",
                 companyRequest.getRequesterId());

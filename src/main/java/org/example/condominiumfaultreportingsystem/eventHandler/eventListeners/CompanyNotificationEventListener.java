@@ -2,6 +2,7 @@ package org.example.condominiumfaultreportingsystem.eventHandler.eventListeners;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyArrivedEvent;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyRemovedEvent;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyRequestAcceptedEvent;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyRequestRejectedEvent;
@@ -44,6 +45,16 @@ public class CompanyNotificationEventListener {
         } catch (Exception e) {
             log.error("Failed to send removal notification for company {}",
                     event.getCompany().getName(), e);
+        }
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handleCompanyArrivedEvent(CompanyArrivedEvent event){
+        try{
+            notificationService.sendCompanyArrivedNotification(event.getCompany(), event.getGroup());
+        }catch (Exception e){
+            log.error("Failed to send arrival notification for group {}",
+                    event.getGroup().getGroupId());
         }
     }
 

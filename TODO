@@ -1,5 +1,5 @@
- - Copmplete reports
- - Foglalkozni a company page UI-al mert okádék
+ - Manual company adding az Admin-Panel-on (A method call a frontend-en)
+ - Ha private a report a resident page-en akkor automatikusan adja be a servcie-type-ot.
 
  - A design-ra van ötlet a deepseek-en
 

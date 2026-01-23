@@ -7,19 +7,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.condominiumfaultreportingsystem.company.ServiceType;
-import org.example.condominiumfaultreportingsystem.companyRequest.CompanyRequestStatus;
-
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CompanyRequestInfoDTO {
+public class CompanyAddDTO {
 
-    private Long requestId;
-    private Long requesterId;
-    private String requesterName;
+    private String userToAddEmail;
 
     private Long buildingId;
     private String buildingAddress;
@@ -33,8 +28,5 @@ public class CompanyRequestInfoDTO {
 
     @Enumerated(EnumType.STRING)
     private ServiceType serviceType;
-
-    private CompanyRequestStatus status;
-    private LocalDateTime createdAt;
 
 }

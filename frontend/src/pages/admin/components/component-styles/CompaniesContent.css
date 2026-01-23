@@ -1,4 +1,111 @@
 /* CompaniesContent.css */
+
+/* Manual Add Company Button*/
+
+.companies-content-manual-button-container{
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px;
+}
+
+.companies-content-manual-button {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(26, 54, 93, 0.2);
+    letter-spacing: 0.3px;
+}
+
+.companies-content-manual-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+    );
+    transition: left 0.6s ease;
+}
+
+.companies-content-manual-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(26, 54, 93, 0.35);
+    background: linear-gradient(135deg, #2c5282 0%, #1a365d 100%);
+}
+
+.companies-content-manual-button:hover::before {
+    left: 100%;
+}
+
+.companies-content-manual-button:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(26, 54, 93, 0.25);
+}
+
+.companies-content-manual-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.3),
+    0 4px 12px rgba(26, 54, 93, 0.2);
+}
+
+.companies-content-manual-button::after {
+    content: '+';
+    font-size: 18px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    margin-left: 4px;
+}
+
+/* Add disabled state if needed */
+.companies-content-manual-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 2px 6px rgba(26, 54, 93, 0.15);
+}
+
+.companies-content-manual-button:disabled:hover {
+    transform: none;
+    box-shadow: 0 2px 6px rgba(26, 54, 93, 0.15);
+    background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .companies-content-manual-button {
+        padding: 14px 20px;
+        font-size: 15px;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .companies-content-manual-button:hover {
+        transform: translateY(-1px);
+    }
+}
+
 .companies-content {
     background: white;
     border-radius: 12px;

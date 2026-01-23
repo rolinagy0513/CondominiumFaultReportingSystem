@@ -1,9 +1,6 @@
 package org.example.condominiumfaultreportingsystem.company;
 
-import org.example.condominiumfaultreportingsystem.DTO.CompanyDTO;
-import org.example.condominiumfaultreportingsystem.DTO.CompanyWithFeedbacksDTO;
-import org.example.condominiumfaultreportingsystem.DTO.EditCompanyDataDTO;
-import org.example.condominiumfaultreportingsystem.DTO.RemovalDTO;
+import org.example.condominiumfaultreportingsystem.DTO.*;
 import org.springframework.data.domain.Page;
 
 import java.security.Principal;
@@ -11,7 +8,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public interface ICompanyService {
-
+    CompanyDTO addCompany(CompanyAddDTO addDTO);
     CompletableFuture<Page<CompanyDTO>> getAllCompanies(Integer page, Integer size, String sortBy, String direction);
     CompanyWithFeedbacksDTO getCompanyById(Long companyId);
     CompanyDTO getMyCompany();

@@ -1,4 +1,14 @@
 /* Modal Styles */
+
+/* Admin-Panel-AddCompanyModal */
+.company-modal-hint {
+    display: block;
+    margin-top: 4px;
+    color: #64748b;
+    font-size: 12px;
+    font-style: italic;
+}
+
 .resident-page-modal-overlay {
     position: fixed;
     top: 0;

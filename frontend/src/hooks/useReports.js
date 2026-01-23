@@ -189,6 +189,29 @@ export const useReports = () =>{
 
     }
 
-    return{ getAllPublicReports, sendPublicReport, sendPrivateReport, getInProgressReport, getCompletedReportsForUser, getPrivateReportsForCompany, acceptReport, getAcceptedReportsForCompany}
+    const completeReport = async (reportId, companyId, cost) =>{
+
+            const params = new URLSearchParams({
+                reportId: reportId.toString(),
+                companyId: companyId.toString(),
+                cost: cost.toString(),
+            });
+
+        try {
+            const response = await apiServices.put(`api/company/report/completeReport?${params.toString()}`)
+            alert("Report has been completed")
+        }catch (error){
+            console.error(error.message);
+        }
+
+    }
+
+    return{
+        getAllPublicReports, sendPublicReport,
+        sendPrivateReport, getInProgressReport
+        , getCompletedReportsForUser, getPrivateReportsForCompany,
+        acceptReport, getAcceptedReportsForCompany,
+        completeReport
+    }
 
 }

@@ -30,6 +30,7 @@ import {useNotifications} from "../../hooks/useNotifications.js";
 import {useExcelOperations} from "../../hooks/useExcelOperations.js";
 
 import "./styles/AdminPanel.css";
+import AddCompanyModal from "./components/AddCompanyModal.jsx";
 
 const AdminPanel = () => {
 
@@ -79,7 +80,8 @@ const AdminPanel = () => {
         modalText, setModalText,
         removalType, setRemovalType,
         modalButtonText, setModalButtonText,
-        modalTitleText, setModalTitleText
+        modalTitleText, setModalTitleText,
+        addCompanyModalOpen
     } = useContext(AdminModalContext);
 
     const {
@@ -319,6 +321,10 @@ const AdminPanel = () => {
                         buttonText={modalButtonText}
                         titleText={modalTitleText}
                     />
+                )}
+
+                {addCompanyModalOpen && (
+                    <AddCompanyModal/>
                 )}
 
             </div>
