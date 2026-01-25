@@ -1,12 +1,12 @@
 import {useContext, useEffect, useState} from "react";
 
-import {ResidentNotificationContext} from "../../../context/resident/ResidentNotificationContext.jsx";
+import {ResidentNotificationContext} from "../context/resident/ResidentNotificationContext.jsx";
 
-import"./components-styles/CompanyRemovalNotification.css"
+import"./styles/CompanyRemovalNotification.css"
 
-const CompanyRemovalNotification = () => {
+const CompanyRemovalNotification = ({notificationMessage, setIsCompanyRemovalNotificationOpen}) => {
 
-    const {notificationMessage, setIsCompanyRemovalNotificationOpen} = useContext(ResidentNotificationContext);
+    // const {notificationMessage, setIsCompanyRemovalNotificationOpen} = useContext(ResidentNotificationContext);
 
     console.log(notificationMessage);
 

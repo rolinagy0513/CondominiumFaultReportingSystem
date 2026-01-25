@@ -2,21 +2,31 @@ import {useContext, useState} from "react";
 import {AdminModalContext} from "../../../context/admin/AdminModalContext.jsx";
 import {BuildingContext} from "../../../context/admin/BuildingContext.jsx";
 
+import {useCompanies} from "../../../hooks/useCompanies.js";
+
 import "../../resident/components/components-styles/ReportModal.css"
+import {AdminPanelContext} from "../../../context/admin/AdminPanelContext.jsx";
 
 const AddCompanyModal = () => {
+
     const {addCompanyModalOpen, setAddCompanyModalOpen} = useContext(AdminModalContext);
     const {buildings} = useContext(BuildingContext);
+    const {setCurrentView} = useContext(AdminPanelContext);
+
+    const {addCompany} = useCompanies()
 
     const [formData, setFormData] = useState({
+        userToAddEmail: '',
+        buildingId: '',
+        buildingAddress: '',
+        buildingNumber: '',
         name: '',
         email: '',
         phoneNumber: '',
         address: '',
         introduction: '',
         serviceType: '',
-        buildingId: '',
-        userToAddEmail: ''
+
     });
 
     const handleFormChange = (e) => {
@@ -29,10 +39,12 @@ const AddCompanyModal = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // You'll need to implement the actual submission logic
+
+        addCompany(formData);
+
         console.log("Form submitted:", formData);
-        // Call your API service to add company
         setAddCompanyModalOpen(false);
+        setCurrentView("buildings");
     };
 
     if (!addCompanyModalOpen) return null;
@@ -64,7 +76,7 @@ const AddCompanyModal = () => {
                             />
                         </div>
                         <div className="resident-page-form-group">
-                            <label>Email *</label>
+                            <label>Contact Email *</label>
                             <input
                                 type="email"
                                 name="email"
@@ -140,7 +152,7 @@ const AddCompanyModal = () => {
                     </div>
 
                     <div className="resident-page-form-group">
-                        <label>User Email (to associate with company) *</label>
+                        <label>Registered User Email (to associate with company) *</label>
                         <input
                             type="email"
                             name="userToAddEmail"

@@ -27,8 +27,8 @@ import {ResidentNotificationContext} from "../../context/resident/ResidentNotifi
 
 import "./style/ResidentPage.css"
 import ReportStatusChangeNotification from "./components/ReportStatusChangeNotification.jsx";
-import WelcomeNotification from "./components/WelcomeNotification.jsx";
-import CompanyRemovalNotification from "./components/CompanyRemovalNotification.jsx";
+import WelcomeNotification from "../../shared-components/WelcomeNotification.jsx";
+import CompanyRemovalNotification from "../../shared-components/CompanyRemovalNotification.jsx";
 
 const ResidentPage = () => {
     const navigate = useNavigate();
@@ -412,11 +412,17 @@ const ResidentPage = () => {
             )}
 
             {isWelcomeNotificationOpen &&(
-                <WelcomeNotification/>
+                <WelcomeNotification
+                notificationMessage={notificationMessage}
+                setIsWelcomeNotificationOpen={setIsWelcomeNotificationOpen}
+                />
             )}
 
             {isCompanyRemovalNotificationOpen &&(
-                <CompanyRemovalNotification/>
+                <CompanyRemovalNotification
+                notificationMessage={notificationMessage}
+                setIsCompanyRemovalNotificationOpen={setIsCompanyRemovalNotificationOpen}
+                />
             )}
 
         </div>

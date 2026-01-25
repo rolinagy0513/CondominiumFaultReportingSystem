@@ -1,4 +1,6 @@
- - Manual company adding az Admin-Panel-on (A method call a frontend-en)
+ - Notifications a company page-en kell valami Ui a private report came-re meg a user removed from group mind a 2 oldalon (resident-company)
+ - AdminPanel (Ha kidobok egy user-t akkor refreshelje a apartment list-et hogy a legfrissebb adatok legyenek ott.)
+
  - Ha private a report a resident page-en akkor automatikusan adja be a servcie-type-ot.
 
  - A design-ra van ötlet a deepseek-en

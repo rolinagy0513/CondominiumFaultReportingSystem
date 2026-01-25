@@ -1,11 +1,10 @@
-import {useContext, useEffect, useState} from "react";
-import "./components-styles/WelcomeNotification.css"
-import {ResidentNotificationContext} from "../../../context/resident/ResidentNotificationContext.jsx";
+import {useEffect, useState} from "react";
 
-const WelcomeNotification = ({ message, onClose }) => {
+import "./styles/WelcomeNotification.css"
+
+const WelcomeNotification = ({ notificationMessage, setIsWelcomeNotificationOpen, onClose }) => {
+
     const [isVisible, setIsVisible] = useState(true);
-
-    const{setIsWelcomeNotificationOpen, notificationMessage} = useContext(ResidentNotificationContext);
 
     console.log(notificationMessage)
 

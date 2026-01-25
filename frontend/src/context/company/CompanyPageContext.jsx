@@ -40,6 +40,10 @@ export const CompanyPageProvider = ({children}) => {
     const [privateReports, setPrivateReports] = useState([]);
     const [acceptedReports, setAcceptedReports] = useState([]);
 
+    const [notificationMessage, setNotificationMessage] = useState([]);
+    const[isWelcomeNotificationOpen, setIsWelcomeNotificationOpen] = useState(false);
+    const[isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen] = useState(false);
+
 
     useEffect(() => {
         console.log('🔄 [COMPANY_CONTEXT] authenticatedCompanyUserId changed to:', authenticatedCompanyUserId);
@@ -149,7 +153,10 @@ export const CompanyPageProvider = ({children}) => {
                 companyGroupId, setCompanyGroupId,
                 companyGroupIdentifier, setCompanyGroupIdentifier,
                 privateReports, setPrivateReports,
-                acceptedReports, setAcceptedReports
+                acceptedReports, setAcceptedReports,
+                notificationMessage, setNotificationMessage,
+                isWelcomeNotificationOpen, setIsWelcomeNotificationOpen,
+                isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen
             }
         }>
             {children}

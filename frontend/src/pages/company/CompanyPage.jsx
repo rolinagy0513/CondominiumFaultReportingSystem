@@ -19,6 +19,9 @@ import websocketServices from "../../services/WebsocketServices.js";
 import apiServices from "../../services/ApiServices.js";
 
 import "./style/CompanyPage.css"
+import {ResidentNotificationContext} from "../../context/resident/ResidentNotificationContext.jsx";
+import WelcomeNotification from "../../shared-components/WelcomeNotification.jsx";
+import CompanyRemovalNotification from "../../shared-components/CompanyRemovalNotification.jsx";
 
 const CompanyPage = () => {
 
@@ -33,8 +36,12 @@ const CompanyPage = () => {
         usersCompany, usersFeedbacks, usersBuildings,
         authenticatedCompanyUserId,
         companyGroupIdentifier, companyId,
-        privateReports, acceptedReports
+        privateReports, acceptedReports,
+        isWelcomeNotificationOpen, setIsWelcomeNotificationOpen,
+        setNotificationMessage, notificationMessage,
+        isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen
     } = useContext(CompanyPageContext);
+
 
     const {
         publicReports
@@ -134,6 +141,7 @@ const CompanyPage = () => {
                     groupTopic,
                     (message) => {
                         console.log("📬 Received on group topic:", message);
+                        handleNotification(message)
                     }
                 );
 
@@ -145,7 +153,7 @@ const CompanyPage = () => {
                     }
                 );
 
-                const removalQueue = `/user/${authenticatedCompanyUserId}/queue/removal`;
+                const removalQueue = `/user/${companyId}/queue/removal`;
                 removalSubscriptionRef.current = websocketServices.subscribe(
                     removalQueue,
                     (message) => {
@@ -158,7 +166,7 @@ const CompanyPage = () => {
                     notificationQueue,
                     (message) => {
                         console.log("📬 Company notification:", message);
-                        // handleNotification(message);
+                        handleNotification(message);
                     }
                 );
             },
@@ -175,6 +183,41 @@ const CompanyPage = () => {
             websocketServices.disconnect();
         };
     }, [companyGroupIdentifier, authenticatedCompanyUserId]);
+
+    const handleNotification = (notification) => {
+        console.log("📬 Company received notification:", notification);
+
+        switch (notification.type) {
+
+            case "WELCOME":
+                setNotificationMessage(notification.message);
+                setIsWelcomeNotificationOpen(true)
+                break;
+
+            case "COMPANY_REMOVAL":
+                setNotificationMessage(notification.message);
+                setIsCompanyRemovalNotificationOpen(true)
+                break;
+
+            case "USER_REMOVAL":
+                alert(`${notification.message} For further information contact the admin`);
+                handleLogout();
+                break;
+
+            case "PRIVATE_REPORT_CAME":
+                alert("New private report has came")
+                getPrivateReportsForCompany(0, companyId);
+                break;
+
+            case "USER_REMOVAL_GROUP":
+                alert("The message: " + notification.message)
+                getAllPublicReports(currentPage);
+                break;
+
+            default:
+                console.warn("Unknown notification type:", notification.type);
+        }
+    };
 
     if (!usersCompany) {
         return <p>Loading...</p>;
@@ -388,11 +431,7 @@ const CompanyPage = () => {
                         <h2 className="company-page-company-name">{usersCompany.name}</h2>
                         <div className="company-page-info-grid">
                             <div className="company-page-info-item">
-                                <span className="company-page-info-label">Company ID:</span>
-                                <span className="company-page-info-value">{usersCompany.id}</span>
-                            </div>
-                            <div className="company-page-info-item">
-                                <span className="company-page-info-label">Email:</span>
+                                <span className="company-page-info-label">Contact Email:</span>
                                 <span className="company-page-info-value">{usersCompany.email}</span>
                             </div>
                             <div className="company-page-info-item">
@@ -409,7 +448,8 @@ const CompanyPage = () => {
                             </div>
                             <div className="company-page-info-item">
                                 <span className="company-page-info-label">Overall Rating:</span>
-                                <span className="company-page-info-value">{usersCompany.overallRating}⭐</span>
+                                <span className="company-page-info-value">{usersCompany.overallRating ? ` ${usersCompany.overallRating}/5⭐` : 'Not rated yet'}
+</span>
                             </div>
                         </div>
                         <div className="company-page-description">
@@ -427,7 +467,6 @@ const CompanyPage = () => {
                                     <div key={feedback.id} className="company-page-feedback-item">
                                         <div className="company-page-feedback-header">
                                             <span className="company-page-feedback-rating">⭐ {feedback.rating}/5</span>
-                                            {/*<span className="company-page-feedback-date">{feedback.createdAt}</span>*/}
                                             <span className="company-page-feedback-date">
                                               {feedback.createdAt ? new Date(feedback.createdAt).toLocaleDateString('en-US', {
                                                   year: 'numeric',
@@ -567,7 +606,23 @@ const CompanyPage = () => {
                     </div>
                 </div>
             </div>
+
+            {isWelcomeNotificationOpen &&(
+                <WelcomeNotification
+                notificationMessage={notificationMessage}
+                setIsWelcomeNotificationOpen={setIsWelcomeNotificationOpen}
+                />
+            )}
+
+            {isCompanyRemovalNotificationOpen &&(
+                <CompanyRemovalNotification
+                notificationMessage={notificationMessage}
+                setIsCompanyRemovalNotificationOpen={setIsCompanyRemovalNotificationOpen}
+                />
+            )}
+
         </div>
+
     );
 };
 
