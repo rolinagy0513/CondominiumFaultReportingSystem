@@ -1,10 +1,9 @@
- - Notifications a company page-en kell valami Ui a private report came-re meg a user removed from group mind a 2 oldalon (resident-company)
- - AdminPanel (Ha kidobok egy user-t akkor refreshelje a apartment list-et hogy a legfrissebb adatok legyenek ott.)
+ - Néha nem jól ítja ki a reportType-ot pl GARBAGE_COLLECTION a company és a resident page-en sem.
+ - Levenni az animation-t a company page-en a title ről.
+ - Optimalizálni a company page-et components-re és több context-re.
+ - Regaáljon a company a removal ra ugyan úgy mint a resident.
 
- - Ha private a report a resident page-en akkor automatikusan adja be a servcie-type-ot.
-
- - A design-ra van ötlet a deepseek-en
+ - Edit company info endpoint + frontend impl.
 
  - A company kapjon valami message-t hogy ha a user elment és megkpata a system message-t kell egy event is.
-
  - Meg kell csinálni az email-t is ami kiküldi majd a notification-t

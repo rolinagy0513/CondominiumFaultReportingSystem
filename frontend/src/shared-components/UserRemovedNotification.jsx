@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 
 import "./styles/RemovalNotification.css"
 
-const CompanyRemovalNotification = ({notificationMessage, setIsCompanyRemovalNotificationOpen}) => {
+const UserRemovedNotification = ({notificationMessage, setIsUserRemovedNotificationOpen}) =>{
 
     const [isVisible, setIsVisible] = useState(true);
 
@@ -10,30 +10,30 @@ const CompanyRemovalNotification = ({notificationMessage, setIsCompanyRemovalNot
         const timer = setTimeout(() => {
             setIsVisible(false);
             setTimeout(() => {
-                setIsCompanyRemovalNotificationOpen(false);
+                setIsUserRemovedNotificationOpen(false);
             }, 300);
         }, 5000);
 
         return () => clearTimeout(timer);
-    }, [setIsCompanyRemovalNotificationOpen]);
+    }, [setIsUserRemovedNotificationOpen]);
 
     const handleClose = () => {
         setIsVisible(false);
         setTimeout(() => {
-            setIsCompanyRemovalNotificationOpen(false);
+            setIsUserRemovedNotificationOpen(false);
         }, 300);
     };
 
     if (!isVisible) return null;
 
     return (
-        <div className="company-removal-notification">
-            <div className="company-removal-content">
+        <div className="removal-notification">
+            <div className="removal-content">
 
                 <div className="removal-message">
-                    <h4>Company Removed</h4>
+                    <h4>User left the group</h4>
                     <p>
-                        <span className="company-name">{notificationMessage}</span>
+                        <span className="removal-name">{notificationMessage}</span>
                     </p>
                 </div>
 
@@ -53,6 +53,9 @@ const CompanyRemovalNotification = ({notificationMessage, setIsCompanyRemovalNot
             <div className="removal-dust-effect"></div>
         </div>
     );
-};
 
-export default CompanyRemovalNotification;
+
+
+}
+
+export default UserRemovedNotification;

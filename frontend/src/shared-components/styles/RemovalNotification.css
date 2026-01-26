@@ -1,5 +1,4 @@
-/* CompanyRemovalNotification.css */
-.company-removal-notification {
+.removal-notification {
     position: fixed;
     top: 20px;
     right: 20px;
@@ -15,7 +14,7 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-.company-removal-content {
+.removal-content {
     display: flex;
     align-items: center;
     padding: 16px;
@@ -104,7 +103,7 @@
 }
 
 @media (max-width: 768px) {
-    .company-removal-notification {
+    .removal-notification {
         top: 10px;
         right: 10px;
         left: 10px;

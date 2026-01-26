@@ -157,26 +157,32 @@ export const useReports = () =>{
         }
     }
 
-    const acceptReport = async ( reportId, companyId) =>{
+    const acceptReport = async (reportId, companyId, currentPublicPage, currentPrivatePage) => {
+        console.log("IDE");
+        console.log(reportId);
+        console.log(companyId);
 
-        console.log("IDE")
-        console.log(reportId)
-        console.log(companyId)
-
-        const data = ({
-            reportId:reportId,
-            companyId:companyId
-        })
-
+        const data = {
+            reportId: reportId,
+            companyId: companyId
+        };
 
         try {
-            const response = await apiServices.put( "api/company/report/acceptReport", data)
-            console.log("A lofasz: " +  response);
-        }catch (error){
-            console.error(error.message);
-        }
+            const response = await apiServices.put("api/company/report/acceptReport", data);
+            console.log("Response: " + response);
 
-    }
+            await getPrivateReportsForCompany(currentPrivatePage, companyId);
+
+            await getAcceptedReportsForCompany(companyId);
+
+            await getAllPublicReports(currentPublicPage);
+
+            return response;
+        } catch (error) {
+            console.error(error.message);
+            throw error;
+        }
+    };
 
     const getAcceptedReportsForCompany = async (companyId) =>{
 
@@ -208,8 +214,8 @@ export const useReports = () =>{
 
     return{
         getAllPublicReports, sendPublicReport,
-        sendPrivateReport, getInProgressReport
-        , getCompletedReportsForUser, getPrivateReportsForCompany,
+        sendPrivateReport, getInProgressReport,
+        getCompletedReportsForUser, getPrivateReportsForCompany,
         acceptReport, getAcceptedReportsForCompany,
         completeReport
     }

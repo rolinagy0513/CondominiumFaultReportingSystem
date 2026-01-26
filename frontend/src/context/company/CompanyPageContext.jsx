@@ -41,8 +41,10 @@ export const CompanyPageProvider = ({children}) => {
     const [acceptedReports, setAcceptedReports] = useState([]);
 
     const [notificationMessage, setNotificationMessage] = useState([]);
-    const[isWelcomeNotificationOpen, setIsWelcomeNotificationOpen] = useState(false);
-    const[isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen] = useState(false);
+    const [isWelcomeNotificationOpen, setIsWelcomeNotificationOpen] = useState(false);
+    const [isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen] = useState(false);
+    const [isUserRemovedNotificationOpen, setIsUserRemovedNotificationOpen] = useState(false);
+    const [isPrivateReportCameOpen, setIsPrivateReportCameOpen] = useState(false);
 
 
     useEffect(() => {
@@ -156,7 +158,9 @@ export const CompanyPageProvider = ({children}) => {
                 acceptedReports, setAcceptedReports,
                 notificationMessage, setNotificationMessage,
                 isWelcomeNotificationOpen, setIsWelcomeNotificationOpen,
-                isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen
+                isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen,
+                isUserRemovedNotificationOpen, setIsUserRemovedNotificationOpen,
+                isPrivateReportCameOpen, setIsPrivateReportCameOpen
             }
         }>
             {children}

@@ -71,7 +71,6 @@
     position: relative;
     padding: 10px 20px;
     text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    animation: titleGlow 3s ease-in-out infinite alternate;
     display: flex;
     align-items: center;
     gap: 15px;
@@ -115,7 +114,6 @@
     font-size: 36px;
     color: #ffffff;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-    animation: iconFloat 3s ease-in-out infinite alternate;
     position: relative;
 }
 
@@ -129,7 +127,6 @@
     background: radial-gradient(circle, rgba(147, 197, 253, 0.3) 0%, transparent 70%);
     z-index: -1;
     border-radius: 50%;
-    animation: iconPulse 3s ease-in-out infinite;
 }
 
 .resident-page-header-right {

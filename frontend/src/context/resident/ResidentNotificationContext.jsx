@@ -8,6 +8,7 @@ export const ResidentNotificationProvider = ({ children }) => {
     const[isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen] = useState(false);
     const[isNewReportNotificationOpen, setIsNewReportNotificationOpen] = useState(false);
     const[isStatusChangeNotificationOpen, setIsStatusChangeNotificationOpen] = useState(false);
+    const[isUserRemovedNotificationOpen, setIsUserRemovedNotificationOpen] = useState(false);
 
     const[notificationMessage, setNotificationMessage] = useState("");
 
@@ -18,6 +19,7 @@ export const ResidentNotificationProvider = ({ children }) => {
             isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen,
             isNewReportNotificationOpen, setIsNewReportNotificationOpen,
             isStatusChangeNotificationOpen, setIsStatusChangeNotificationOpen,
+            isUserRemovedNotificationOpen, setIsUserRemovedNotificationOpen,
             notificationMessage, setNotificationMessage
         }}>
             {children}

@@ -21,10 +21,12 @@ export const ResidentReportProvider = ({ children }) => {
         name: '',
         issueDescription: '',
         comment: '',
-        reportType: 'ELECTRICITY'
+        reportType: ''
     })
 
     const [completeReportModalOpen, setCompleteReportModalOpen] = useState(false);
+
+    const [selectedCompanyServiceType, setSelectedCompanyServiceType] = useState("");
 
     return (
         <ResidentReportContext.Provider value={{
@@ -35,7 +37,8 @@ export const ResidentReportProvider = ({ children }) => {
             reportFormData, setReportFormData,
             showPrivateReportForm, setShowPrivateReportForm,
             privateReportFormData, setPrivateReportData,
-            completeReportModalOpen, setCompleteReportModalOpen
+            completeReportModalOpen, setCompleteReportModalOpen,
+            selectedCompanyServiceType, setSelectedCompanyServiceType
         }}>
             {children}
         </ResidentReportContext.Provider>

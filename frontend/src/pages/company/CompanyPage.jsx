@@ -22,6 +22,8 @@ import "./style/CompanyPage.css"
 import {ResidentNotificationContext} from "../../context/resident/ResidentNotificationContext.jsx";
 import WelcomeNotification from "../../shared-components/WelcomeNotification.jsx";
 import CompanyRemovalNotification from "../../shared-components/CompanyRemovalNotification.jsx";
+import UserRemovedNotification from "../../shared-components/UserRemovedNotification.jsx";
+import PrivateReportCameNotification from "./components/PrivateReportCameNotification.jsx";
 
 const CompanyPage = () => {
 
@@ -39,7 +41,9 @@ const CompanyPage = () => {
         privateReports, acceptedReports,
         isWelcomeNotificationOpen, setIsWelcomeNotificationOpen,
         setNotificationMessage, notificationMessage,
-        isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen
+        isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen,
+        setIsUserRemovedNotificationOpen, isUserRemovedNotificationOpen,
+        isPrivateReportCameOpen, setIsPrivateReportCameOpen,
     } = useContext(CompanyPageContext);
 
 
@@ -187,11 +191,17 @@ const CompanyPage = () => {
     const handleNotification = (notification) => {
         console.log("📬 Company received notification:", notification);
 
+        setNotificationMessage("");
+
         switch (notification.type) {
 
             case "WELCOME":
                 setNotificationMessage(notification.message);
                 setIsWelcomeNotificationOpen(true)
+                break;
+
+            case "PUBLIC_REPORT_CAME":
+                getAllPublicReports(currentPage);
                 break;
 
             case "COMPANY_REMOVAL":
@@ -205,12 +215,14 @@ const CompanyPage = () => {
                 break;
 
             case "PRIVATE_REPORT_CAME":
-                alert("New private report has came")
+                setNotificationMessage(notification.message);
+                setIsPrivateReportCameOpen(true)
                 getPrivateReportsForCompany(0, companyId);
                 break;
 
             case "USER_REMOVAL_GROUP":
-                alert("The message: " + notification.message)
+                setNotificationMessage(notification.message);
+                setIsUserRemovedNotificationOpen(true);
                 getAllPublicReports(currentPage);
                 break;
 
@@ -223,7 +235,7 @@ const CompanyPage = () => {
         return <p>Loading...</p>;
     }
 
-    // Determine which data to show based on active tab
+
     const currentReports = activeReportTab === 'public' ? publicReports : privateReports;
     const currentPageNum = activeReportTab === 'public' ? currentPage : currentPrivatePage;
     const currentTotalPages = activeReportTab === 'public' ? totalPages : totalPrivatePage;
@@ -379,9 +391,19 @@ const CompanyPage = () => {
                                     </span>
                                     <button
                                         className="company-page-accept-btn"
-                                        onClick={(e) => {
+                                        onClick={async (e) => {
                                             e.stopPropagation();
-                                            acceptReport(report.reportId, companyId);
+                                            try {
+                                                await acceptReport(
+                                                    report.reportId,
+                                                    companyId,
+                                                    currentPage,
+                                                    currentPrivatePage
+                                                );
+                                            } catch (error) {
+                                                console.error("Failed to accept report:", error);
+                                                // Optional: Show error message to user
+                                            }
                                         }}
                                     >
                                         Accept Report
@@ -619,6 +641,17 @@ const CompanyPage = () => {
                 notificationMessage={notificationMessage}
                 setIsCompanyRemovalNotificationOpen={setIsCompanyRemovalNotificationOpen}
                 />
+            )}
+
+            {isUserRemovedNotificationOpen &&(
+                <UserRemovedNotification
+                notificationMessage={notificationMessage}
+                setIsUserRemovedNotificationOpen={setIsUserRemovedNotificationOpen}
+                />
+            )}
+
+            {isPrivateReportCameOpen && (
+                <PrivateReportCameNotification/>
             )}
 
         </div>

@@ -203,7 +203,7 @@ public class NotificationService {
                 .floor(apartment.getFloor())
                 .apartmentStatus(apartment.getStatus())
                 .buildingNumber(apartment.getBuilding().getBuildingNumber())
-                .message("A user has left the group")
+                .message("The resident has left the group: " + userThatLeft.getName())
                 .type(NotificationType.USER_REMOVAL_GROUP)
                 .build();
 
@@ -230,7 +230,7 @@ public class NotificationService {
         log.info("METHOD: sendNewPrivateReportCameNotification | New PRIVATE report for companyId={}", companyId);
 
         NewReportCameNotification notification = NewReportCameNotification.builder()
-                .message("New report came")
+                .message("A new private report has came from: " + userName)
                 .reportType(report.getReportType())
                 .userName(userName)
                 .submittedAt(report.getCreatedAt())

@@ -35,6 +35,7 @@ const MainContent = ({
 
     const {
         publicReports,inProgressReports,
+        setSelectedCompanyServiceType
     } = useContext(ResidentReportContext);
 
     const {
@@ -329,6 +330,7 @@ const MainContent = ({
                                         className="resident-page-companySection-privateReport"
                                         onClick={() => {
                                             setSelectedCompanyId(company.id);
+                                            setSelectedCompanyServiceType(company.serviceType);
                                             setShowPrivateReportForm(true);
                                         }}
                                     >

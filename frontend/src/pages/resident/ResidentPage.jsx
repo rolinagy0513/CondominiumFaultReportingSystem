@@ -29,6 +29,7 @@ import "./style/ResidentPage.css"
 import ReportStatusChangeNotification from "./components/ReportStatusChangeNotification.jsx";
 import WelcomeNotification from "../../shared-components/WelcomeNotification.jsx";
 import CompanyRemovalNotification from "../../shared-components/CompanyRemovalNotification.jsx";
+import UserRemovedNotification from "../../shared-components/UserRemovedNotification.jsx";
 
 const ResidentPage = () => {
     const navigate = useNavigate();
@@ -60,13 +61,29 @@ const ResidentPage = () => {
         companyModalOpen, expandedCompany
     } = useContext(ResidentCompanyContext);
 
+    // 修复：添加安全检查和默认值
+    const residentReportContext = useContext(ResidentReportContext);
+
+    // 检查上下文是否可用
+    if (!residentReportContext) {
+        console.error("ResidentReportContext is not available. Make sure ResidentPage is wrapped with ResidentReportContext.Provider");
+        // 或者提供一个默认值
+        return <div>Error: Context not available. Please check your setup.</div>;
+    }
+
+    // 安全地从上下文中提取值
     const {
-        privateReportFormData, setPrivateReportData,
-        showPrivateReportForm, setShowPrivateReportForm,
-        showReportForm, setShowReportForm,
-        reportFormData, setReportFormData,
-        completeReportModalOpen,
-    } = useContext(ResidentReportContext);
+        privateReportFormData = {},
+        setPrivateReportData = () => {},
+        showPrivateReportForm = false,
+        setShowPrivateReportForm = () => {},
+        showReportForm = false,
+        setShowReportForm = () => {},
+        reportFormData = {},
+        setReportFormData = () => {},
+        completeReportModalOpen = false,
+        selectedCompanyServiceType = null
+    } = residentReportContext || {};
 
     const {
         currentPage,
@@ -75,9 +92,9 @@ const ResidentPage = () => {
     const {
         isWelcomeNotificationOpen, setIsWelcomeNotificationOpen,
         isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen,
-        isNewReportNotificationOpen, setIsNewReportNotificationOpen,
         isStatusChangeNotificationOpen, setIsStatusChangeNotificationOpen,
-        notificationMessage, setNotificationMessage
+        notificationMessage, setNotificationMessage, setIsUserRemovedNotificationOpen,
+        isUserRemovedNotificationOpen
     } = useContext(ResidentNotificationContext);
 
     const {
@@ -246,6 +263,8 @@ const ResidentPage = () => {
     const handleNotification = (notification) => {
         console.log("📬 Resident received notification:", notification);
 
+        setNotificationMessage("");
+
         switch (notification.type) {
 
             case "COMPANY_REMOVAL":
@@ -262,7 +281,8 @@ const ResidentPage = () => {
                 break;
 
             case "USER_REMOVAL_GROUP":
-                alert("The message: " + notification.message)
+                setNotificationMessage(notification.message);
+                setIsUserRemovedNotificationOpen(true);
                 getAllPublicReports(currentPage);
                 break;
 
@@ -358,7 +378,7 @@ const ResidentPage = () => {
                 name: '',
                 issueDescription: '',
                 comment: '',
-                reportType: 'ELECTRICITY'
+                reportType: ''
             });
             setShowPrivateReportForm(false);
             setSelectedCompanyId(null);
@@ -413,15 +433,22 @@ const ResidentPage = () => {
 
             {isWelcomeNotificationOpen &&(
                 <WelcomeNotification
-                notificationMessage={notificationMessage}
-                setIsWelcomeNotificationOpen={setIsWelcomeNotificationOpen}
+                    notificationMessage={notificationMessage}
+                    setIsWelcomeNotificationOpen={setIsWelcomeNotificationOpen}
                 />
             )}
 
             {isCompanyRemovalNotificationOpen &&(
                 <CompanyRemovalNotification
-                notificationMessage={notificationMessage}
-                setIsCompanyRemovalNotificationOpen={setIsCompanyRemovalNotificationOpen}
+                    notificationMessage={notificationMessage}
+                    setIsCompanyRemovalNotificationOpen={setIsCompanyRemovalNotificationOpen}
+                />
+            )}
+
+            {isUserRemovedNotificationOpen &&(
+                <UserRemovedNotification
+                    notificationMessage={notificationMessage}
+                    setIsUserRemovedNotificationOpen={setIsUserRemovedNotificationOpen}
                 />
             )}
 

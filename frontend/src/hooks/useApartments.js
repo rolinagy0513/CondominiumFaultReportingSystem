@@ -166,10 +166,6 @@ export const useApartments = (
         if (success) {
             console.log(`The resident has benn successfully removed from the apartment with the id of: ${apartmentId}`);
 
-            if (selectedBuilding) {
-                getApartments(selectedBuilding.id, currentPage);
-            }
-
             setTargetId(null);
             setIsRemovalModalOpen(false);
             setModalText("");

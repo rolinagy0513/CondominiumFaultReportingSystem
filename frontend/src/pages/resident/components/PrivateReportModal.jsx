@@ -1,4 +1,4 @@
-import {useContext} from "react";
+import {useContext, useEffect} from "react";
 
 import {ResidentCompanyContext} from "../../../context/resident/ResidentCompanyContext.jsx";
 import {ResidentReportContext} from "../../../context/resident/ResidentReportContext.jsx";
@@ -6,6 +6,42 @@ import {ResidentReportContext} from "../../../context/resident/ResidentReportCon
 import "./components-styles/ReportModal.css"
 
 const PrivateReportModal = ({handleSubmitPrivateReport}) =>{
+
+    const {
+        companiesInBuilding, setSelectedCompanyId,
+        selectedCompanyId,
+    } = useContext(ResidentCompanyContext);
+
+    const{
+        privateReportFormData, setPrivateReportData,
+        setShowPrivateReportForm, selectedCompanyServiceType
+    } = useContext(ResidentReportContext);
+
+    // Map company service type to report type
+    const serviceTypeToReportTypeMap = {
+        ELECTRICIAN: 'ELECTRICITY',
+        PLUMBER: 'WATER_SUPPLY',
+        CLEANING: 'GARBAGE_COLLECTION',
+        SECURITY: 'SECURITY',
+        ELEVATOR_MAINTENANCE: 'ELEVATOR',
+        HEATING_TECHNICIANS: 'HEATING',
+        GARDENING: 'GARDENING',
+        OTHER: 'OTHER'
+    };
+
+    // When the modal opens or selectedCompanyServiceType changes, set the reportType
+    useEffect(() => {
+        if (selectedCompanyServiceType) {
+            // Map the company service type to report type
+            const mappedReportType = serviceTypeToReportTypeMap[selectedCompanyServiceType] || 'OTHER';
+
+            // Update the private report form data with the mapped report type
+            setPrivateReportData(prev => ({
+                ...prev,
+                reportType: mappedReportType
+            }));
+        }
+    }, [selectedCompanyServiceType]);
 
     const handlePrivateReportFormChange = (e) =>{
         const {name, value} = e.target;
@@ -15,25 +51,17 @@ const PrivateReportModal = ({handleSubmitPrivateReport}) =>{
         }));
     }
 
-    const {
-        companiesInBuilding, setSelectedCompanyId,
-        selectedCompanyId,
-    } = useContext(ResidentCompanyContext);
-
-    const{
-        privateReportFormData, setPrivateReportData,
-        setShowPrivateReportForm
-    } = useContext(ResidentReportContext);
-
     return(
         <div className="resident-page-modal-overlay">
             <div className="resident-page-modal-content">
                 <div className="resident-page-modal-header">
                     <h3>Send Private Report</h3>
                     {selectedCompanyId && (
-                        <p>
-                            To: {companiesInBuilding?.find(c => c.id === selectedCompanyId)?.name}
-                        </p>
+                        <div className="company-service-info">
+                            <p>
+                                To: {companiesInBuilding?.find(c => c.id === selectedCompanyId)?.name}
+                            </p>
+                        </div>
                     )}
                     <button
                         className="resident-page-modal-close"
@@ -58,26 +86,14 @@ const PrivateReportModal = ({handleSubmitPrivateReport}) =>{
                                 placeholder="Brief description"
                             />
                         </div>
-                        <div className="resident-page-form-group">
-                            <label>Report Type *</label>
-                            <select
-                                name="reportType"
-                                value={privateReportFormData.reportType}
-                                onChange={handlePrivateReportFormChange}
-                                required
-                            >
-                                <option value="ELECTRICITY">⚡ Electricity</option>
-                                <option value="LIGHTNING">💡 Lighting</option>
-                                <option value="WATER_SUPPLY">💧 Water Supply</option>
-                                <option value="SEWAGE">🚽 Sewage</option>
-                                <option value="HEATING">🔥 Heating</option>
-                                <option value="ELEVATOR">🛗 Elevator</option>
-                                <option value="GARBAGE_COLLECTION">🗑️ Garbage</option>
-                                <option value="SECURITY">🔒 Security</option>
-                                <option value="GARDENING">🌳 Gardening</option>
-                                <option value="OTHER">📋 Other</option>
-                            </select>
-                        </div>
+                        {/*<div className="resident-page-form-group">*/}
+                        {/*    <label>Report Type *</label>*/}
+                        {/*    <div className="report-type-display">*/}
+                        {/*        <span className="service-type-badge">*/}
+                        {/*            {selectedCompanyServiceType}: {privateReportFormData.reportType}*/}
+                        {/*        </span>*/}
+                        {/*    </div>*/}
+                        {/*</div>*/}
                     </div>
                     <div className="resident-page-form-group">
                         <label>Issue Description *</label>
