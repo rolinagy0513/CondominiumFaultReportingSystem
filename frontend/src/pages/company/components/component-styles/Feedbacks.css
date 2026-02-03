@@ -1,0 +1,101 @@
+.company-page-feedbacks-section {
+    background: var(--background-white);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.company-page-feedbacks-section h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    margin: 0 0 1.25rem 0;
+}
+
+.company-page-feedbacks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: 500px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.company-page-feedbacks-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.company-page-feedbacks-list::-webkit-scrollbar-track {
+    background: var(--background-gray);
+    border-radius: 3px;
+}
+
+.company-page-feedbacks-list::-webkit-scrollbar-thumb {
+    background: var(--secondary-blue);
+    border-radius: 3px;
+}
+
+.company-page-feedback-item {
+    background: var(--background-gray);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    border-left: 3px solid var(--primary-blue);
+    transition: var(--transition);
+    overflow: hidden;
+}
+
+.company-page-feedback-item:hover {
+    transform: translateX(4px);
+    box-shadow: var(--shadow-sm);
+}
+
+.company-page-feedback-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.company-page-feedback-rating {
+    font-weight: 600;
+    color: var(--primary-blue);
+    font-size: 0.9rem;
+}
+
+.company-page-feedback-date {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.company-page-feedback-message {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--text-primary);
+    margin: 0 0 0.75rem 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.company-page-feedback-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.company-page-feedback-author {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.company-page-no-feedback {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    padding: 2rem 0;
+}

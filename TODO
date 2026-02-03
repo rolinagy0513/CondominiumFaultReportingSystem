@@ -1,5 +1,7 @@
+ - Nem történik semmi a company page-en ha megcsinálok tehát completelek egy reportot frissülnie kell a dolgoknak ple feedbacks és az active reportok
+ - Optimalizálni a contexteket a company page-en
+
  - Néha nem jól ítja ki a reportType-ot pl GARBAGE_COLLECTION a company és a resident page-en sem.
- - Levenni az animation-t a company page-en a title ről.
  - Optimalizálni a company page-et components-re és több context-re.
  - Regaáljon a company a removal ra ugyan úgy mint a resident.
 

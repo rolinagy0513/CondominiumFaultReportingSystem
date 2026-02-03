@@ -1,0 +1,272 @@
+.company-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 32px;
+    background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(26, 54, 93, 0.2);
+    margin-bottom: 24px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.company-page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+/* Left side - Company Name */
+.company-page-header-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    z-index: 1;
+}
+
+.company-page-header-left h2 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    background: linear-gradient(90deg, #fff, #cbd5e0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.company-page-company-tagline {
+    margin: 8px 0 0 0;
+    opacity: 0.9;
+    font-size: 14px;
+    color: #e2e8f0;
+}
+
+/* Middle - Dashboard Title */
+.company-page-header-middle {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+}
+
+.company-page-title {
+    margin: 0;
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: white;
+    position: relative;
+    padding: 10px 20px;
+    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-right: 30px;
+    border-radius: 16px;
+    background-color: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.company-page-title::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 100%);
+    border-radius: 16px;
+    z-index: -1;
+}
+
+.company-page-title::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 2px;
+    background: linear-gradient(90deg,
+    transparent,
+    rgba(255, 255, 255, 0.5),
+    transparent);
+    border-radius: 1px;
+    opacity: 0.7;
+    filter: blur(1px);
+}
+
+.company-page-title-icon {
+    font-size: 36px;
+    color: #ffffff;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    position: relative;
+}
+
+.company-page-title-icon::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: radial-gradient(circle, rgba(147, 197, 253, 0.3) 0%, transparent 70%);
+    z-index: -1;
+    border-radius: 50%;
+}
+
+/* Right side - Actions */
+.company-page-header-right {
+    flex: 1;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: flex-end;
+    z-index: 1;
+}
+
+.company-page-header-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.company-page-header-action-btn:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.company-page-header-icon {
+    font-size: 18px;
+}
+
+.company-page-notification-btn {
+    position: relative;
+    padding: 10px;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    justify-content: center;
+}
+
+.company-page-notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ef4444;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+}
+
+.company-page-logout-btn {
+    background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.company-page-logout-btn:hover {
+    background: linear-gradient(135deg, #e33e3e 0%, #ef4444 100%);
+}
+
+/* Responsive Design for Header */
+@media (max-width: 1024px) {
+    .company-page-title {
+        font-size: 36px;
+        letter-spacing: 1.5px;
+        padding: 8px 16px;
+        gap: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .company-page-header {
+        padding: 16px 20px;
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+    }
+
+    .company-page-header-left,
+    .company-page-header-middle,
+    .company-page-header-right {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .company-page-header-left {
+        align-items: center;
+        order: 1;
+    }
+
+    .company-page-header-middle {
+        order: 2;
+    }
+
+    .company-page-title {
+        font-size: 32px;
+        letter-spacing: 1px;
+        padding: 8px 16px;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .company-page-header-right {
+        order: 3;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .company-page-header-left h2 {
+        font-size: 24px;
+    }
+
+    .company-page-title {
+        font-size: 28px;
+        flex-direction: column;
+        gap: 8px;
+        padding: 12px;
+    }
+
+    .company-page-header-action-btn {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+
+    .company-page-notification-btn {
+        width: 40px;
+        height: 40px;
+    }
+}

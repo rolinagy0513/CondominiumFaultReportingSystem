@@ -1,0 +1,154 @@
+.company-page-accepted-reports-section {
+    background: var(--background-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    flex: 1; /* Takes available space */
+    display: flex;
+    flex-direction: column;
+    min-height: 300px;
+    overflow: hidden; /* Prevent overflow from child elements */
+}
+
+.company-page-accepted-reports-card {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+    flex: 1;
+}
+
+.company-page-accepted-reports-card .company-page-card-header {
+    flex-shrink: 0; /* Prevent header from shrinking */
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--accent-blue);
+}
+
+.company-page-accepted-reports-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+    min-height: 0; /* Important for flex children to allow scrolling */
+}
+
+.company-page-accepted-reports-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.company-page-accepted-reports-content::-webkit-scrollbar-track {
+    background: var(--background-gray);
+    border-radius: 3px;
+}
+
+.company-page-accepted-reports-content::-webkit-scrollbar-thumb {
+    background: var(--secondary-blue);
+    border-radius: 3px;
+}
+
+.company-page-accepted-report-item {
+    background: var(--background-gray);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    border-left: 4px solid var(--primary-blue);
+    transition: var(--transition);
+    overflow: hidden;
+    flex-shrink: 0; /* Prevent items from shrinking */
+}
+
+.company-page-accepted-report-item:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateX(4px);
+}
+
+.company-page-accepted-report-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.company-page-accepted-report-header .company-page-report-type-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.5rem;
+}
+
+.company-page-accepted-report-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    flex: 1;
+    min-width: 0;
+}
+
+.company-page-accepted-report-meta {
+    margin-bottom: 1rem;
+}
+
+.company-page-accepted-report-type {
+    display: inline-block;
+    background: var(--accent-blue);
+    color: var(--primary-blue);
+    padding: 0.375rem 0.75rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.company-page-accepted-report-type-icon {
+    display: none;
+}
+
+.company-page-accepted-report-description {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0.5rem 0 0 0;
+    line-height: 1.5;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.company-page-accepted-report-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.company-page-accepted-report-date {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.company-page-complete-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: var(--background-white);
+    border: none;
+    padding: 0.625rem 1rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition);
+    width: 100%;
+}
+
+.company-page-complete-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.company-page-complete-btn:active {
+    transform: translateY(0);
+}

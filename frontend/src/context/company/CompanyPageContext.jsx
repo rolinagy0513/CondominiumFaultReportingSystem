@@ -143,6 +143,20 @@ export const CompanyPageProvider = ({children}) => {
         });
     }, [authenticatedCompanyUserId, companyId, authenticatedCompanyUserName, companyGroupId, companyGroupIdentifier]);
 
+
+    const reportTypeIcons = {
+        ELECTRICITY: "⚡",
+        LIGHTNING: "💡",
+        WATER_SUPPLY: "💧",
+        SEWAGE: "🚽",
+        HEATING: "🔥",
+        ELEVATOR: "🛗",
+        GARBAGE_COLLECTION: "🗑️",
+        SECURITY: "🔒",
+        GARDENING: "🌳",
+        OTHER: "📋"
+    };
+
     return (
         <CompanyPageContext.Provider value={
             {
@@ -160,7 +174,8 @@ export const CompanyPageProvider = ({children}) => {
                 isWelcomeNotificationOpen, setIsWelcomeNotificationOpen,
                 isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen,
                 isUserRemovedNotificationOpen, setIsUserRemovedNotificationOpen,
-                isPrivateReportCameOpen, setIsPrivateReportCameOpen
+                isPrivateReportCameOpen, setIsPrivateReportCameOpen,
+                reportTypeIcons
             }
         }>
             {children}
