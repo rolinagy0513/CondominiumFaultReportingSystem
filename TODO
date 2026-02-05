@@ -1,7 +1,8 @@
- - Optimalizálni a company page-et components-re és több context-re.
+  - Edit company (Csak a frontend impl).
+
  - Regaáljon a company a removal ra ugyan úgy mint a resident.
 
- - Edit company info endpoint + frontend impl.
+ - Optimalizálni a company page-et components-re és több context-re.
 
  - A company kapjon valami message-t hogy ha a user elment és megkpata a system message-t kell egy event is.
  - Meg kell csinálni az email-t is ami kiküldi majd a notification-t
