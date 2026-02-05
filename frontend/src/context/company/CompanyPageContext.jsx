@@ -157,6 +157,8 @@ export const CompanyPageProvider = ({children}) => {
         OTHER: "📋"
     };
 
+    const[isFeedbackNotificationOpen, setIsFeedbackNotificationOpen] = useState(false);
+
     return (
         <CompanyPageContext.Provider value={
             {
@@ -175,7 +177,7 @@ export const CompanyPageProvider = ({children}) => {
                 isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen,
                 isUserRemovedNotificationOpen, setIsUserRemovedNotificationOpen,
                 isPrivateReportCameOpen, setIsPrivateReportCameOpen,
-                reportTypeIcons
+                reportTypeIcons, isFeedbackNotificationOpen, setIsFeedbackNotificationOpen
             }
         }>
             {children}

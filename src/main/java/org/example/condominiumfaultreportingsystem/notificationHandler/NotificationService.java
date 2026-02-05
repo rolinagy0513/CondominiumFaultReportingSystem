@@ -277,6 +277,7 @@ public class NotificationService {
                 .senderEmail(feedback.getReviewerEmail())
                 .rating(feedback.getRating())
                 .message("A new feedback has came!")
+                .type(NotificationType.FEEDBACK_CAME)
                 .build();
 
         messagingTemplate.convertAndSendToUser(companyId.toString(), "/queue/notification", notification);

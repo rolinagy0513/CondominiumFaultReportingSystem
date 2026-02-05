@@ -4,6 +4,7 @@ import {CompanyPageContext} from "../../../context/company/CompanyPageContext.js
 import "./component-styles/PrivateReportCameNotification.css"
 
 const PrivateReportCameNotification = () => {
+
     const {notificationMessage, setIsPrivateReportCameOpen} = useContext(CompanyPageContext);
     const [isVisible, setIsVisible] = useState(true);
 

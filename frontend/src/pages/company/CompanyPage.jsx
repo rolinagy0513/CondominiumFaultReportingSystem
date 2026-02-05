@@ -24,6 +24,7 @@ import AcceptedReports from "./components/AcceptedReports.jsx";
 import BuildingsList from "./components/BuildingsList.jsx";
 import MiddleSection from "./components/MiddleSection.jsx"; // New import
 import "./style/CompanyPage.css"
+import FeedbackNotification from "./components/FeedbackNotification.jsx";
 
 const CompanyPage = () => {
 
@@ -42,7 +43,7 @@ const CompanyPage = () => {
         setNotificationMessage, notificationMessage,
         isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen,
         setIsUserRemovedNotificationOpen, isUserRemovedNotificationOpen,
-        isPrivateReportCameOpen, setIsPrivateReportCameOpen
+        isPrivateReportCameOpen, setIsPrivateReportCameOpen,isFeedbackNotificationOpen, setIsFeedbackNotificationOpen
     } = useContext(CompanyPageContext);
 
     const subscriptionRef = useRef(null);
@@ -186,6 +187,12 @@ const CompanyPage = () => {
                 getAllPublicReports(currentPage);
                 break;
 
+            case "FEEDBACK_CAME":
+                setNotificationMessage(notification.message)
+                setIsFeedbackNotificationOpen(true)
+                getFeedbacksForCompany(companyId)
+                break;
+
             default:
                 console.warn("Unknown notification type:", notification.type);
         }
@@ -269,6 +276,10 @@ const CompanyPage = () => {
 
             {isPrivateReportCameOpen && (
                 <PrivateReportCameNotification/>
+            )}
+
+            {isFeedbackNotificationOpen && (
+                <FeedbackNotification/>
             )}
         </div>
     );

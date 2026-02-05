@@ -16,5 +16,6 @@ public class FeedbackNotification {
     private Double rating;
 
     private String message;
+    private NotificationType type;
 
 }

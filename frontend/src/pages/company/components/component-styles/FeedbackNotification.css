@@ -1,0 +1,220 @@
+.feedback-notification {
+    position: fixed;
+    top: 90px;
+    right: 20px;
+    z-index: 10000;
+    min-width: 320px;
+    max-width: 450px;
+    background: linear-gradient(135deg, #4a044e 0%, #2d0230 100%);
+    border-radius: 12px;
+    box-shadow:
+            0 10px 25px rgba(74, 4, 78, 0.3),
+            0 0 0 1px rgba(192, 132, 252, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    color: #f5f3ff;
+    overflow: hidden;
+    animation: slideInFeedback 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    border-left: 4px solid #a855f7;
+    backdrop-filter: blur(10px);
+}
+
+.feedback-content {
+    display: flex;
+    align-items: center;
+    padding: 18px 20px;
+    gap: 16px;
+    background: linear-gradient(to right, rgba(168, 85, 247, 0.1), transparent);
+}
+
+.feedback-icon {
+    font-size: 28px;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+    flex-shrink: 0;
+    animation: iconPulse 2s ease-in-out infinite;
+}
+
+.feedback-message {
+    flex: 1;
+    min-width: 0;
+}
+
+.feedback-message h4 {
+    margin: 0 0 6px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #d8b4fe;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.feedback-message p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #e9d5ff;
+    font-weight: 500;
+}
+
+.feedback-details {
+    color: #ffffff;
+    font-weight: 600;
+    background: linear-gradient(90deg, #c084fc, #e9d5ff, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-size: 200% 100%;
+    animation: textShimmer 3s infinite linear;
+}
+
+.feedback-close-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #d8b4fe;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    backdrop-filter: blur(5px);
+}
+
+.feedback-close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+}
+
+.feedback-progress-track {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: rgba(45, 2, 48, 0.5);
+    overflow: hidden;
+}
+
+.feedback-progress-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #a855f7, #c084fc, #a855f7);
+    background-size: 200% 100%;
+    transform: translateX(-100%);
+    animation:
+            progressBarFeedback 5s linear forwards,
+            shimmer 2s infinite linear;
+}
+
+.feedback-glow-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 50%, rgba(168, 85, 247, 0.2), transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+@keyframes slideInFeedback {
+    from {
+        transform: translateX(100%) translateY(-20px);
+        opacity: 0;
+        filter: blur(5px);
+    }
+    to {
+        transform: translateX(0) translateY(0);
+        opacity: 1;
+        filter: blur(0);
+    }
+}
+
+@keyframes progressBarFeedback {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes iconPulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 6px 18px rgba(168, 85, 247, 0.5);
+    }
+}
+
+@keyframes textShimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .feedback-notification {
+        top: 80px;
+        right: 10px;
+        left: 10px;
+        min-width: auto;
+        max-width: none;
+        border-radius: 10px;
+    }
+
+    .feedback-content {
+        padding: 16px;
+        gap: 12px;
+    }
+
+    .feedback-icon {
+        width: 42px;
+        height: 42px;
+        font-size: 22px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .feedback-notification,
+    .feedback-close-btn:hover,
+    .feedback-icon,
+    .feedback-progress-fill,
+    .feedback-details {
+        animation: none;
+        transition: none;
+    }
+}
