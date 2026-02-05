@@ -22,9 +22,10 @@ import CompanyInfo from "./components/CompanyInfo.jsx";
 import Feedbacks from "./components/Feedbacks.jsx";
 import AcceptedReports from "./components/AcceptedReports.jsx";
 import BuildingsList from "./components/BuildingsList.jsx";
-import MiddleSection from "./components/MiddleSection.jsx"; // New import
-import "./style/CompanyPage.css"
+import MiddleSection from "./components/MiddleSection.jsx";
 import FeedbackNotification from "./components/FeedbackNotification.jsx";
+
+import "./style/CompanyPage.css"
 
 const CompanyPage = () => {
 
@@ -191,6 +192,7 @@ const CompanyPage = () => {
                 setNotificationMessage(notification.message)
                 setIsFeedbackNotificationOpen(true)
                 getFeedbacksForCompany(companyId)
+                getMyCompany()
                 break;
 
             default:

@@ -33,6 +33,7 @@ export const useReports = () =>{
         setAcceptedReports
     } = useContext(CompanyPageContext);
 
+
     const pageSize = 5;
 
     const getAllPublicReports = async (page = 0) =>{
@@ -205,7 +206,6 @@ export const useReports = () =>{
 
         try {
             const response = await apiServices.put(`api/company/report/completeReport?${params.toString()}`)
-            alert("Report has been completed")
             getAcceptedReportsForCompany(companyId);
         }catch (error){
             console.error(error.message);

@@ -268,7 +268,6 @@ public class CompanyService implements ICompanyService {
 
     }
 
-
     @Transactional
     public void removeCompany(RemovalDTO removalDTO, Principal principal){
 

@@ -8,7 +8,6 @@ import {BuildingContext} from "../context/admin/BuildingContext.jsx";
 import {AdminPanelContext} from "../context/admin/AdminPanelContext.jsx";
 
 import {useContext} from "react";
-import {ResidentPageContext} from "../context/resident/ResidentPageContext.jsx";
 import {ResidentApartmentContext} from "../context/resident/ResidentApartmentContext.jsx";
 
 export const useApartments = (

@@ -282,12 +282,22 @@ export const useCompanies = () =>{
 
     }
 
+    const editCompanyDetails = async (data) =>{
+
+        try {
+            const response = await apiServices.put("/api/company/company/editCompany",data)
+        }catch (error){
+            console.error(error.message);
+        }
+
+    }
+
     return{
         getCompanies, handleGetPendingCompanyRequests,
         handleAcceptCompanyRequest, handleRejectCompanyRequest,
         handleRemoveCompanyFromSystem, getCompanyByBuildingId,
         getCompanyById,getCompanyByBuildingIdAndServiceType, getCompaniesByServiceType,
-        getCompanyWithFeedbacks, getMyCompany, addCompany
+        getCompanyWithFeedbacks, getMyCompany, addCompany, editCompanyDetails
     }
 
 }

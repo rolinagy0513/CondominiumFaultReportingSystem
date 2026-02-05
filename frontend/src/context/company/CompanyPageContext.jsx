@@ -62,7 +62,7 @@ export const CompanyPageProvider = ({children}) => {
             localStorage.getItem("authenticatedCompanyUserId"));
     }, [authenticatedCompanyUserId]);
 
-    // Sync companyId with localStorage
+
     useEffect(() => {
         console.log('🔄 [COMPANY_CONTEXT] companyId changed to:', companyId);
 
@@ -78,7 +78,7 @@ export const CompanyPageProvider = ({children}) => {
             localStorage.getItem("companyId"));
     }, [companyId]);
 
-    // Sync authenticatedCompanyUserName with localStorage
+
     useEffect(() => {
         console.log('🔄 [COMPANY_CONTEXT] authenticatedCompanyUserName changed to:', authenticatedCompanyUserName);
 
@@ -94,7 +94,7 @@ export const CompanyPageProvider = ({children}) => {
             localStorage.getItem("authenticatedCompanyUserName"));
     }, [authenticatedCompanyUserName]);
 
-    // Sync companyGroupId with localStorage
+    
     useEffect(() => {
         console.log('🔄 [COMPANY_CONTEXT] companyGroupId changed to:', companyGroupId);
 

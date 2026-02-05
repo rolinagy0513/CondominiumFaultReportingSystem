@@ -10,6 +10,9 @@ const CompanyInfo = () =>{
 
     const {usersCompany} = useContext(CompanyPageContext);
 
+    console.log("This is the users company")
+    console.log(usersCompany);
+
     return(
         <div className="company-page-info-section">
             <h2 className="company-page-company-name">{usersCompany.name}</h2>
@@ -33,8 +36,8 @@ const CompanyInfo = () =>{
                 <div className="company-page-info-item">
                     <span className="company-page-info-label">Overall Rating:</span>
                     <span className="company-page-info-value">
-                                    {usersCompany.overallRating ? ` ${usersCompany.overallRating}/5⭐` : 'Not rated yet'}
-                                </span>
+                        {usersCompany.overallRating ? ` ${usersCompany.overallRating.toFixed(1)}/5⭐` : 'Not rated yet'}
+                    </span>
                 </div>
             </div>
             <div className="company-page-description">

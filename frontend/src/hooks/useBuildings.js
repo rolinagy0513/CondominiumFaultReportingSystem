@@ -5,7 +5,6 @@ import {AddBuildingContext} from "../context/admin/AddBuildingContext.jsx";
 import {AdminPanelContext} from "../context/admin/AdminPanelContext.jsx";
 
 import {useContext} from "react";
-import {ResidentPageContext} from "../context/resident/ResidentPageContext.jsx";
 import {ResidentBuildingContext} from "../context/resident/ResidentBuildingContext.jsx";
 import {ResidentApartmentContext} from "../context/resident/ResidentApartmentContext.jsx";
 import {CompanyPageContext} from "../context/company/CompanyPageContext.jsx";
