@@ -286,18 +286,33 @@ export const useCompanies = () =>{
 
         try {
             const response = await apiServices.put("/api/company/company/editCompany",data)
+            getMyCompany()
         }catch (error){
             console.error(error.message);
         }
 
     }
 
+    const refreshCompaniesInBuilding = async () => {
+        if (!ownersBuildingId) return;
+
+        try {
+            if (selectedServiceType && selectedServiceType !== "ALL") {
+                await getCompanyByBuildingIdAndServiceType(ownersBuildingId, selectedServiceType);
+            } else {
+                await getCompanyByBuildingId(ownersBuildingId);
+            }
+        } catch (error) {
+            console.error("Error refreshing companies:", error.message);
+        }
+    };
+
     return{
         getCompanies, handleGetPendingCompanyRequests,
         handleAcceptCompanyRequest, handleRejectCompanyRequest,
         handleRemoveCompanyFromSystem, getCompanyByBuildingId,
         getCompanyById,getCompanyByBuildingIdAndServiceType, getCompaniesByServiceType,
-        getCompanyWithFeedbacks, getMyCompany, addCompany, editCompanyDetails
+        getCompanyWithFeedbacks, getMyCompany, addCompany, editCompanyDetails, refreshCompaniesInBuilding
     }
 
 }

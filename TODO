@@ -1,5 +1,3 @@
-  - Edit company (Csak a frontend impl).
-
  - Regaáljon a company a removal ra ugyan úgy mint a resident.
 
  - Optimalizálni a company page-et components-re és több context-re.

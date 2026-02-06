@@ -283,4 +283,16 @@ public class NotificationService {
         messagingTemplate.convertAndSendToUser(companyId.toString(), "/queue/notification", notification);
         log.info("METHOD: sendFeedbackNotification | SENT FEEDBACK notification to companyId={}", companyId);
     }
+
+    public void sendCompanyDataChangedNotification(String groupName) {
+
+        CompanyDataChangedNotification notification = CompanyDataChangedNotification.builder()
+                .message("Company data has been changed")
+                .type(NotificationType.COMPANY_DATA_CHANGED)
+                .build();
+
+        messagingTemplate.convertAndSend("/topic/group/" + groupName, notification);
+        log.info("METHOD: sendCompanyDataChangedNotification | SENT COMPANY_DATA_CHANGED to group={}", groupName);
+
+    }
 }

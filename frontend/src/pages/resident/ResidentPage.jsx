@@ -108,7 +108,8 @@ const ResidentPage = () => {
     const{
         getCompanyByBuildingId,
         getCompanyByBuildingIdAndServiceType,
-        getCompanyWithFeedbacks
+        getCompanyWithFeedbacks,
+        refreshCompaniesInBuilding
     } = useCompanies()
 
     const {
@@ -306,6 +307,15 @@ const ResidentPage = () => {
                 setIsStatusChangeNotificationOpen(true);
                 getCompletedReportsForUser();
                 getInProgressReport();
+                break;
+
+            case "COMPANY_DATA_CHANGED":
+                console.log("The edit event came successfully");
+                console.log(notification);
+
+                if (ownersBuildingId) {
+                    refreshCompaniesInBuilding();
+                }
                 break;
 
             default:

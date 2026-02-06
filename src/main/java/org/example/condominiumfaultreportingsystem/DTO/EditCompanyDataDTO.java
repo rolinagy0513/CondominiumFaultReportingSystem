@@ -13,6 +13,7 @@ import org.example.condominiumfaultreportingsystem.company.ServiceType;
 public class EditCompanyDataDTO {
 
     private Long companyId;
+    private String groupIdentifier;
 
     private String companyName;
     private String companyIntroduction;

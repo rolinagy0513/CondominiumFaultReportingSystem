@@ -11,6 +11,7 @@ import org.example.condominiumfaultreportingsystem.company.CompanyRepository;
 import org.example.condominiumfaultreportingsystem.company.ICompanyService;
 import org.example.condominiumfaultreportingsystem.company.ServiceType;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyArrivedEvent;
+import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyDataChangedEvent;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyRequestAcceptedEvent;
 import org.example.condominiumfaultreportingsystem.exception.*;
 import org.example.condominiumfaultreportingsystem.feedback.Feedback;
@@ -174,8 +175,13 @@ public class CompanyService implements ICompanyService {
     @Transactional
     public CompanyDTO editCompanyDetails(EditCompanyDataDTO editCompanyDataDTO){
 
-        Company company = companyRepository.findById(editCompanyDataDTO.getCompanyId())
-                .orElseThrow(()-> new CompanyNotFoundException(editCompanyDataDTO.getCompanyId()));
+        Optional<Company> companyOpt = companyRepository.getCompanyWithBuildings(editCompanyDataDTO.getCompanyId());
+
+        if (companyOpt.isEmpty()){
+            throw new CompanyNotFoundException(editCompanyDataDTO.getCompanyId());
+        }
+
+        Company company = companyOpt.get();
 
         if (editCompanyDataDTO.getCompanyName() != null){
             company.setName(editCompanyDataDTO.getCompanyName());
@@ -198,6 +204,15 @@ public class CompanyService implements ICompanyService {
         }
 
         companyRepository.save(company);
+
+        eventPublisher.publishEvent(
+                new CompanyDataChangedEvent(editCompanyDataDTO.getGroupIdentifier())
+        );
+
+        cacheService.evictAllCompaniesCache();
+        cacheService.evictCompanyByBuildingCache(company.getBuildings().getFirst().getId());
+        cacheService.evictCompanyByServiceTypeCache();
+        cacheService.evictCompanyByBuildingIdAndServiceTypeCache(company.getBuildings().getFirst().getId(), company.getServiceType());
 
         return mapToDto(company);
 

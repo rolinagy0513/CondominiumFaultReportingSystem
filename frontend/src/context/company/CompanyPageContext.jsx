@@ -45,6 +45,7 @@ export const CompanyPageProvider = ({children}) => {
     const [isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen] = useState(false);
     const [isUserRemovedNotificationOpen, setIsUserRemovedNotificationOpen] = useState(false);
     const [isPrivateReportCameOpen, setIsPrivateReportCameOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
 
     useEffect(() => {
@@ -177,7 +178,8 @@ export const CompanyPageProvider = ({children}) => {
                 isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen,
                 isUserRemovedNotificationOpen, setIsUserRemovedNotificationOpen,
                 isPrivateReportCameOpen, setIsPrivateReportCameOpen,
-                reportTypeIcons, isFeedbackNotificationOpen, setIsFeedbackNotificationOpen
+                reportTypeIcons, isFeedbackNotificationOpen, setIsFeedbackNotificationOpen,
+                isEditModalOpen, setIsEditModalOpen
             }
         }>
             {children}

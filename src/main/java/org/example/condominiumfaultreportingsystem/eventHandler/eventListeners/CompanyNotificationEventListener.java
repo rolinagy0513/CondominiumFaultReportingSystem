@@ -2,10 +2,7 @@ package org.example.condominiumfaultreportingsystem.eventHandler.eventListeners;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyArrivedEvent;
-import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyRemovedEvent;
-import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyRequestAcceptedEvent;
-import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyRequestRejectedEvent;
+import org.example.condominiumfaultreportingsystem.eventHandler.events.*;
 import org.example.condominiumfaultreportingsystem.notificationHandler.NotificationService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
@@ -55,6 +52,16 @@ public class CompanyNotificationEventListener {
         }catch (Exception e){
             log.error("Failed to send arrival notification for group {}",
                     event.getGroup().getGroupId());
+        }
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handleCompanyDataChanged(CompanyDataChangedEvent event){
+        try{
+            notificationService.sendCompanyDataChangedNotification(event.getGroupIdentifier());
+        }catch (Exception e){
+            log.error("Failed to send data changed notification for group {}",
+                    event.getGroupIdentifier());
         }
     }
 

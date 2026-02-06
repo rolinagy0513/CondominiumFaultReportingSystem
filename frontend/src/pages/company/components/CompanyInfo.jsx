@@ -1,20 +1,18 @@
 import {useContext} from "react";
-
+import { CiEdit } from "react-icons/ci";
 import {getServiceTypeDisplay} from "../../../utility/GetCompanyLogoUtility.jsx";
-
 import {CompanyPageContext} from "../../../context/company/CompanyPageContext.jsx";
-
 import "./component-styles/CompanyInfo.css"
 
 const CompanyInfo = () =>{
-
-    const {usersCompany} = useContext(CompanyPageContext);
-
-    console.log("This is the users company")
-    console.log(usersCompany);
+    const {usersCompany, setIsEditModalOpen} = useContext(CompanyPageContext);
 
     return(
         <div className="company-page-info-section">
+            <button className="company-page-edit-button" onClick={() => setIsEditModalOpen(true)}>
+                <CiEdit/>
+                <span>Edit company details</span>
+            </button>
             <h2 className="company-page-company-name">{usersCompany.name}</h2>
             <div className="company-page-info-grid">
                 <div className="company-page-info-item">
@@ -46,7 +44,6 @@ const CompanyInfo = () =>{
             </div>
         </div>
     )
-
 }
 
 export default CompanyInfo

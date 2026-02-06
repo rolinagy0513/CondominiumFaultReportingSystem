@@ -26,6 +26,7 @@ import MiddleSection from "./components/MiddleSection.jsx";
 import FeedbackNotification from "./components/FeedbackNotification.jsx";
 
 import "./style/CompanyPage.css"
+import EditCompanyModal from "./components/EditCompanyModal.jsx";
 
 const CompanyPage = () => {
 
@@ -44,7 +45,9 @@ const CompanyPage = () => {
         setNotificationMessage, notificationMessage,
         isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen,
         setIsUserRemovedNotificationOpen, isUserRemovedNotificationOpen,
-        isPrivateReportCameOpen, setIsPrivateReportCameOpen,isFeedbackNotificationOpen, setIsFeedbackNotificationOpen
+        isPrivateReportCameOpen, setIsPrivateReportCameOpen,
+        isFeedbackNotificationOpen, setIsFeedbackNotificationOpen,
+        isEditModalOpen
     } = useContext(CompanyPageContext);
 
     const subscriptionRef = useRef(null);
@@ -283,6 +286,11 @@ const CompanyPage = () => {
             {isFeedbackNotificationOpen && (
                 <FeedbackNotification/>
             )}
+
+            {isEditModalOpen &&(
+                <EditCompanyModal/>
+            )}
+
         </div>
     );
 };
