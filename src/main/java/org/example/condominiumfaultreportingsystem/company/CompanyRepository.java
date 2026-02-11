@@ -42,6 +42,5 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     @Query("SELECT COUNT(f) FROM Feedback f WHERE f.company.id = :companyId")
     Integer countFeedbacksByCompanyId(@Param("companyId") Long companyId);
 
-
     List<Company> user(User user);
 }

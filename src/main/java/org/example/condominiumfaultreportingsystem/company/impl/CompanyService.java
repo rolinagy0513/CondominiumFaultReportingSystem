@@ -12,9 +12,12 @@ import org.example.condominiumfaultreportingsystem.company.ICompanyService;
 import org.example.condominiumfaultreportingsystem.company.ServiceType;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyArrivedEvent;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyDataChangedEvent;
+import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyRemovedEvent;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyRequestAcceptedEvent;
 import org.example.condominiumfaultreportingsystem.exception.*;
 import org.example.condominiumfaultreportingsystem.feedback.Feedback;
+import org.example.condominiumfaultreportingsystem.group.Group;
+import org.example.condominiumfaultreportingsystem.group.GroupRepository;
 import org.example.condominiumfaultreportingsystem.group.impl.GroupService;
 import org.example.condominiumfaultreportingsystem.security.user.Role;
 import org.example.condominiumfaultreportingsystem.security.user.User;
@@ -50,6 +53,7 @@ public class CompanyService implements ICompanyService {
     private final CacheService cacheService;
 
     private final ApplicationEventPublisher eventPublisher;
+    private final GroupRepository groupRepository;
 
     @Transactional
     public CompanyDTO addCompany(CompanyAddDTO addDTO){

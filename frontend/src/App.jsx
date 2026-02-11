@@ -25,6 +25,7 @@ import {ResidentUserProvider} from "./context/resident/ResidentUserContext.jsx";
 import {InvoiceProvider} from "./context/invoice/InvoiceContext.jsx";
 import {ResidentNotificationProvider} from "./context/resident/ResidentNotificationContext.jsx";
 import {CompanyPageProvider} from "./context/company/CompanyPageContext.jsx";
+import {CompanyNotificationProvider} from "./context/company/CompanyNotificationContext.jsx";
 
 function App() {
 
@@ -54,9 +55,11 @@ function App() {
                                                                                            <InvoiceProvider>
                                                                                                <ResidentNotificationProvider>
                                                                                                    <CompanyPageProvider>
-                                                                                                       <AuthRoutes/>
-                                                                                                       <MainRoutes/>
-                                                                                                       <AdminRoutes/>
+                                                                                                       <CompanyNotificationProvider>
+                                                                                                           <AuthRoutes/>
+                                                                                                           <MainRoutes/>
+                                                                                                           <AdminRoutes/>
+                                                                                                       </CompanyNotificationProvider>
                                                                                                    </CompanyPageProvider>
                                                                                                </ResidentNotificationProvider>
                                                                                            </InvoiceProvider>

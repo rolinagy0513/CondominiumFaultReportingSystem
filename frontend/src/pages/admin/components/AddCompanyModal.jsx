@@ -1,19 +1,19 @@
-import {useContext, useState} from "react";
-import {AdminModalContext} from "../../../context/admin/AdminModalContext.jsx";
-import {BuildingContext} from "../../../context/admin/BuildingContext.jsx";
+import { useContext, useState } from "react";
 
-import {useCompanies} from "../../../hooks/useCompanies.js";
+import { AdminModalContext } from "../../../context/admin/AdminModalContext.jsx";
+import { BuildingContext } from "../../../context/admin/BuildingContext.jsx";
+import { AdminPanelContext } from "../../../context/admin/AdminPanelContext.jsx";
 
-import "../../resident/components/components-styles/ReportModal.css"
-import {AdminPanelContext} from "../../../context/admin/AdminPanelContext.jsx";
+import { useCompanies } from "../../../hooks/useCompanies.js";
+
+
+import "./component-styles/AddCompanyModal.css"
 
 const AddCompanyModal = () => {
-
-    const {addCompanyModalOpen, setAddCompanyModalOpen} = useContext(AdminModalContext);
-    const {buildings} = useContext(BuildingContext);
-    const {setCurrentView} = useContext(AdminPanelContext);
-
-    const {addCompany} = useCompanies()
+    const { addCompanyModalOpen, setAddCompanyModalOpen } = useContext(AdminModalContext);
+    const { buildings } = useContext(BuildingContext);
+    const { setCurrentView } = useContext(AdminPanelContext);
+    const { addCompany } = useCompanies();
 
     const [formData, setFormData] = useState({
         userToAddEmail: '',
@@ -26,11 +26,14 @@ const AddCompanyModal = () => {
         address: '',
         introduction: '',
         serviceType: '',
-
     });
 
+
+    const [serviceTypeOpen, setServiceTypeOpen] = useState(false);
+    const [buildingOpen, setBuildingOpen] = useState(false);
+
     const handleFormChange = (e) => {
-        const {name, value} = e.target;
+        const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
             [name]: value
@@ -39,32 +42,186 @@ const AddCompanyModal = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
         addCompany(formData);
-
         console.log("Form submitted:", formData);
         setAddCompanyModalOpen(false);
         setCurrentView("buildings");
     };
 
+    const serviceTypeOptions = [
+        { value: "ELECTRICIAN", label: "⚡ Electrician" },
+        { value: "PLUMBER", label: "🔧 Plumber" },
+        { value: "CLEANING", label: "🧹 Cleaning" },
+        { value: "SECURITY", label: "🔒 Security" },
+        { value: "HEATING_TECHNICIANS", label: "🔥 Heating Technicians" },
+        { value: "ELEVATOR_MAINTENANCE", label: "🛗 Elevator Maintenance" },
+        { value: "GARDENING", label: "🌳 Gardening" },
+        { value: "OTHER", label: "📋 Other Services" }
+    ];
+
+
+    const CustomSelect = ({
+                              name,
+                              value,
+                              onChange,
+                              options,
+                              placeholder,
+                              required,
+                              isOpen,
+                              setIsOpen
+                          }) => {
+        const selectedOption = options.find(opt => opt.value === value);
+
+        return (
+            <div className="add-company-custom-select">
+                <button
+                    type="button"
+                    className={`add-company-select-button ${isOpen ? 'active' : ''}`}
+                    onClick={() => setIsOpen(!isOpen)}
+                >
+                    <span className={!selectedOption ? 'add-company-select-placeholder' : ''}>
+                        {selectedOption ? selectedOption.label : placeholder}
+                    </span>
+                    <span className="add-company-select-arrow"></span>
+                </button>
+
+                {isOpen && (
+                    <div className="add-company-select-dropdown">
+                        {options.map((option) => (
+                            <div
+                                key={option.value}
+                                className={`add-company-select-option ${value === option.value ? 'selected' : ''}`}
+                                onClick={() => {
+                                    onChange({ target: { name, value: option.value } });
+                                    setIsOpen(false);
+                                }}
+                            >
+                                {option.label}
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                <select
+                    name={name}
+                    value={value}
+                    onChange={onChange}
+                    required={required}
+                    tabIndex={-1}
+                    aria-hidden="true"
+                    style={{
+                        position: 'absolute',
+                        opacity: 0,
+                        height: 0,
+                        width: 0,
+                        pointerEvents: 'none'
+                    }}
+                >
+                    <option value="">{placeholder}</option>
+                    {options.map(option => (
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                    ))}
+                </select>
+            </div>
+        );
+    };
+
+
+    const BuildingCustomSelect = ({
+                                      name,
+                                      value,
+                                      onChange,
+                                      buildings,
+                                      placeholder,
+                                      required,
+                                      isOpen,
+                                      setIsOpen
+                                  }) => {
+        const selectedBuilding = buildings?.find(b => b.id.toString() === value?.toString());
+
+        return (
+            <div className="add-company-custom-select">
+                <button
+                    type="button"
+                    className={`add-company-select-button ${isOpen ? 'active' : ''}`}
+                    onClick={() => setIsOpen(!isOpen)}
+                >
+                    <span className={!selectedBuilding ? 'add-company-select-placeholder' : ''}>
+                        {selectedBuilding
+                            ? `${selectedBuilding.address}, Building #${selectedBuilding.buildingNumber}`
+                            : placeholder
+                        }
+                    </span>
+                    <span className="add-company-select-arrow"></span>
+                </button>
+
+                {isOpen && (
+                    <div className="add-company-select-dropdown">
+                        {buildings && buildings.length > 0 ? (
+                            buildings.map((building) => (
+                                <div
+                                    key={building.id}
+                                    className={`add-company-select-option ${value === building.id.toString() ? 'selected' : ''}`}
+                                    onClick={() => {
+                                        onChange({ target: { name, value: building.id.toString() } });
+                                        setIsOpen(false);
+                                    }}
+                                >
+                                    {building.address}, Building #{building.buildingNumber}
+                                </div>
+                            ))
+                        ) : (
+                            <div className="add-company-select-empty">No buildings available</div>
+                        )}
+                    </div>
+                )}
+
+                <select
+                    name={name}
+                    value={value}
+                    onChange={onChange}
+                    required={required}
+                    tabIndex={-1}
+                    aria-hidden="true"
+                    style={{
+                        position: 'absolute',
+                        opacity: 0,
+                        height: 0,
+                        width: 0,
+                        pointerEvents: 'none'
+                    }}
+                >
+                    <option value="">{placeholder}</option>
+                    {buildings?.map(building => (
+                        <option key={building.id} value={building.id}>
+                            {building.address}, Building #{building.buildingNumber}
+                        </option>
+                    ))}
+                </select>
+            </div>
+        );
+    };
+
     if (!addCompanyModalOpen) return null;
 
     return (
-        <div className="resident-page-modal-overlay">
-            <div className="resident-page-modal-content">
-                <div className="resident-page-modal-header">
+        <div className="add-company-modal-overlay">
+            <div className="add-company-modal-content">
+                <div className="add-company-modal-header">
                     <h3>Add New Company</h3>
                     <button
-                        className="resident-page-modal-close"
+                        className="add-company-modal-close"
                         onClick={() => setAddCompanyModalOpen(false)}
                     >
                         ×
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="resident-page-report-form">
-                    <div className="resident-page-form-row">
-                        <div className="resident-page-form-group">
+                <form onSubmit={handleSubmit} className="add-company-form">
+                    <div className="add-company-form-row">
+                        <div className="add-company-form-group">
                             <label>Company Name *</label>
                             <input
                                 type="text"
@@ -75,7 +232,7 @@ const AddCompanyModal = () => {
                                 placeholder="Enter company name"
                             />
                         </div>
-                        <div className="resident-page-form-group">
+                        <div className="add-company-form-group">
                             <label>Contact Email *</label>
                             <input
                                 type="email"
@@ -88,8 +245,8 @@ const AddCompanyModal = () => {
                         </div>
                     </div>
 
-                    <div className="resident-page-form-row">
-                        <div className="resident-page-form-group">
+                    <div className="add-company-form-row">
+                        <div className="add-company-form-group">
                             <label>Phone Number *</label>
                             <input
                                 type="tel"
@@ -100,7 +257,7 @@ const AddCompanyModal = () => {
                                 placeholder="+1 (555) 123-4567"
                             />
                         </div>
-                        <div className="resident-page-form-group">
+                        <div className="add-company-form-group">
                             <label>Company Address *</label>
                             <input
                                 type="text"
@@ -113,45 +270,36 @@ const AddCompanyModal = () => {
                         </div>
                     </div>
 
-                    <div className="resident-page-form-row">
-                        <div className="resident-page-form-group">
+                    <div className="add-company-form-row">
+                        <div className="add-company-form-group">
                             <label>Service Type *</label>
-                            <select
+                            <CustomSelect
                                 name="serviceType"
                                 value={formData.serviceType}
                                 onChange={handleFormChange}
+                                options={serviceTypeOptions}
+                                placeholder="Select a service type"
                                 required
-                            >
-                                <option value="">Select a service type</option>
-                                <option value="ELECTRICIAN">⚡ Electrician</option>
-                                <option value="PLUMBER">🔧 Plumber</option>
-                                <option value="CLEANING">🧹 Cleaning</option>
-                                <option value="SECURITY">🔒 Security</option>
-                                <option value="HEATING_TECHNICIANS">🔥 Heating Technicians</option>
-                                <option value="ELEVATOR_MAINTENANCE">🛗 Elevator Maintenance</option>
-                                <option value="GARDENING">🌳 Gardening</option>
-                                <option value="OTHER">📋 Other Services</option>
-                            </select>
+                                isOpen={serviceTypeOpen}
+                                setIsOpen={setServiceTypeOpen}
+                            />
                         </div>
-                        <div className="resident-page-form-group">
+                        <div className="add-company-form-group">
                             <label>Assign to Building *</label>
-                            <select
+                            <BuildingCustomSelect
                                 name="buildingId"
                                 value={formData.buildingId}
                                 onChange={handleFormChange}
+                                buildings={buildings}
+                                placeholder="Select a building"
                                 required
-                            >
-                                <option value="">Select a building</option>
-                                {buildings && buildings.map(building => (
-                                    <option key={building.id} value={building.id}>
-                                        {building.address}, Building #{building.buildingNumber}
-                                    </option>
-                                ))}
-                            </select>
+                                isOpen={buildingOpen}
+                                setIsOpen={setBuildingOpen}
+                            />
                         </div>
                     </div>
 
-                    <div className="resident-page-form-group">
+                    <div className="add-company-form-group">
                         <label>Registered User Email (to associate with company) *</label>
                         <input
                             type="email"
@@ -161,12 +309,12 @@ const AddCompanyModal = () => {
                             required
                             placeholder="user@example.com"
                         />
-                        <small className="company-modal-hint">
+                        <small className="add-company-hint">
                             This user will be promoted to COMPANY role and associated with this company
                         </small>
                     </div>
 
-                    <div className="resident-page-form-group">
+                    <div className="add-company-form-group">
                         <label>Company Introduction *</label>
                         <textarea
                             name="introduction"
@@ -178,22 +326,22 @@ const AddCompanyModal = () => {
                         />
                     </div>
 
-                    <div className="resident-page-form-actions">
+                    <div className="add-company-form-actions">
                         <button
                             type="button"
-                            className="resident-page-btn-secondary"
+                            className="add-company-btn-secondary"
                             onClick={() => setAddCompanyModalOpen(false)}
                         >
                             Cancel
                         </button>
-                        <button type="submit" className="resident-page-btn-primary">
+                        <button type="submit" className="add-company-btn-primary">
                             Add Company
                         </button>
                     </div>
                 </form>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default AddCompanyModal;

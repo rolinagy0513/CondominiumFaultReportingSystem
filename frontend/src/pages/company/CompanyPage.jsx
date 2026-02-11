@@ -27,6 +27,7 @@ import FeedbackNotification from "./components/FeedbackNotification.jsx";
 
 import "./style/CompanyPage.css"
 import EditCompanyModal from "./components/EditCompanyModal.jsx";
+import {CompanyNotificationContext} from "../../context/company/CompanyNotificationContext.jsx";
 
 const CompanyPage = () => {
 
@@ -37,18 +38,20 @@ const CompanyPage = () => {
     const LOGOUT_URL = `${AUTH_API_PATH}/logout`;
 
     const {
-        usersCompany, usersFeedbacks, usersBuildings,
+        usersCompany,
         authenticatedCompanyUserId,
         companyGroupIdentifier, companyId,
-        privateReports, acceptedReports,
-        isWelcomeNotificationOpen, setIsWelcomeNotificationOpen,
         setNotificationMessage, notificationMessage,
-        isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen,
-        setIsUserRemovedNotificationOpen, isUserRemovedNotificationOpen,
         isPrivateReportCameOpen, setIsPrivateReportCameOpen,
         isFeedbackNotificationOpen, setIsFeedbackNotificationOpen,
-        isEditModalOpen
     } = useContext(CompanyPageContext);
+
+    const {
+        isWelcomeNotificationOpen, setIsWelcomeNotificationOpen,
+        isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen,
+        setIsUserRemovedNotificationOpen, isUserRemovedNotificationOpen,
+        isEditModalOpen
+    } = useContext(CompanyNotificationContext);
 
     const subscriptionRef = useRef(null);
     const removalSubscriptionRef = useRef(null);
@@ -56,13 +59,8 @@ const CompanyPage = () => {
     const requestResponseSubscriptionRef = useRef(null);
 
     const {
-        currentPage, setCurrentPage,
-        totalPages, currentPrivatePage,
-        setCurrentPrivatePage, totalPrivatePage,
-        setTotalPages, setTotalPrivatePage
+        currentPage
     } = useContext(PaginationContext);
-
-    const {publicReports} = useContext(ResidentReportContext);
 
     const {
         getMyCompany
@@ -122,11 +120,12 @@ const CompanyPage = () => {
                     }
                 );
 
-                const removalQueue = `/user/${companyId}/queue/removal`;
+                const removalQueue = `/user/${authenticatedCompanyUserId}/queue/removal`;
                 removalSubscriptionRef.current = websocketServices.subscribe(
                     removalQueue,
                     (message) => {
                         console.log("📬 Company removal notification:", message);
+                        handleNotification(message);
                     }
                 );
 
@@ -171,6 +170,7 @@ const CompanyPage = () => {
 
             case "COMPANY_REMOVAL":
                 setNotificationMessage(notification.message);
+                if (notification.companyName )
                 setIsCompanyRemovalNotificationOpen(true)
                 break;
 

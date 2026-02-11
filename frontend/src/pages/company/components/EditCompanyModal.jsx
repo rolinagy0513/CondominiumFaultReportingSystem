@@ -2,12 +2,16 @@ import {useContext, useState} from "react";
 import {CompanyPageContext} from "../../../context/company/CompanyPageContext.jsx";
 import "./component-styles/EditCompanyModal.css"
 import {useCompanies} from "../../../hooks/useCompanies.js";
+import {CompanyNotificationContext} from "../../../context/company/CompanyNotificationContext.jsx";
 
 const EditCompanyModal = () => {
     const {
-        isEditModalOpen, setIsEditModalOpen,
         companyId, companyGroupIdentifier
     } = useContext(CompanyPageContext);
+
+    const {
+        isEditModalOpen, setIsEditModalOpen
+    } = useContext(CompanyNotificationContext);
 
     const [formData, setFormData] = useState({
         companyName: '',

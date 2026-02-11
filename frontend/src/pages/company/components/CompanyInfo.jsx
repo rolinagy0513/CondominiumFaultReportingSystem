@@ -3,9 +3,12 @@ import { CiEdit } from "react-icons/ci";
 import {getServiceTypeDisplay} from "../../../utility/GetCompanyLogoUtility.jsx";
 import {CompanyPageContext} from "../../../context/company/CompanyPageContext.jsx";
 import "./component-styles/CompanyInfo.css"
+import {CompanyNotificationContext} from "../../../context/company/CompanyNotificationContext.jsx";
 
 const CompanyInfo = () =>{
-    const {usersCompany, setIsEditModalOpen} = useContext(CompanyPageContext);
+    const {usersCompany} = useContext(CompanyPageContext);
+
+    const{ setIsEditModalOpen} = useContext(CompanyNotificationContext);
 
     return(
         <div className="company-page-info-section">

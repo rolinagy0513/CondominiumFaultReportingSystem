@@ -96,7 +96,7 @@ public class NotificationService {
                 .companyEmail(company.getEmail())
                 .serviceType(company.getServiceType())
                 .message("Your company has been removed from the system.")
-                .type(NotificationType.COMPANY_REMOVAL)
+                .type(NotificationType.USER_REMOVAL)
                 .build();
 
         String userIdString = userId.toString();

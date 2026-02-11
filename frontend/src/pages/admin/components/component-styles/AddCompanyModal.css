@@ -1,0 +1,477 @@
+/* AddCompanyModal.css */
+/* Copy of ReportModal.css styles with component-specific prefixes */
+
+/* ===== AddCompanyModal Styles ===== */
+
+/* Modal Overlay */
+.add-company-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: add-company-fade-in 0.3s ease-out;
+}
+
+/* Modal Content */
+.add-company-modal-content {
+    background: white;
+    width: 90%;
+    max-width: 700px;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    animation: add-company-modal-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Modal Header */
+.add-company-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 32px;
+    background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+    color: white;
+}
+
+.add-company-modal-header h3 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+/* Close Button */
+.add-company-modal-close {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: white;
+    font-size: 28px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    line-height: 1;
+    padding: 0;
+}
+
+.add-company-modal-close:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: rotate(90deg);
+}
+
+/* Form Styles */
+.add-company-form {
+    padding: 32px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* Form Row */
+.add-company-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+/* Form Group */
+.add-company-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.add-company-form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.add-company-form-group label::after {
+    content: attr(data-required);
+    font-size: 11px;
+    color: #ef4444;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.add-company-form-group:has(input:required) label::after,
+.add-company-form-group:has(textarea:required) label::after,
+.add-company-form-group:has(select:required) label::after,
+.add-company-form-group:has(.add-company-custom-select) label::after {
+    content: " *";
+    opacity: 1;
+}
+
+/* Form Inputs */
+.add-company-form input,
+.add-company-form textarea {
+    padding: 14px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    background: white;
+    color: #1e293b;
+}
+
+.add-company-form input:focus,
+.add-company-form textarea:focus {
+    outline: none;
+    border-color: #1a365d;
+    box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.1);
+}
+
+.add-company-form input::placeholder,
+.add-company-form textarea::placeholder {
+    color: #94a3b8;
+}
+
+/* Textarea Styles */
+.add-company-form textarea {
+    resize: vertical;
+    min-height: 60px;
+    max-height: 200px;
+    line-height: 1.5;
+}
+
+/* ===== CUSTOM DROPDOWN STYLES - STAYS INSIDE MODAL ===== */
+.add-company-custom-select {
+    position: relative;
+    width: 100%;
+}
+
+.add-company-select-button {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 15px;
+    text-align: left;
+    background: white;
+    color: #1e293b;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.add-company-select-button:hover {
+    border-color: #94a3b8;
+}
+
+.add-company-select-button.active {
+    border-color: #1a365d;
+    box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.1);
+}
+
+.add-company-select-arrow {
+    width: 16px;
+    height: 16px;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: transform 0.3s ease;
+}
+
+.add-company-select-button.active .add-company-select-arrow {
+    transform: rotate(180deg);
+}
+
+/* Dropdown Menu - THIS STAYS INSIDE THE MODAL */
+.add-company-select-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+    animation: add-company-dropdown-fade 0.2s ease;
+}
+
+/* Dropdown Options */
+.add-company-select-option {
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    color: #1e293b;
+    word-wrap: break-word;
+    white-space: normal;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.add-company-select-option:last-child {
+    border-bottom: none;
+}
+
+.add-company-select-option:hover {
+    background-color: #f0f7ff;
+}
+
+.add-company-select-option.selected {
+    background-color: #e6f0fa;
+    color: #1a365d;
+    font-weight: 500;
+    border-left: 3px solid #1a365d;
+}
+
+/* No options message */
+.add-company-select-empty {
+    padding: 16px;
+    text-align: center;
+    color: #64748b;
+    font-style: italic;
+}
+
+/* Hide the native select */
+.add-company-form select {
+    display: none;
+}
+
+/* Form Actions */
+.add-company-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    padding-top: 24px;
+    border-top: 1px solid #e2e8f0;
+    margin-top: 8px;
+}
+
+/* Buttons */
+.add-company-btn-secondary,
+.add-company-btn-primary {
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+}
+
+.add-company-btn-secondary {
+    background: white;
+    color: #64748b;
+    border: 2px solid #e2e8f0;
+}
+
+.add-company-btn-secondary:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+    color: #475569;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.add-company-btn-primary {
+    background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.add-company-btn-primary::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #2c5282 0%, #1a365d 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.add-company-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(26, 54, 93, 0.3);
+}
+
+.add-company-btn-primary:hover::after {
+    opacity: 1;
+}
+
+.add-company-btn-primary span {
+    position: relative;
+    z-index: 1;
+}
+
+/* Hint Text */
+.add-company-hint {
+    display: block;
+    margin-top: 4px;
+    color: #64748b;
+    font-size: 12px;
+    font-style: italic;
+}
+
+/* Animations */
+@keyframes add-company-fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes add-company-modal-slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes add-company-dropdown-fade {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes add-company-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Scrollbar Styling */
+.add-company-form::-webkit-scrollbar,
+.add-company-select-dropdown::-webkit-scrollbar {
+    width: 8px;
+}
+
+.add-company-form::-webkit-scrollbar-track,
+.add-company-select-dropdown::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+.add-company-form::-webkit-scrollbar-thumb,
+.add-company-select-dropdown::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.add-company-form::-webkit-scrollbar-thumb:hover,
+.add-company-select-dropdown::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Error States */
+.add-company-form-group input:invalid,
+.add-company-form-group textarea:invalid {
+    border-color: #ef4444;
+}
+
+.add-company-form-group input:invalid:focus,
+.add-company-form-group textarea:invalid:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.add-company-form-group input:valid,
+.add-company-form-group textarea:valid {
+    border-color: #10b981;
+}
+
+/* Loading State */
+.add-company-btn-primary.add-company-loading {
+    position: relative;
+    color: transparent;
+}
+
+.add-company-btn-primary.add-company-loading::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: add-company-spin 0.8s linear infinite;
+    z-index: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .add-company-modal-content {
+        width: 95%;
+        max-width: 95%;
+        border-radius: 16px;
+    }
+
+    .add-company-modal-header {
+        padding: 20px 24px;
+    }
+
+    .add-company-modal-header p {
+        color: white;
+        font-weight: bolder;
+    }
+
+    .add-company-form {
+        padding: 24px 20px;
+    }
+
+    .add-company-form-row {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .add-company-form-actions {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .add-company-btn-secondary,
+    .add-company-btn-primary {
+        width: 100%;
+    }
+
+    .add-company-select-dropdown {
+        max-height: 150px;
+    }
+
+    .add-company-select-option {
+        padding: 14px 16px;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+}

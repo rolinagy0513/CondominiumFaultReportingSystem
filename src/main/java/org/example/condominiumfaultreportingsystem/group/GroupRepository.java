@@ -21,11 +21,6 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
     @EntityGraph(attributePaths = "users", type = EntityGraph.EntityGraphType.LOAD)
     Optional<Group> findGroupByUsersId(Long userId);
 
-    /**
-     * Fetches the Group and the users together eagerly everything else is fetched as defined(lazy)
-     * @param groupName The name of the group
-     * @return The Group with the users
-     */
     @EntityGraph(attributePaths = "users", type = EntityGraph.EntityGraphType.LOAD)
     Optional<Group> findWithUsersByGroupName(String groupName);
 

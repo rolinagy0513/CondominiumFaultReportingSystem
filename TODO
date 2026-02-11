@@ -1,6 +1,6 @@
- - Regaáljon a company a removal ra ugyan úgy mint a resident.
-
- - Optimalizálni a company page-et components-re és több context-re.
+ - Optimalizálni a company page-et több context-re.
+ - A következő az ez lessz const [isPrivateReportCameOpen, setIsPrivateReportCameOpen] = useState(false);
 
  - A company kapjon valami message-t hogy ha a user elment és megkpata a system message-t kell egy event is.
+
  - Meg kell csinálni az email-t is ami kiküldi majd a notification-t

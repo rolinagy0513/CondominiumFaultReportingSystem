@@ -39,13 +39,9 @@ export const CompanyPageProvider = ({children}) => {
     const [usersBuildings, setUsersBuildings] = useState([]);
     const [privateReports, setPrivateReports] = useState([]);
     const [acceptedReports, setAcceptedReports] = useState([]);
-
     const [notificationMessage, setNotificationMessage] = useState([]);
-    const [isWelcomeNotificationOpen, setIsWelcomeNotificationOpen] = useState(false);
-    const [isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen] = useState(false);
-    const [isUserRemovedNotificationOpen, setIsUserRemovedNotificationOpen] = useState(false);
+
     const [isPrivateReportCameOpen, setIsPrivateReportCameOpen] = useState(false);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
 
     useEffect(() => {
@@ -174,12 +170,8 @@ export const CompanyPageProvider = ({children}) => {
                 privateReports, setPrivateReports,
                 acceptedReports, setAcceptedReports,
                 notificationMessage, setNotificationMessage,
-                isWelcomeNotificationOpen, setIsWelcomeNotificationOpen,
-                isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen,
-                isUserRemovedNotificationOpen, setIsUserRemovedNotificationOpen,
                 isPrivateReportCameOpen, setIsPrivateReportCameOpen,
                 reportTypeIcons, isFeedbackNotificationOpen, setIsFeedbackNotificationOpen,
-                isEditModalOpen, setIsEditModalOpen
             }
         }>
             {children}
