@@ -41,16 +41,16 @@ const CompanyPage = () => {
         usersCompany,
         authenticatedCompanyUserId,
         companyGroupIdentifier, companyId,
-        setNotificationMessage, notificationMessage,
-        isPrivateReportCameOpen, setIsPrivateReportCameOpen,
-        isFeedbackNotificationOpen, setIsFeedbackNotificationOpen,
+        // isFeedbackNotificationOpen, setIsFeedbackNotificationOpen,
     } = useContext(CompanyPageContext);
 
     const {
         isWelcomeNotificationOpen, setIsWelcomeNotificationOpen,
         isCompanyRemovalNotificationOpen, setIsCompanyRemovalNotificationOpen,
         setIsUserRemovedNotificationOpen, isUserRemovedNotificationOpen,
-        isEditModalOpen
+        isEditModalOpen, isPrivateReportCameOpen, setIsPrivateReportCameOpen,
+        setNotificationMessage, notificationMessage,
+        isFeedbackNotificationOpen, setIsFeedbackNotificationOpen,
     } = useContext(CompanyNotificationContext);
 
     const subscriptionRef = useRef(null);
@@ -189,6 +189,7 @@ const CompanyPage = () => {
                 setNotificationMessage(notification.message);
                 setIsUserRemovedNotificationOpen(true);
                 getAllPublicReports(currentPage);
+                getAcceptedReportsForCompany(companyId);
                 break;
 
             case "FEEDBACK_CAME":

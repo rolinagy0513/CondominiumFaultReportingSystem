@@ -1,13 +1,15 @@
+/* Existing styles remain unchanged, new additions at the bottom */
+
 .company-page-accepted-reports-section {
     background: var(--background-white);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
     border: 1px solid var(--border-color);
-    flex: 1; /* Takes available space */
+    flex: 1;
     display: flex;
     flex-direction: column;
     min-height: 300px;
-    overflow: hidden; /* Prevent overflow from child elements */
+    overflow: hidden;
 }
 
 .company-page-accepted-reports-card {
@@ -20,7 +22,7 @@
 }
 
 .company-page-accepted-reports-card .company-page-card-header {
-    flex-shrink: 0; /* Prevent header from shrinking */
+    flex-shrink: 0;
     margin-bottom: 1rem;
     padding-bottom: 1rem;
     border-bottom: 2px solid var(--accent-blue);
@@ -33,7 +35,7 @@
     flex: 1;
     overflow-y: auto;
     padding-right: 0.5rem;
-    min-height: 0; /* Important for flex children to allow scrolling */
+    min-height: 0;
 }
 
 .company-page-accepted-reports-content::-webkit-scrollbar {
@@ -57,7 +59,7 @@
     border-left: 4px solid var(--primary-blue);
     transition: var(--transition);
     overflow: hidden;
-    flex-shrink: 0; /* Prevent items from shrinking */
+    flex-shrink: 0;
 }
 
 .company-page-accepted-report-item:hover {
@@ -151,4 +153,30 @@
 
 .company-page-complete-btn:active {
     transform: translateY(0);
+}
+
+/* ===== NEW STYLES FOR CANCELLED REPORTS ===== */
+.company-page-accepted-report-item--cancelled {
+    border-left-color: #dc2626; /* red */
+    background-color: #fef2f2;   /* very light red */
+    opacity: 0.9;
+}
+
+.company-page-cancelled-banner {
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background-color: #fee2e2;   /* light red */
+    border-left: 3px solid #dc2626;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    color: #991b1b;              /* dark red */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.company-page-cancelled-banner span {
+    line-height: 1.4;
+    word-break: break-word;
 }

@@ -1,9 +1,12 @@
 import {useContext, useEffect, useState} from "react";
-import {CompanyPageContext} from "../../../context/company/CompanyPageContext.jsx";
+
+import {CompanyNotificationContext} from "../../../context/company/CompanyNotificationContext.jsx";
+
 import "./component-styles/FeedbackNotification.css"
 
 const FeedbackNotification = () => {
-    const {isFeedbackNotificationOpen, setIsFeedbackNotificationOpen, feedbackMessage} = useContext(CompanyPageContext);
+    const {isFeedbackNotificationOpen, setIsFeedbackNotificationOpen} = useContext(CompanyNotificationContext);
+
     const [isVisible, setIsVisible] = useState(true);
 
     useEffect(() => {
@@ -37,7 +40,7 @@ const FeedbackNotification = () => {
                     <h4>New Feedback Received</h4>
                     <p>
                         <span className="feedback-details">
-                            {feedbackMessage || "You have received new feedback on your company profile."}
+                            {  "You have received new feedback on your company profile."}
                         </span>
                     </p>
                 </div>

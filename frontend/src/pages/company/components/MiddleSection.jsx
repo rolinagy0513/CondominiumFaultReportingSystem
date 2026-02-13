@@ -9,8 +9,13 @@ import { useReports } from "../../../hooks/useReports.js";
 
 import {truncateText} from "../../../utility/turncateText.js";
 
+import "./component-styles/MiddleSection.css"
+import {CompanyReportContext} from "../../../context/company/CompanyReportContext.jsx";
+
 const MiddleSection = () => {
-    const { companyId, privateReports } = useContext(CompanyPageContext);
+
+    const { companyId} = useContext(CompanyPageContext);
+    const { privateReports } = useContext(CompanyReportContext);
     const { publicReports } = useContext(ResidentReportContext)
 
     const {

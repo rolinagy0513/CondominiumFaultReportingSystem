@@ -292,8 +292,11 @@ public class ApartmentService implements IApartmentService {
 
                 List<Report> usersInProgressReports = usersInProgressReportOpt.get();
 
-                usersInProgressReports.forEach(
-                        report -> report.setSystemMessage("[SYSTEM] : The user has been removed from the system in the process.")
+                usersInProgressReportOpt.ifPresent(reports ->
+                        reports.forEach(report -> {
+                            report.setSystemMessage("[SYSTEM] : The user has been removed from the system in the process.");
+                            report.setReportStatus(ReportStatus.CANCELLED);
+                        })
                 );
 
             }

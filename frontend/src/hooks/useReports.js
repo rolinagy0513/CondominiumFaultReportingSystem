@@ -6,6 +6,7 @@ import {PaginationContext} from "../context/general/PaginationContext.jsx";
 import {ResidentReportContext} from "../context/resident/ResidentReportContext.jsx";
 import {ResidentUserContext} from "../context/resident/ResidentUserContext.jsx";
 import {CompanyPageContext} from "../context/company/CompanyPageContext.jsx";
+import {CompanyReportContext} from "../context/company/CompanyReportContext.jsx";
 
 export const useReports = () =>{
 
@@ -29,9 +30,12 @@ export const useReports = () =>{
     } = useContext(PaginationContext);
 
     const{
-        companyGroupId,setPrivateReports,
-        setAcceptedReports
+        companyGroupId
     } = useContext(CompanyPageContext);
+
+    const{
+        setPrivateReports,setAcceptedReports
+    } = useContext(CompanyReportContext);
 
 
     const pageSize = 5;

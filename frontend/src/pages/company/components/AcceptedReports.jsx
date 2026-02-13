@@ -1,22 +1,17 @@
-import {useContext} from "react";
+import { useContext } from "react";
+import { FaFileAlt } from "react-icons/fa";
+import { useReports } from "../../../hooks/useReports.js";
+import { truncateText } from "../../../utility/turncateText.js";
+import { CompanyPageContext } from "../../../context/company/CompanyPageContext.jsx";
+import { CompanyReportContext } from "../../../context/company/CompanyReportContext.jsx";
+import "./component-styles/AcceptedReports.css";
 
-import {FaFileAlt} from "react-icons/fa";
+const AcceptedReports = () => {
+    const { companyId } = useContext(CompanyPageContext);
+    const { acceptedReports, reportTypeIcons } = useContext(CompanyReportContext);
+    const { completeReport } = useReports();
 
-import {useReports} from "../../../hooks/useReports.js";
-
-import {truncateText} from "../../../utility/turncateText.js";
-
-import {CompanyPageContext} from "../../../context/company/CompanyPageContext.jsx";
-
-import "./component-styles/AcceptedReports.css"
-
-const AcceptedReports = () =>{
-
-    const {acceptedReports, companyId, reportTypeIcons} = useContext(CompanyPageContext)
-
-    const {completeReport} = useReports()
-
-    return(
+    return (
         <div className="company-page-accepted-reports-section">
             <div className="company-page-accepted-reports-card">
                 <div className="company-page-card-header">
@@ -26,38 +21,50 @@ const AcceptedReports = () =>{
 
                 <div className="company-page-accepted-reports-content">
                     {acceptedReports.map((report, index) => (
-                        <div key={index} className="company-page-accepted-report-item">
+                        <div
+                            key={index}
+                            className={`company-page-accepted-report-item ${
+                                report.status === "CANCELLED" ? "company-page-accepted-report-item--cancelled" : ""
+                            }`}
+                        >
                             <div className="company-page-accepted-report-header">
-                                              <span className="company-page-report-type-icon">
-                                                {reportTypeIcons[report.reportType] || "📋"}
-                                              </span>
+                                <span className="company-page-report-type-icon">
+                                    {reportTypeIcons[report.reportType] || "📋"}
+                                </span>
                                 <h4 className="company-page-accepted-report-title">{report.name}</h4>
                             </div>
 
                             <div className="company-page-accepted-report-meta">
-                                              <span className="company-page-accepted-report-type">
-                                                <span className="company-page-accepted-report-type-icon">
-                                                  {reportTypeIcons[report.reportType] || "📋"}
-                                                </span>
-                                                  {report.reportType}
-                                                </span>
+                                <span className="company-page-accepted-report-type">
+                                    <span className="company-page-accepted-report-type-icon">
+                                        {reportTypeIcons[report.reportType] || "📋"}
+                                    </span>
+                                    {report.reportType}
+                                </span>
                                 <p className="company-page-accepted-report-description">
                                     {truncateText(report.issueDescription, 60)}
                                 </p>
                             </div>
 
+                            {/* Cancelled banner – shown only if status is CANCELLED */}
+                            {report.status === "CANCELLED" && (
+                                <div className="company-page-cancelled-banner">
+                                    <span>⛔ This report has been cancelled.</span>
+                                </div>
+                            )}
+
                             <div className="company-page-accepted-report-footer">
                                 <div>
-                                                <span className="company-page-footer-tag">
-                                                  By {report.senderName}
-                                                </span>
+                                    <span className="company-page-footer-tag">
+                                        By {report.senderName}
+                                    </span>
                                 </div>
 
                                 <span className="company-page-accepted-report-date">
-                                                {report.createdAt
-                                                    ? new Date(report.createdAt).toLocaleDateString()
-                                                    : "Recently"}
-                                            </span>
+                                    {report.createdAt
+                                        ? new Date(report.createdAt).toLocaleDateString()
+                                        : "Recently"}
+                                </span>
 
                                 <button
                                     className="company-page-complete-btn"
@@ -71,8 +78,7 @@ const AcceptedReports = () =>{
                 </div>
             </div>
         </div>
-    )
-
-}
+    );
+};
 
 export default AcceptedReports;

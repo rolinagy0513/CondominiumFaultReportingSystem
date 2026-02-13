@@ -1,6 +1,4 @@
- - Optimalizálni a company page-et több context-re.
- - A következő az ez lessz const [isPrivateReportCameOpen, setIsPrivateReportCameOpen] = useState(false);
-
- - A company kapjon valami message-t hogy ha a user elment és megkpata a system message-t kell egy event is.
+ - Meg lett backenden csinálva a cucc már csak le kell tesztelni hogy ha cancelled akkor hogyan néz ki a cucc.
+ - Displayelje a system message-t is.
 
  - Meg kell csinálni az email-t is ami kiküldi majd a notification-t

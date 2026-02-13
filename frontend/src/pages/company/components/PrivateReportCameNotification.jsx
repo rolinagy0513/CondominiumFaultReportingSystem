@@ -1,11 +1,13 @@
 import {useContext, useEffect, useState} from "react";
-import {CompanyPageContext} from "../../../context/company/CompanyPageContext.jsx";
+
+import {CompanyNotificationContext} from "../../../context/company/CompanyNotificationContext.jsx";
 
 import "./component-styles/PrivateReportCameNotification.css"
 
 const PrivateReportCameNotification = () => {
 
-    const {notificationMessage, setIsPrivateReportCameOpen} = useContext(CompanyPageContext);
+    const {setIsPrivateReportCameOpen,notificationMessage} = useContext(CompanyNotificationContext)
+
     const [isVisible, setIsVisible] = useState(true);
 
     useEffect(() => {

@@ -4,6 +4,10 @@ export const CompanyPageContext = createContext()
 
 export const CompanyPageProvider = ({children}) => {
 
+    const [usersCompany, setUsersCompany] = useState([]);
+    const [usersFeedbacks, setUsersFeedbacks] = useState([]);
+    const [usersBuildings, setUsersBuildings] = useState([]);
+
     const [authenticatedCompanyUserId, setAuthenticatedCompanyUserId] = useState(() => {
         const storedId = localStorage.getItem("authenticatedCompanyUserId");
         console.log('🔍 [COMPANY_CONTEXT] Initial authenticatedCompanyUserId from localStorage:', storedId);
@@ -33,15 +37,6 @@ export const CompanyPageProvider = ({children}) => {
         console.log('🔍 [COMPANY_CONTEXT] Initial companyGroupIdentifier from localStorage:', storedIdentifier);
         return storedIdentifier;
     });
-
-    const [usersCompany, setUsersCompany] = useState([]);
-    const [usersFeedbacks, setUsersFeedbacks] = useState([]);
-    const [usersBuildings, setUsersBuildings] = useState([]);
-    const [privateReports, setPrivateReports] = useState([]);
-    const [acceptedReports, setAcceptedReports] = useState([]);
-    const [notificationMessage, setNotificationMessage] = useState([]);
-
-    const [isPrivateReportCameOpen, setIsPrivateReportCameOpen] = useState(false);
 
 
     useEffect(() => {
@@ -141,21 +136,6 @@ export const CompanyPageProvider = ({children}) => {
     }, [authenticatedCompanyUserId, companyId, authenticatedCompanyUserName, companyGroupId, companyGroupIdentifier]);
 
 
-    const reportTypeIcons = {
-        ELECTRICITY: "⚡",
-        LIGHTNING: "💡",
-        WATER_SUPPLY: "💧",
-        SEWAGE: "🚽",
-        HEATING: "🔥",
-        ELEVATOR: "🛗",
-        GARBAGE_COLLECTION: "🗑️",
-        SECURITY: "🔒",
-        GARDENING: "🌳",
-        OTHER: "📋"
-    };
-
-    const[isFeedbackNotificationOpen, setIsFeedbackNotificationOpen] = useState(false);
-
     return (
         <CompanyPageContext.Provider value={
             {
@@ -167,11 +147,6 @@ export const CompanyPageProvider = ({children}) => {
                 authenticatedCompanyUserName, setAuthenticatedCompanyUserName,
                 companyGroupId, setCompanyGroupId,
                 companyGroupIdentifier, setCompanyGroupIdentifier,
-                privateReports, setPrivateReports,
-                acceptedReports, setAcceptedReports,
-                notificationMessage, setNotificationMessage,
-                isPrivateReportCameOpen, setIsPrivateReportCameOpen,
-                reportTypeIcons, isFeedbackNotificationOpen, setIsFeedbackNotificationOpen,
             }
         }>
             {children}
