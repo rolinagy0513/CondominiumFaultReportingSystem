@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.condominiumfaultreportingsystem.company.ServiceType;
+import org.example.condominiumfaultreportingsystem.company.priceRange.PriceRange;
 
 import java.util.List;
 
@@ -26,6 +27,8 @@ public class CompanyWithFeedbacksDTO {
     private Double overallRating;
 
     private String companyIntroduction;
+
+    private PriceRange priceRange;
 
     @Enumerated(EnumType.STRING)
     private ServiceType serviceType;

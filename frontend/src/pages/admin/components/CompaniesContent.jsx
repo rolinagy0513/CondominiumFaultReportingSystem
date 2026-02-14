@@ -1,12 +1,9 @@
-import {useContext, useEffect} from "react";
-
-import {getServiceIcon} from "../../../utility/GetCompanyLogoUtility.jsx";
-import {getServiceTypeDisplay} from "../../../utility/GetCompanyLogoUtility.jsx";
-
-import {CompanyContext} from "../../../context/admin/CompanyContext.jsx";
-
-import "./component-styles/CompaniesContent.css"
-import {AdminModalContext} from "../../../context/admin/AdminModalContext.jsx";
+import { useContext, useEffect } from "react";
+import { getServiceIcon } from "../../../utility/GetCompanyLogoUtility.jsx";
+import { getServiceTypeDisplay } from "../../../utility/GetCompanyLogoUtility.jsx";
+import { CompanyContext } from "../../../context/admin/CompanyContext.jsx";
+import { AdminModalContext } from "../../../context/admin/AdminModalContext.jsx";
+import "./component-styles/CompaniesContent.css";
 
 const CompaniesContent = ({
                               handleBackToBuildings, companies,
@@ -15,11 +12,9 @@ const CompaniesContent = ({
                               removeCompanyAction, companiesTotalPages,
                               handleCompaniesPageChange, getCompanies,
                               getCompaniesByServiceType
-                          }) =>{
-
-    const {selectedServiceType, setSelectedServiceType} = useContext(CompanyContext);
-
-    const {setAddCompanyModalOpen} = useContext(AdminModalContext);
+                          }) => {
+    const { selectedServiceType, setSelectedServiceType } = useContext(CompanyContext);
+    const { setAddCompanyModalOpen } = useContext(AdminModalContext);
 
     const serviceTypes = [
         { value: "ALL", label: "All Services" },
@@ -32,6 +27,19 @@ const CompaniesContent = ({
         { value: "GARDENING", label: "Gardening" },
         { value: "OTHER", label: "Other" }
     ];
+
+    const formatPriceRange = (priceRange) => {
+        if (!priceRange) return '';
+        const { minPrice, maxPrice, currencyType } = priceRange;
+        if (minPrice != null && maxPrice != null) {
+            return `${minPrice} ${currencyType || ''} - ${maxPrice} ${currencyType || ''}`;
+        } else if (minPrice != null) {
+            return `${minPrice} ${currencyType || ''}`;
+        } else if (maxPrice != null) {
+            return `${maxPrice} ${currencyType || ''}`;
+        }
+        return '';
+    };
 
     const handleServiceTypeChange = (e) => {
         const value = e.target.value;
@@ -54,7 +62,7 @@ const CompaniesContent = ({
         }
     }, []);
 
-    return(
+    return (
         <div className="companies-content">
             <div className="content-header">
                 <button
@@ -84,9 +92,9 @@ const CompaniesContent = ({
                 </p>
             </div>
 
-             <div className="companies-content-manual-button-container">
-                 <button className="companies-content-manual-button" onClick={()=> setAddCompanyModalOpen(true)}>Add a company manually</button>
-             </div>
+            <div className="companies-content-manual-button-container">
+                <button className="companies-content-manual-button" onClick={() => setAddCompanyModalOpen(true)}>Add a company manually</button>
+            </div>
 
             {loadingCompanies ? (
                 <div className="loading">Loading companies...</div>
@@ -104,16 +112,23 @@ const CompaniesContent = ({
                                             <h4>{company.name}</h4>
                                         </div>
                                         <span className={`service-type ${company.serviceType?.toLowerCase() || 'unknown'}`}>
-                                                    {getServiceTypeDisplay(company.serviceType)}
-                                                </span>
+                                            {getServiceTypeDisplay(company.serviceType)}
+                                        </span>
                                     </div>
                                     <div className="company-details">
                                         <p><strong>Email:</strong> {company.email}</p>
                                         <p><strong>Phone:</strong> {company.phoneNumber}</p>
                                         <p><strong>Address:</strong> {company.address}</p>
-                                        <p><strong>Introduction:</strong>{company.companyIntroduction}</p>
+                                        {/* Price Range Display */}
+                                        {company.priceRange && (company.priceRange.minPrice != null || company.priceRange.maxPrice != null) && (
+                                            <p>
+                                                <strong>Price Range:</strong>
+                                                <span>{formatPriceRange(company.priceRange)}</span>
+                                            </p>
+                                        )}
+                                        <p><strong>Introduction:</strong> {company.companyIntroduction}</p>
                                     </div>
-                                    <button className="remove-button" onClick={()=>removeCompanyAction(company.id)}>Remove Company</button>
+                                    <button className="remove-button" onClick={() => removeCompanyAction(company.id)}>Remove Company</button>
                                 </div>
                             ))
                         ) : (
@@ -130,7 +145,6 @@ const CompaniesContent = ({
                                 onClick={() => {
                                     const newPage = companiesCurrentPage - 1;
                                     handleCompaniesPageChange(newPage);
-                                    // Call appropriate function for the new page
                                     if (selectedServiceType === "ALL") {
                                         getCompanies(newPage);
                                     } else {
@@ -225,8 +239,7 @@ const CompaniesContent = ({
                 </>
             )}
         </div>
-    )
-
-}
+    );
+};
 
 export default CompaniesContent;

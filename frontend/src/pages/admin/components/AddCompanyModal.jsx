@@ -1,13 +1,9 @@
 import { useContext, useState } from "react";
-
 import { AdminModalContext } from "../../../context/admin/AdminModalContext.jsx";
 import { BuildingContext } from "../../../context/admin/BuildingContext.jsx";
 import { AdminPanelContext } from "../../../context/admin/AdminPanelContext.jsx";
-
 import { useCompanies } from "../../../hooks/useCompanies.js";
-
-
-import "./component-styles/AddCompanyModal.css"
+import "./component-styles/AddCompanyModal.css";
 
 const AddCompanyModal = () => {
     const { addCompanyModalOpen, setAddCompanyModalOpen } = useContext(AdminModalContext);
@@ -18,19 +14,21 @@ const AddCompanyModal = () => {
     const [formData, setFormData] = useState({
         userToAddEmail: '',
         buildingId: '',
-        buildingAddress: '',
-        buildingNumber: '',
         name: '',
         email: '',
         phoneNumber: '',
         address: '',
         introduction: '',
         serviceType: '',
+        // Price range fields
+        minPrice: '',
+        maxPrice: '',
+        currency: '',
     });
-
 
     const [serviceTypeOpen, setServiceTypeOpen] = useState(false);
     const [buildingOpen, setBuildingOpen] = useState(false);
+    const [currencyOpen, setCurrencyOpen] = useState(false);
 
     const handleFormChange = (e) => {
         const { name, value } = e.target;
@@ -42,8 +40,26 @@ const AddCompanyModal = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        addCompany(formData);
-        console.log("Form submitted:", formData);
+
+        // Build the payload with nested priceRange
+        const companyData = {
+            userToAddEmail: formData.userToAddEmail,
+            buildingId: formData.buildingId,
+            name: formData.name,
+            email: formData.email,
+            phoneNumber: formData.phoneNumber,
+            address: formData.address,
+            introduction: formData.introduction,
+            serviceType: formData.serviceType,
+            priceRange: {
+                minPrice: formData.minPrice ? parseFloat(formData.minPrice) : null,
+                maxPrice: formData.maxPrice ? parseFloat(formData.maxPrice) : null,
+                currencyType: formData.currency || null
+            }
+        };
+
+        addCompany(companyData);
+        console.log("Form submitted:", companyData);
         setAddCompanyModalOpen(false);
         setCurrentView("buildings");
     };
@@ -59,17 +75,13 @@ const AddCompanyModal = () => {
         { value: "OTHER", label: "📋 Other Services" }
     ];
 
+    const currencyOptions = [
+        { value: "EUR", label: "€ Euro" },
+        { value: "USD", label: "$ US Dollar" }
+    ];
 
-    const CustomSelect = ({
-                              name,
-                              value,
-                              onChange,
-                              options,
-                              placeholder,
-                              required,
-                              isOpen,
-                              setIsOpen
-                          }) => {
+    // Custom select component (reused for serviceType and currency)
+    const CustomSelect = ({ name, value, onChange, options, placeholder, required, isOpen, setIsOpen }) => {
         const selectedOption = options.find(opt => opt.value === value);
 
         return (
@@ -128,17 +140,8 @@ const AddCompanyModal = () => {
         );
     };
 
-
-    const BuildingCustomSelect = ({
-                                      name,
-                                      value,
-                                      onChange,
-                                      buildings,
-                                      placeholder,
-                                      required,
-                                      isOpen,
-                                      setIsOpen
-                                  }) => {
+    // Custom select for buildings (unchanged)
+    const BuildingCustomSelect = ({ name, value, onChange, buildings, placeholder, required, isOpen, setIsOpen }) => {
         const selectedBuilding = buildings?.find(b => b.id.toString() === value?.toString());
 
         return (
@@ -295,6 +298,44 @@ const AddCompanyModal = () => {
                                 required
                                 isOpen={buildingOpen}
                                 setIsOpen={setBuildingOpen}
+                            />
+                        </div>
+                    </div>
+
+                    {/* New row for price range */}
+                    <div className="add-company-form-row add-company-form-row--three-cols">
+                        <div className="add-company-form-group">
+                            <label>Min Price</label>
+                            <input
+                                type="number"
+                                name="minPrice"
+                                value={formData.minPrice}
+                                onChange={handleFormChange}
+                                step="0.01"
+                                placeholder="0.00"
+                            />
+                        </div>
+                        <div className="add-company-form-group">
+                            <label>Max Price</label>
+                            <input
+                                type="number"
+                                name="maxPrice"
+                                value={formData.maxPrice}
+                                onChange={handleFormChange}
+                                step="0.01"
+                                placeholder="0.00"
+                            />
+                        </div>
+                        <div className="add-company-form-group">
+                            <label>Currency</label>
+                            <CustomSelect
+                                name="currency"
+                                value={formData.currency}
+                                onChange={handleFormChange}
+                                options={currencyOptions}
+                                placeholder="Select currency"
+                                isOpen={currencyOpen}
+                                setIsOpen={setCurrencyOpen}
                             />
                         </div>
                     </div>

@@ -1,12 +1,25 @@
-import {useContext} from "react";
-import {ResidentCompanyContext} from "../../../context/resident/ResidentCompanyContext.jsx";
-import "./components-styles/CompanyModal.css"
-import {getServiceIcon, getServiceTypeDisplay} from "../../../utility/GetCompanyLogoUtility.jsx";
+import { useContext } from "react";
+import { ResidentCompanyContext } from "../../../context/resident/ResidentCompanyContext.jsx";
+import { getServiceIcon, getServiceTypeDisplay } from "../../../utility/GetCompanyLogoUtility.jsx";
+import "./components-styles/CompanyModal.css";
 
 const CompanyModal = () => {
     const { expandedCompany, expandedCompanyId, setExpandedCompanyId } = useContext(ResidentCompanyContext);
 
     if (!expandedCompanyId) return null;
+
+    const formatPriceRange = (priceRange) => {
+        if (!priceRange) return '';
+        const { minPrice, maxPrice, currencyType } = priceRange;
+        if (minPrice != null && maxPrice != null) {
+            return `${minPrice} ${currencyType || ''} - ${maxPrice} ${currencyType || ''}`;
+        } else if (minPrice != null) {
+            return `${minPrice} ${currencyType || ''}`;
+        } else if (maxPrice != null) {
+            return `${maxPrice} ${currencyType || ''}`;
+        }
+        return '';
+    };
 
     const renderStars = (rating) => {
         const stars = [];
@@ -78,6 +91,17 @@ const CompanyModal = () => {
                                 {expandedCompany.address}
                             </span>
                         </div>
+
+                        {/* Price Range Display */}
+                        {expandedCompany.priceRange && (expandedCompany.priceRange.minPrice != null || expandedCompany.priceRange.maxPrice != null) && (
+                            <div className="company-modal-info-item">
+                                <span className="company-modal-info-label">Price Range:</span>
+                                <span className="company-modal-info-value">
+                                    {formatPriceRange(expandedCompany.priceRange)}
+                                </span>
+                            </div>
+                        )}
+
                         <div className="company-modal-info-item">
                             <span className="company-modal-info-label">Overall Rating:</span>
                             <div className="company-modal-rating-display">
@@ -157,6 +181,6 @@ const CompanyModal = () => {
             </div>
         </div>
     );
-}
+};
 
 export default CompanyModal;

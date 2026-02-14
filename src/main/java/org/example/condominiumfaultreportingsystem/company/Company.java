@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.condominiumfaultreportingsystem.building.Building;
+import org.example.condominiumfaultreportingsystem.company.priceRange.PriceRange;
 import org.example.condominiumfaultreportingsystem.feedback.Feedback;
 import org.example.condominiumfaultreportingsystem.security.user.User;
 
@@ -53,6 +54,9 @@ public class Company {
 
     @Enumerated(EnumType.STRING)
     private ServiceType serviceType;
+
+    @Embedded
+    private PriceRange priceRange;
 
     @ManyToMany(mappedBy = "companies", fetch = FetchType.LAZY)
     private List<Building> buildings = new ArrayList<>();

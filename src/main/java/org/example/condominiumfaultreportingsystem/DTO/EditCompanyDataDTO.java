@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.condominiumfaultreportingsystem.company.ServiceType;
+import org.example.condominiumfaultreportingsystem.company.priceRange.PriceRange;
 
 @Data
 @NoArgsConstructor
@@ -20,6 +21,7 @@ public class EditCompanyDataDTO {
     private String companyAddress;
     private String phoneNumber;
     private ServiceType serviceType;
+    private PriceRange priceRange;
 
 
 }

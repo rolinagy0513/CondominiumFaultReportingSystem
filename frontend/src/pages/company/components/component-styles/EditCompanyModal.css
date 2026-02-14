@@ -127,6 +127,18 @@
     cursor: not-allowed;
 }
 
+/* Price row layout */
+.ecm-price-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.ecm-price-field {
+    margin-bottom: 0;
+}
+
 /* Responsive adjustments */
 @media (max-width: 600px) {
     .ecm-modal-content {
@@ -155,6 +167,11 @@
     .ecm-submit-button {
         width: 100%;
         padding: 12px;
+    }
+
+    .ecm-price-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
     }
 }
 

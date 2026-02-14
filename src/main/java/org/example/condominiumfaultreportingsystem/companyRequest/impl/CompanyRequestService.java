@@ -33,7 +33,6 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.plaf.OptionPaneUI;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -72,6 +71,10 @@ public class CompanyRequestService implements ICompanyRequestService {
                 .role(user.getRole())
                 .build();
 
+        if (companyRequestDTO.getPriceRange().getMaxPrice().compareTo(companyRequestDTO.getPriceRange().getMinPrice()) < 0){
+            throw new InvalidPriceRangeException();
+        }
+
         try{
 
             if (currentUser.getRole() == Role.COMPANY || currentUser.getRole() == Role.RESIDENT){
@@ -92,6 +95,7 @@ public class CompanyRequestService implements ICompanyRequestService {
                     .companyAddress(companyRequestDTO.getCompanyAddress())
                     .companyIntroduction(companyRequestDTO.getCompanyIntroduction())
                     .serviceType(companyRequestDTO.getServiceType())
+                    .priceRange(companyRequestDTO.getPriceRange())
                     .status(CompanyRequestStatus.PENDING)
                     .createdAt(LocalDateTime.now())
                     .build();
@@ -189,6 +193,7 @@ public class CompanyRequestService implements ICompanyRequestService {
                         .address(companyRequest.getCompanyAddress())
                         .status(companyRequest.getStatus())
                         .serviceType(companyRequest.getServiceType())
+                        .priceRange(companyRequest.getPriceRange())
                         .createdAt(companyRequest.getCreatedAt())
                         .build())
                 .toList();
@@ -211,6 +216,7 @@ public class CompanyRequestService implements ICompanyRequestService {
                 .address(companyRequest.getCompanyAddress())
                 .companyIntroduction(companyRequest.getCompanyIntroduction())
                 .serviceType(companyRequest.getServiceType())
+                .priceRange(companyRequest.getPriceRange())
                 .buildings(new ArrayList<>())
                 .user(user)
                 .build();
@@ -302,6 +308,7 @@ public class CompanyRequestService implements ICompanyRequestService {
                 .phoneNumber(companyRequest.getCompanyPhoneNumber())
                 .address(companyRequest.getCompanyAddress())
                 .serviceType(companyRequest.getServiceType())
+                .priceRange(companyRequest.getPriceRange())
                 .status(companyRequest.getStatus())
                 .createdAt(companyRequest.getCreatedAt())
                 .build();

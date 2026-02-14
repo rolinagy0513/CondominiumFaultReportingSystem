@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.condominiumfaultreportingsystem.company.ServiceType;
+import org.example.condominiumfaultreportingsystem.company.priceRange.PriceRange;
 
 import java.time.LocalDateTime;
 
@@ -35,6 +36,9 @@ public class CompanyRequest {
     private String companyAddress;
 
     private String companyIntroduction;
+
+    @Embedded
+    private PriceRange priceRange;
 
     @Enumerated(EnumType.STRING)
     private ServiceType serviceType;

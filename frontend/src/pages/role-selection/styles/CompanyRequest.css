@@ -470,6 +470,18 @@
     }
 }
 
+/* ===== NEW PRICE ROW STYLES ===== */
+.company-request-price-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.company-request-price-field {
+    margin-bottom: 0;
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
     .company-request-container {
@@ -532,6 +544,12 @@
     .company-request-pending-text {
         font-size: 1.1rem;
     }
+
+    /* Price row responsive */
+    .company-request-price-row {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -570,5 +588,10 @@
 
     .company-request-pending-hint {
         font-size: 0.9rem;
+    }
+
+    .company-request-price-row {
+        grid-template-columns: 1fr;
+        gap: 15px;
     }
 }

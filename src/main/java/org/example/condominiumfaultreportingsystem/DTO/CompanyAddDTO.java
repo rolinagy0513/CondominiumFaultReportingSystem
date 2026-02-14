@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.condominiumfaultreportingsystem.company.ServiceType;
+import org.example.condominiumfaultreportingsystem.company.priceRange.PriceRange;
 
 @Data
 @NoArgsConstructor
@@ -25,6 +26,8 @@ public class CompanyAddDTO {
     private String phoneNumber;
     private String address;
     private String introduction;
+
+    private PriceRange priceRange;
 
     @Enumerated(EnumType.STRING)
     private ServiceType serviceType;

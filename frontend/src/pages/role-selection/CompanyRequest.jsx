@@ -1,23 +1,23 @@
-import {useContext, useEffect, useState, useRef} from "react";
-import {UserContext} from "../../context/general/UserContext.jsx";
-import {useLocation, useNavigate} from "react-router-dom";
+import { useContext, useEffect, useState, useRef } from "react";
+import { UserContext } from "../../context/general/UserContext.jsx";
+import { useLocation, useNavigate } from "react-router-dom";
 import BuildingsList from "../admin/components/BuildingsList.jsx";
-import {CompanyRequestContext} from "../../context/role-selection/CompanyRequestContext.jsx";
+import { CompanyRequestContext } from "../../context/role-selection/CompanyRequestContext.jsx";
 import apiServices from "../../services/ApiServices.js";
 import websocketServices from "../../services/WebsocketServices.js";
 
-import "./styles/CompanyRequest.css"
+import "./styles/CompanyRequest.css";
 
 const CompanyRequest = () => {
     const AUTH_API_PATH = import.meta.env.VITE_API_BASE_AUTH_URL;
-    const BUILDING_API_PATH = import.meta.env.VITE_API_BASE_BUILDING_URL
+    const BUILDING_API_PATH = import.meta.env.VITE_API_BASE_BUILDING_URL;
     const SEND_COMPANY_REQUEST = import.meta.env.VITE_API_WEBSOCKET_COMPANY_REQUEST_SEND_DESTINATION;
     const SOCK_URL = import.meta.env.VITE_API_WEBSOCKET_BASE_URL;
 
-    const LOGOUT_URL = `${AUTH_API_PATH}/logout`
+    const LOGOUT_URL = `${AUTH_API_PATH}/logout`;
     const GET_ALL_BUILDING_URL = `${BUILDING_API_PATH}/getAll`;
 
-    const {authenticatedUserId} = useContext(UserContext);
+    const { authenticatedUserId } = useContext(UserContext);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -31,9 +31,14 @@ const CompanyRequest = () => {
         setIsConnected, serviceTypeOptions
     } = useContext(CompanyRequestContext);
 
-
     const subscriptionRef = useRef(null);
     const currentUserIdRef = useRef(null);
+
+    // Currency options
+    const currencyOptions = [
+        { value: "EUR", label: "Euro (€)" },
+        { value: "USD", label: "US Dollar ($)" }
+    ];
 
     useEffect(() => {
         getAllBuildings();
@@ -131,7 +136,7 @@ const CompanyRequest = () => {
         } catch (error) {
             console.error('Logout error:', error.message);
         }
-    }
+    };
 
     const getAllBuildings = async () => {
         try {
@@ -140,7 +145,7 @@ const CompanyRequest = () => {
         } catch (error) {
             console.error('Error fetching buildings:', error.message);
         }
-    }
+    };
 
     const handleSelectBuilding = (buildingId) => {
         const building = buildings.find(b => b.id === buildingId);
@@ -162,6 +167,7 @@ const CompanyRequest = () => {
 
         setRequestSent(true);
 
+        // Build request payload with nested priceRange
         const requestData = {
             buildingId: selectedBuilding.id,
             buildingNumber: selectedBuilding.buildingNumber,
@@ -171,7 +177,12 @@ const CompanyRequest = () => {
             companyPhoneNumber: formData.companyPhoneNumber,
             companyAddress: formData.companyAddress,
             companyIntroduction: formData.companyIntroduction,
-            serviceType: formData.serviceType
+            serviceType: formData.serviceType,
+            priceRange: {
+                minPrice: formData.minPrice ? parseFloat(formData.minPrice) : null,
+                maxPrice: formData.maxPrice ? parseFloat(formData.maxPrice) : null,
+                currencyType: formData.currency || null
+            }
         };
 
         const success = websocketServices.sendMessage(
@@ -188,7 +199,10 @@ const CompanyRequest = () => {
                 companyPhoneNumber: '',
                 companyAddress: '',
                 companyIntroduction: '',
-                serviceType: ''
+                serviceType: '',
+                minPrice: '',
+                maxPrice: '',
+                currency: ''
             });
 
         } else {
@@ -363,12 +377,13 @@ const CompanyRequest = () => {
                             <div className="company-request-form-group">
                                 <label htmlFor="companyIntroduction">Company Introduction *</label>
                                 <textarea
-                                id="companyIntroduction"
-                                name="companyIntroduction"
-                                onChange={handleInputChange}
-                                required
-                                disabled={requestSent}
-                                rows="3"
+                                    id="companyIntroduction"
+                                    name="companyIntroduction"
+                                    value={formData.companyIntroduction}
+                                    onChange={handleInputChange}
+                                    required
+                                    disabled={requestSent}
+                                    rows="3"
                                 />
                             </div>
 
@@ -382,6 +397,7 @@ const CompanyRequest = () => {
                                     required
                                     disabled={requestSent}
                                 >
+                                    <option value="">Select a service type</option>
                                     {serviceTypeOptions.map(option => (
                                         <option key={option.value} value={option.value}>
                                             {option.label}
@@ -390,10 +406,75 @@ const CompanyRequest = () => {
                                 </select>
                             </div>
 
+                            {/* Price Range Fields */}
+                            <div className="company-request-price-row">
+                                <div className="company-request-form-group company-request-price-field">
+                                    <label htmlFor="minPrice">Min Price *</label>
+                                    <input
+                                        type="number"
+                                        id="minPrice"
+                                        name="minPrice"
+                                        value={formData.minPrice || ''}
+                                        onChange={handleInputChange}
+                                        required
+                                        disabled={requestSent}
+                                        step="0.01"
+                                        min="0"
+                                        placeholder="0.00"
+                                    />
+                                </div>
+
+                                <div className="company-request-form-group company-request-price-field">
+                                    <label htmlFor="maxPrice">Max Price *</label>
+                                    <input
+                                        type="number"
+                                        id="maxPrice"
+                                        name="maxPrice"
+                                        value={formData.maxPrice || ''}
+                                        onChange={handleInputChange}
+                                        required
+                                        disabled={requestSent}
+                                        step="0.01"
+                                        min="0"
+                                        placeholder="0.00"
+                                    />
+                                </div>
+
+                                <div className="company-request-form-group company-request-price-field">
+                                    <label htmlFor="currency">Currency *</label>
+                                    <select
+                                        id="currency"
+                                        name="currency"
+                                        value={formData.currency || ''}
+                                        onChange={handleInputChange}
+                                        required
+                                        disabled={requestSent}
+                                    >
+                                        <option value="">Select currency</option>
+                                        {currencyOptions.map(option => (
+                                            <option key={option.value} value={option.value}>
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+
                             <button
                                 type="submit"
                                 className="company-request-submit-btn"
-                                disabled={requestSent || !formData.companyName || !formData.companyEmail || !formData.companyPhoneNumber || !formData.companyAddress || !formData.companyIntroduction || !formData.serviceType}
+                                disabled={
+                                    requestSent ||
+                                    !formData.companyName ||
+                                    !formData.companyEmail ||
+                                    !formData.companyPhoneNumber ||
+                                    !formData.companyAddress ||
+                                    !formData.companyIntroduction ||
+                                    !formData.serviceType ||
+                                    !formData.minPrice ||
+                                    !formData.maxPrice ||
+                                    !formData.currency
+                                }
                             >
                                 {requestSent ? "Request Sent" : "Submit Company Request"}
                             </button>
@@ -407,6 +488,6 @@ const CompanyRequest = () => {
             </div>
         </div>
     );
-}
+};
 
 export default CompanyRequest;

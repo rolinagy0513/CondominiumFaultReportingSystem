@@ -562,6 +562,23 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handles InvalidPriceRangeException.
+     * Returns HTTP 409 when the provided price range for a company is invalid
+     *
+     * @param ex the  thrown InvalidPriceRangeException
+     * @return ResponseEntity with ApiError and HTTP 409 status
+     */
+    @ExceptionHandler(InvalidPriceRangeException.class)
+    public ResponseEntity<ApiError> handleInvalidPriceRangeException(InvalidPriceRangeException ex) {
+        return new ResponseEntity<>(
+                new ApiError(ex.getMessage(),
+                        "The company with the provided id is not in any buildings.",
+                        LocalDateTime.now()),
+                HttpStatus.CONFLICT
+        );
+    }
+
+    /**
      * Handles DataAccessException from Spring Data.
      * Returns HTTP 500 for database operation failures with details.
      *

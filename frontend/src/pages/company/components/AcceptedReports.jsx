@@ -4,12 +4,15 @@ import { useReports } from "../../../hooks/useReports.js";
 import { truncateText } from "../../../utility/turncateText.js";
 import { CompanyPageContext } from "../../../context/company/CompanyPageContext.jsx";
 import { CompanyReportContext } from "../../../context/company/CompanyReportContext.jsx";
+
 import "./component-styles/AcceptedReports.css";
 
 const AcceptedReports = () => {
     const { companyId } = useContext(CompanyPageContext);
     const { acceptedReports, reportTypeIcons } = useContext(CompanyReportContext);
     const { completeReport } = useReports();
+
+    console.log(acceptedReports);
 
     return (
         <div className="company-page-accepted-reports-section">
@@ -24,7 +27,9 @@ const AcceptedReports = () => {
                         <div
                             key={index}
                             className={`company-page-accepted-report-item ${
-                                report.status === "CANCELLED" ? "company-page-accepted-report-item--cancelled" : ""
+                                report.reportStatus === "CANCELLED"
+                                    ? "company-page-accepted-report-item--cancelled"
+                                    : ""
                             }`}
                         >
                             <div className="company-page-accepted-report-header">
@@ -46,10 +51,14 @@ const AcceptedReports = () => {
                                 </p>
                             </div>
 
-                            {/* Cancelled banner – shown only if status is CANCELLED */}
-                            {report.status === "CANCELLED" && (
+                            {report.reportStatus === "CANCELLED" && (
                                 <div className="company-page-cancelled-banner">
                                     <span>⛔ This report has been cancelled.</span>
+                                    {report.systemMessage && (
+                                        <span className="company-page-system-message">
+                                            {report.systemMessage}
+                                        </span>
+                                    )}
                                 </div>
                             )}
 
@@ -66,12 +75,14 @@ const AcceptedReports = () => {
                                         : "Recently"}
                                 </span>
 
-                                <button
-                                    className="company-page-complete-btn"
-                                    onClick={() => completeReport(report.reportId, companyId, 10)}
-                                >
-                                    Complete Report
-                                </button>
+                                {report.reportStatus === "IN_PROGRESS" && (
+                                    <button
+                                        className="company-page-complete-btn"
+                                        onClick={() => completeReport(report.reportId, companyId, 10)}
+                                    >
+                                        Complete Report
+                                    </button>
+                                )}
                             </div>
                         </div>
                     ))}

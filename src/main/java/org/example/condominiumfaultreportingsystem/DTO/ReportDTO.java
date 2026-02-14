@@ -27,6 +27,8 @@ public class ReportDTO {
     private Integer roomNumber;
     private Integer floor;
 
+    private String systemMessage;
+
     private LocalDateTime createdAt;
 
     private ReportStatus reportStatus;

@@ -33,8 +33,13 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
             @Param("companyId") Long companyId, Pageable pageable
     );
 
-    @Query("SELECT r FROM Report r WHERE r.companyId = :companyId AND r.reportStatus = :status")
-    Optional<List<Report>> getAllAcceptedReportsForCompany(@Param("companyId") Long companyId, @Param("status") ReportStatus status);
+    @Query("SELECT r FROM Report r WHERE r.companyId = :companyId AND " +
+            "(r.reportStatus = :status1 OR r.reportStatus = :status2)")
+    Optional<List<Report>> getAllAcceptedReportsForCompany(
+            @Param("companyId") Long companyId,
+            @Param("status1") ReportStatus status1,
+            @Param("status2") ReportStatus status2
+    );
 
     @EntityGraph(attributePaths = "user")
     @Query("SELECT r FROM Report r WHERE r.id = :reportId")

@@ -268,7 +268,7 @@ public class ReportService implements IReportService{
     @Cacheable(value = "privateReports", key = "#companyId")
     public List<ReportDTO> getAcceptedReportsForCompany(Long companyId){
 
-        Optional<List<Report>> reportsOpt = reportRepository.getAllAcceptedReportsForCompany(companyId, ReportStatus.IN_PROGRESS);
+        Optional<List<Report>> reportsOpt = reportRepository.getAllAcceptedReportsForCompany(companyId, ReportStatus.IN_PROGRESS, ReportStatus.CANCELLED);
 
         if (reportsOpt.isEmpty()){
             throw new ReportNotFoundException();
@@ -449,6 +449,7 @@ public class ReportService implements IReportService{
                 .floor(report.getFloor())
                 .reportStatus(report.getReportStatus())
                 .reportType(report.getReportType())
+                .systemMessage(report.getSystemMessage())
                 .createdAt(report.getCreatedAt())
                 .build();
     }

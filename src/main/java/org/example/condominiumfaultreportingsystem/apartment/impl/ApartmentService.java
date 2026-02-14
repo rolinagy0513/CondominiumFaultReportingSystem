@@ -296,6 +296,7 @@ public class ApartmentService implements IApartmentService {
                         reports.forEach(report -> {
                             report.setSystemMessage("[SYSTEM] : The user has been removed from the system in the process.");
                             report.setReportStatus(ReportStatus.CANCELLED);
+                            cacheService.evictPrivateReportsCache(report.getCompanyId());
                         })
                 );
 

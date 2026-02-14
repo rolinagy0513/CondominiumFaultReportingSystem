@@ -25,6 +25,11 @@
     animation: modalSlideIn 0.3s ease;
 }
 
+.company-modal-info-item .company-modal-price-range {
+    font-weight: 600;
+    color: #059669;
+}
+
 @keyframes modalSlideIn {
     from {
         opacity: 0;

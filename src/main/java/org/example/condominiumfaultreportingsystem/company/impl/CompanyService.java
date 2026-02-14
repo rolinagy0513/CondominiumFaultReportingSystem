@@ -53,7 +53,6 @@ public class CompanyService implements ICompanyService {
     private final CacheService cacheService;
 
     private final ApplicationEventPublisher eventPublisher;
-    private final GroupRepository groupRepository;
 
     @Transactional
     public CompanyDTO addCompany(CompanyAddDTO addDTO){
@@ -66,6 +65,10 @@ public class CompanyService implements ICompanyService {
         Building building = buildingRepository.findById(addDTO.getBuildingId())
                 .orElseThrow(()-> new BuildingIsNotFoundException(addDTO.getBuildingId()));
 
+        if (addDTO.getPriceRange().getMaxPrice().compareTo(addDTO.getPriceRange().getMinPrice()) < 0) {
+            throw new InvalidPriceRangeException();
+        }
+
         userService.promoteUserToCompany(currentUser.getId(), requesterUser.getId());
 
         Company newCompany = Company.builder()
@@ -75,6 +78,7 @@ public class CompanyService implements ICompanyService {
                 .address(addDTO.getAddress())
                 .companyIntroduction(addDTO.getIntroduction())
                 .serviceType(addDTO.getServiceType())
+                .priceRange(addDTO.getPriceRange())
                 .buildings(new ArrayList<>())
                 .user(requesterUser)
                 .build();
@@ -149,6 +153,7 @@ public class CompanyService implements ICompanyService {
                 .address(company.getAddress())
                 .overallRating(company.getOverallRating())
                 .companyIntroduction(company.getCompanyIntroduction())
+                .priceRange(company.getPriceRange())
                 .serviceType(company.getServiceType())
                 .feedbacks(feedbackDTOList)
                 .build();
@@ -205,6 +210,10 @@ public class CompanyService implements ICompanyService {
 
         if (editCompanyDataDTO.getServiceType() != null){
             company.setServiceType(editCompanyDataDTO.getServiceType());
+        }
+
+        if (editCompanyDataDTO.getPriceRange() != null){
+            company.setPriceRange(editCompanyDataDTO.getPriceRange());
         }
 
         companyRepository.save(company);
@@ -368,6 +377,7 @@ public class CompanyService implements ICompanyService {
                 .address(company.getAddress())
                 .overallRating(company.getOverallRating())
                 .companyIntroduction(company.getCompanyIntroduction())
+                .priceRange(company.getPriceRange())
                 .serviceType(company.getServiceType())
                 .build();
 
