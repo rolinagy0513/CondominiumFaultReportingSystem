@@ -9,8 +9,9 @@ export const CompanyNotificationProvider = ({children}) => {
     const [isUserRemovedNotificationOpen, setIsUserRemovedNotificationOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isPrivateReportCameOpen, setIsPrivateReportCameOpen] = useState(false);
-    const[isFeedbackNotificationOpen, setIsFeedbackNotificationOpen] = useState(false);
+    const [isFeedbackNotificationOpen, setIsFeedbackNotificationOpen] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState([]);
+    const [isCompleteReportModalOpen, setIsCompleteReportModalOpen] = useState(false);
 
 
     return (
@@ -21,7 +22,8 @@ export const CompanyNotificationProvider = ({children}) => {
                 isUserRemovedNotificationOpen, setIsUserRemovedNotificationOpen,
                 isEditModalOpen, setIsEditModalOpen, isPrivateReportCameOpen, setIsPrivateReportCameOpen,
                 isFeedbackNotificationOpen, setIsFeedbackNotificationOpen,
-                notificationMessage, setNotificationMessage
+                notificationMessage, setNotificationMessage,
+                isCompleteReportModalOpen, setIsCompleteReportModalOpen
             }
         }>
             {children}

@@ -278,6 +278,7 @@ export const useCompanies = () =>{
             const response = await apiServices.post("/api/admin/company/addCompany",data)
         }catch (error){
             console.error(error.message);
+            throw error;
         }
 
     }

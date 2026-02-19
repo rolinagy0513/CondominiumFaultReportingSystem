@@ -28,6 +28,7 @@ import FeedbackNotification from "./components/FeedbackNotification.jsx";
 import "./style/CompanyPage.css"
 import EditCompanyModal from "./components/EditCompanyModal.jsx";
 import {CompanyNotificationContext} from "../../context/company/CompanyNotificationContext.jsx";
+import CompleteReportModal from "./components/CompleteReportModal.jsx";
 
 const CompanyPage = () => {
 
@@ -41,7 +42,6 @@ const CompanyPage = () => {
         usersCompany,
         authenticatedCompanyUserId,
         companyGroupIdentifier, companyId,
-        // isFeedbackNotificationOpen, setIsFeedbackNotificationOpen,
     } = useContext(CompanyPageContext);
 
     const {
@@ -51,6 +51,7 @@ const CompanyPage = () => {
         isEditModalOpen, isPrivateReportCameOpen, setIsPrivateReportCameOpen,
         setNotificationMessage, notificationMessage,
         isFeedbackNotificationOpen, setIsFeedbackNotificationOpen,
+        isCompleteReportModalOpen
     } = useContext(CompanyNotificationContext);
 
     const subscriptionRef = useRef(null);
@@ -290,6 +291,10 @@ const CompanyPage = () => {
 
             {isEditModalOpen &&(
                 <EditCompanyModal/>
+            )}
+
+            {isCompleteReportModalOpen &&(
+                <CompleteReportModal/>
             )}
 
         </div>

@@ -20,7 +20,6 @@ const AddCompanyModal = () => {
         address: '',
         introduction: '',
         serviceType: '',
-        // Price range fields
         minPrice: '',
         maxPrice: '',
         currency: '',
@@ -38,10 +37,9 @@ const AddCompanyModal = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Build the payload with nested priceRange
         const companyData = {
             userToAddEmail: formData.userToAddEmail,
             buildingId: formData.buildingId,
@@ -58,10 +56,17 @@ const AddCompanyModal = () => {
             }
         };
 
-        addCompany(companyData);
-        console.log("Form submitted:", companyData);
-        setAddCompanyModalOpen(false);
-        setCurrentView("buildings");
+        try {
+
+            await addCompany(companyData);
+            console.log("Form submitted:", companyData);
+            setAddCompanyModalOpen(false);
+            setCurrentView("buildings");
+
+        } catch (error) {
+
+            alert(`Failed to add company: ${error.message}`);
+        }
     };
 
     const serviceTypeOptions = [
@@ -80,7 +85,6 @@ const AddCompanyModal = () => {
         { value: "USD", label: "$ US Dollar" }
     ];
 
-    // Custom select component (reused for serviceType and currency)
     const CustomSelect = ({ name, value, onChange, options, placeholder, required, isOpen, setIsOpen }) => {
         const selectedOption = options.find(opt => opt.value === value);
 
@@ -140,7 +144,6 @@ const AddCompanyModal = () => {
         );
     };
 
-    // Custom select for buildings (unchanged)
     const BuildingCustomSelect = ({ name, value, onChange, buildings, placeholder, required, isOpen, setIsOpen }) => {
         const selectedBuilding = buildings?.find(b => b.id.toString() === value?.toString());
 

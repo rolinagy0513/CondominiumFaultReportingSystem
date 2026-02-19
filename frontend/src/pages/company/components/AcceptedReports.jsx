@@ -1,18 +1,25 @@
-import { useContext } from "react";
-import { FaFileAlt } from "react-icons/fa";
-import { useReports } from "../../../hooks/useReports.js";
-import { truncateText } from "../../../utility/turncateText.js";
-import { CompanyPageContext } from "../../../context/company/CompanyPageContext.jsx";
-import { CompanyReportContext } from "../../../context/company/CompanyReportContext.jsx";
+import {useContext} from "react";
+import {FaFileAlt} from "react-icons/fa";
+import {useReports} from "../../../hooks/useReports.js";
+import {truncateText} from "../../../utility/turncateText.js";
+import {CompanyPageContext} from "../../../context/company/CompanyPageContext.jsx";
+import {CompanyReportContext} from "../../../context/company/CompanyReportContext.jsx";
 
 import "./component-styles/AcceptedReports.css";
+import {CompanyNotificationContext} from "../../../context/company/CompanyNotificationContext.jsx";
 
 const AcceptedReports = () => {
     const { companyId } = useContext(CompanyPageContext);
-    const { acceptedReports, reportTypeIcons } = useContext(CompanyReportContext);
+    const { acceptedReports, reportTypeIcons, setReportToCompleteId} = useContext(CompanyReportContext);
+    const {setIsCompleteReportModalOpen} = useContext(CompanyNotificationContext);
     const { completeReport } = useReports();
 
     console.log(acceptedReports);
+
+    const onSubmission = (reportId) =>{
+        setReportToCompleteId(reportId);
+        setIsCompleteReportModalOpen(true);
+    }
 
     return (
         <div className="company-page-accepted-reports-section">
@@ -78,7 +85,7 @@ const AcceptedReports = () => {
                                 {report.reportStatus === "IN_PROGRESS" && (
                                     <button
                                         className="company-page-complete-btn"
-                                        onClick={() => completeReport(report.reportId, companyId, 10)}
+                                        onClick={() => onSubmission(report.reportId)}
                                     >
                                         Complete Report
                                     </button>

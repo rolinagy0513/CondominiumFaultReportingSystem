@@ -5,8 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.condominiumfaultreportingsystem.company.ServiceType;
+import org.example.condominiumfaultreportingsystem.company.priceRange.CurrencyType;
 
-import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -28,5 +28,6 @@ public class CompletedReportDataDTO {
     private Integer roomNumber;
 
     private Double cost;
+    private CurrencyType currencyType;
 
 }

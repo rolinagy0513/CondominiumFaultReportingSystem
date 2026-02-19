@@ -245,6 +245,7 @@ public class ReportService implements IReportService{
 
         report.setReportStatus(ReportStatus.DONE);
         report.setCost(cost);
+        report.setCurrencyType(company.getPriceRange().getCurrencyType());
         reportRepository.save(report);
 
         cacheService.evictPrivateReportsCache(companyId);
@@ -369,6 +370,7 @@ public class ReportService implements IReportService{
 
     }
 
+    @Transactional
     public List<CompletedReportDataDTO> getCompletedReportsForUser(){
 
         UserDTO currentUser = userService.getCurrentUser();
@@ -389,6 +391,7 @@ public class ReportService implements IReportService{
                 .roomNumber(report.getRoomNumber())
                 .floorNumber(report.getFloor())
                 .cost(report.getCost())
+                .currencyType(report.getCurrencyType())
                 .build()).toList();
 
     }

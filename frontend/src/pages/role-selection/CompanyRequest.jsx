@@ -165,9 +165,24 @@ const CompanyRequest = () => {
 
         if (!selectedBuilding || requestSent) return;
 
+        const minPrice = parseFloat(formData.minPrice);
+        const maxPrice = parseFloat(formData.maxPrice);
+
+        if (minPrice > maxPrice){
+            alert("❌ Error: Minimum price cannot be greater than maximum price. Please adjust the values.");
+
+            setFormData(prev => ({
+                ...prev,
+                minPrice: '',
+                maxPrice: ''
+            }));
+
+            return;
+
+        }
+
         setRequestSent(true);
 
-        // Build request payload with nested priceRange
         const requestData = {
             buildingId: selectedBuilding.id,
             buildingNumber: selectedBuilding.buildingNumber,

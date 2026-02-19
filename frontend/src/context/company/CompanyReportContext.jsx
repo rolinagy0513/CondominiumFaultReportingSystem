@@ -6,6 +6,7 @@ export const CompanyReportProvider = ({children}) => {
 
     const [privateReports, setPrivateReports] = useState([]);
     const [acceptedReports, setAcceptedReports] = useState([]);
+    const [reportToCompleteId, setReportToCompleteId] = useState(null);
 
 
     const reportTypeIcons = {
@@ -27,7 +28,8 @@ export const CompanyReportProvider = ({children}) => {
             {
                 privateReports, setPrivateReports,
                 acceptedReports, setAcceptedReports,
-                reportTypeIcons,
+                reportTypeIcons, reportToCompleteId,
+                setReportToCompleteId
             }
         }>
             {children}

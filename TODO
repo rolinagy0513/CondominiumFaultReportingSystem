@@ -1,8 +1,4 @@
  - Valahol van a kódban egy css bug ami miatt szarul írja ki a service type-ot az adminPanel-on a notification-nál és a felugró ablaknál is.
  - Admin panel company list ha túl hosszú az adrress akkor szarul néz ki a grid.
 
- - Le kell tesztelni hogy dobja e az exception-t a frontenden alert formájában ha a priceRange nél a max kissebb mint a min.
-
- - A price mindig nulla azt meg kell csinálni hogy a company tudjon complete report-nál megadni price-t
-
  - Meg kell csinálni az email-t is ami kiküldi majd a notification-t

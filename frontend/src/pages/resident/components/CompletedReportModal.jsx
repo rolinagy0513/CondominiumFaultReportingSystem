@@ -112,6 +112,22 @@ const CompletedReportModal = () => {
         }
     };
 
+    const renderCurrencyType = (currencyType) =>{
+
+        if (currencyType === "EUR"){
+            return "€"
+        }
+
+        if(currencyType === "USD"){
+            return "$"
+        }
+
+        else {
+            return "€"
+        }
+
+    }
+
     const handleProceedToPayment = (report) => {
         setReportId(report.reportId);
         setInvoiceNumber(`INV-${Date.now()}-${Math.floor(Math.random() * 1000)}`);
@@ -122,7 +138,6 @@ const CompletedReportModal = () => {
         setReportName(report.reportName);
         setCost(report.cost || 0);
 
-        // Navigate to payment page
         navigate("/payment-page");
     };
 
@@ -200,7 +215,7 @@ const CompletedReportModal = () => {
                                             <strong>Location:</strong> Floor: {report.floorNumber} Room: {report.roomNumber}
                                         </div>
                                         <div className="resident-page-complete-report-cost">
-                                            <strong>Cost:</strong> ${report.cost}
+                                            <strong>Cost:</strong> {renderCurrencyType(report.currencyType)}{report.cost}
                                         </div>
                                     </div>
 
