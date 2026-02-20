@@ -14,15 +14,16 @@ spring:
         format_sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+  sendgrid:
+    api-key: ${SENDGRID_API_KEY}
 
 application:
   security:
     jwt:
       secret-key: YOUR_SECRET_KEY
-      expiration: 86400000 # a day
+      expiration: 86400000 # 1 day
       refresh-token:
         expiration: 604800000 # 7 days
-
 
 admin:
   group:

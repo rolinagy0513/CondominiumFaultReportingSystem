@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .header { background-color: #1a365d; padding: 30px; text-align: center; }
+        .header h1 { color: #ffffff; margin: 0; font-size: 24px; }
+        .body { padding: 30px; color: #333333; }
+        .body h2 { color: #1a365d; }
+        .footer { background-color: #f4f4f4; text-align: center; padding: 15px; font-size: 12px; color: #999999; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Welcome to HomeLink!</h1>
+    </div>
+    <div class="body">
+        <h2>Hello, <span th:text="${name}"></span>!</h2>
+        <p>We're glad to have you on board. Your account has been successfully created.</p>
+        <p>You can now log in and start using our services which incldues reporting issues in the apartment coommunication between resident and company and paying for the services.</p>
+        <p>Best regards,<br/><strong>The HomeLink Team</strong></p>
+    </div>
+    <div class="footer">
+        <p>© 2026 HomeLink. All rights reserved.</p>
+    </div>
+</div>
+</body>
+</html>

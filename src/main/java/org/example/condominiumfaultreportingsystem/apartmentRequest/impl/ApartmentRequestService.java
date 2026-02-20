@@ -11,6 +11,7 @@ import org.example.condominiumfaultreportingsystem.cache.CacheService;
 import org.example.condominiumfaultreportingsystem.companyRequest.CompanyRequest;
 import org.example.condominiumfaultreportingsystem.companyRequest.CompanyRequestRepository;
 import org.example.condominiumfaultreportingsystem.companyRequest.CompanyRequestStatus;
+import org.example.condominiumfaultreportingsystem.email.EmailService;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.ApartmentRequestAcceptedEvent;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.ApartmentRequestRejectedEvent;
 import org.example.condominiumfaultreportingsystem.exception.*;
@@ -54,6 +55,7 @@ public class ApartmentRequestService implements IApartmentRequestService {
 
     private final SimpMessagingTemplate messagingTemplate;
     private final ApplicationEventPublisher eventPublisher;
+    private final EmailService emailService;
 
 
     @Value("${admin.group.name}")
@@ -226,6 +228,8 @@ public class ApartmentRequestService implements IApartmentRequestService {
         String buildingAddress = apartment.getBuilding().getAddress();
 
         GroupDTO usersGroup = groupService.addUserToGroup(buildingNumber,buildingAddress, userToAdd, apartment);
+
+        emailService.sendWelcomeEmail(userToAdd.getEmail(), userToAdd.getFirstname());
 
         userService.promoteUserToResident(currentAdmin.getId(),userToAdd.getId());
 
