@@ -239,7 +239,7 @@ const AddCompanyModal = () => {
                             />
                         </div>
                         <div className="add-company-form-group">
-                            <label>Contact Email *</label>
+                            <label>For the notifications*</label>
                             <input
                                 type="email"
                                 name="email"
@@ -305,7 +305,6 @@ const AddCompanyModal = () => {
                         </div>
                     </div>
 
-                    {/* New row for price range */}
                     <div className="add-company-form-row add-company-form-row--three-cols">
                         <div className="add-company-form-group">
                             <label>Min Price</label>

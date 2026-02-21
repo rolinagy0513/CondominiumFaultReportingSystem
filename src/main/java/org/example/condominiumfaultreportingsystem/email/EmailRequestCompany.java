@@ -1,6 +1,5 @@
 package org.example.condominiumfaultreportingsystem.email;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EmailRequest {
+public class EmailRequestCompany {
     private String to;
     private String name;
-//    private String body;
+    private String buildingAddress;
 }

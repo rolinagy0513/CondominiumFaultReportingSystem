@@ -136,7 +136,7 @@ const NotificationModal = ({
                                                 <strong>Company Name: </strong> {request.name}
                                                 <br />
                                                 <strong>Service Type: </strong>
-                                                <span className="service-type-badge">
+                                                <span className="ap-service-type-badge">
                                                     {getServiceTypeDisplay(request.serviceType)}
                                                 </span>
                                                 <br />

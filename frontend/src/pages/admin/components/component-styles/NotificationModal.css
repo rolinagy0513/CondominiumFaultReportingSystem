@@ -419,7 +419,7 @@
 }
 
 /* Service type badge styling */
-.service-type-badge {
+.ap-service-type-badge {
     display: inline-block;
     padding: 4px 8px;
     background: #e0e7ff;
@@ -497,7 +497,7 @@
         padding: 10px;
     }
 
-    .service-type-badge {
+    .ap-service-type-badge {
         font-size: 10px;
         padding: 3px 6px;
         margin-left: 6px;
@@ -536,7 +536,7 @@
         align-self: center;
     }
 
-    .service-type-badge {
+    .ap-service-type-badge {
         display: block;
         margin: 4px 0;
         width: fit-content;

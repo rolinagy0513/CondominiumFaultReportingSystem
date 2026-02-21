@@ -13,6 +13,7 @@ import org.example.condominiumfaultreportingsystem.company.Company;
 import org.example.condominiumfaultreportingsystem.company.CompanyRepository;
 import org.example.condominiumfaultreportingsystem.company.ServiceType;
 import org.example.condominiumfaultreportingsystem.companyRequest.*;
+import org.example.condominiumfaultreportingsystem.email.EmailService;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyRequestAcceptedEvent;
 import org.example.condominiumfaultreportingsystem.eventHandler.events.CompanyRequestRejectedEvent;
 import org.example.condominiumfaultreportingsystem.exception.*;
@@ -56,6 +57,7 @@ public class CompanyRequestService implements ICompanyRequestService {
     private final SimpMessagingTemplate messagingTemplate;
     private final ApplicationEventPublisher eventPublisher;
     private final ApartmentRequestRepository apartmentRequestRepository;
+    private final EmailService emailService;
 
     @Value("${admin.group.name}")
     private String adminGroupName;
@@ -238,6 +240,8 @@ public class CompanyRequestService implements ICompanyRequestService {
         cacheService.evictAllCompaniesCache();
 
         GroupDTO companyGroup = groupService.addUserToGroup(companyRequest.getBuildingNumber(), companyRequest.getBuildingAddress(), user, null);
+
+        emailService.sendWelcomeCompanyEmail(companyRequest.getCompanyEmail(), companyRequest.getCompanyName(), building.getAddress());
 
         eventPublisher.publishEvent(
                 new CompanyRequestAcceptedEvent(companyRequest, companyGroup)

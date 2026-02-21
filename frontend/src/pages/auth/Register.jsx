@@ -1,14 +1,17 @@
-import {useNavigate} from "react-router-dom";
 import React, {useContext, useEffect} from "react";
-import {FeedbackContext} from "../../context/general/FeedbackContext.jsx";
-import {AuthContext} from "../../context/auth/AuthContext.jsx";
-import apiServices from "../../services/ApiServices.js";
-import AuthForm from "./components/AuthForm.jsx";
+import {useNavigate} from "react-router-dom";
 
 import registerImage from "../../assets/building.png";
 
-import "./styles/Register.css"
+import {FeedbackContext} from "../../context/general/FeedbackContext.jsx";
+import {AuthContext} from "../../context/auth/AuthContext.jsx";
 import {UserContext} from "../../context/general/UserContext.jsx";
+
+import apiServices from "../../services/ApiServices.js";
+
+import AuthForm from "./components/AuthForm.jsx";
+
+import "./styles/Register.css"
 
 const Register = () =>{
 
@@ -21,6 +24,11 @@ const Register = () =>{
     const { message, setMessage, isLoading, setIsLoading } = useContext(FeedbackContext);
     const { registerFormData, setRegisterFormData} = useContext(AuthContext);
     const { setAuthenticatedUserId, setAuthenticatedUserName } = useContext(UserContext);
+
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.(com|org|net|edu|gov|mil|biz|info|io|co|uk|de|fr|es|it|nl|ru|br|au|jp|cn|in|me|tv|us|ca|mx)$/i;
+        return emailRegex.test(email);
+    };
 
     const resetForm = () =>{
         setRegisterFormData({
@@ -50,6 +58,12 @@ const Register = () =>{
         e.preventDefault();
         setMessage('');
         setIsLoading(true)
+
+        if (!validateEmail(registerFormData.email)) {
+            setMessage("Please enter a valid email address (e.g., name@domain.com)");
+            setIsLoading(false);
+            return;
+        }
 
         try{
 

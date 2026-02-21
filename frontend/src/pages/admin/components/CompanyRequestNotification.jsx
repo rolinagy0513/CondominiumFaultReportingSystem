@@ -20,7 +20,7 @@ const CompanyRequestNotification = ({ notification, onClose }) => {
                     </div>
                     <div className="notification-title-section">
                         <h4 className="notification-title">New Company Request</h4>
-                        <span className="service-type-badge">
+                        <span className="apcr-service-type-badge">
                             {getServiceTypeDisplay(notification.serviceType)}
                         </span>
                     </div>

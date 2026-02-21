@@ -347,6 +347,7 @@ const CompanyRequest = () => {
                                     onChange={handleInputChange}
                                     required
                                     disabled={requestSent}
+                                    placeholder="The name of your company"
                                 />
                             </div>
 
@@ -360,6 +361,7 @@ const CompanyRequest = () => {
                                     onChange={handleInputChange}
                                     required
                                     disabled={requestSent}
+                                    placeholder="Notifications will be sent here"
                                 />
                             </div>
 

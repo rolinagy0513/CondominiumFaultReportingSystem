@@ -20,9 +20,15 @@ public class EmailController {
 //        return ResponseEntity.ok("Email sent successfully!");
 //    }
 
-    @PostMapping("/send-welcome")
-    public ResponseEntity<String> sendWelcomeEmail(@RequestBody EmailRequest request) {
-        emailService.sendWelcomeEmail(request.getTo(), request.getName());
+    @PostMapping("/send-welcomeResident")
+    public ResponseEntity<String> sendWelcomeResidentEmail(@RequestBody EmailRequestResident request) {
+        emailService.sendWelcomeResidentEmail(request.getTo(), request.getName(), request.getBuildingAddress(), request.getApartmentNumber());
+        return ResponseEntity.ok("Welcome email sent successfully!");
+    }
+
+    @PostMapping("/send-welcomeCompany")
+    public ResponseEntity<String> sendWelcomeCompanyEmail(@RequestBody EmailRequestCompany request) {
+        emailService.sendWelcomeCompanyEmail(request.getTo(), request.getName(), request.getBuildingAddress());
         return ResponseEntity.ok("Welcome email sent successfully!");
     }
 

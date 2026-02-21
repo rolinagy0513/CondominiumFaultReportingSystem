@@ -229,7 +229,7 @@ public class ApartmentRequestService implements IApartmentRequestService {
 
         GroupDTO usersGroup = groupService.addUserToGroup(buildingNumber,buildingAddress, userToAdd, apartment);
 
-        emailService.sendWelcomeEmail(userToAdd.getEmail(), userToAdd.getFirstname());
+        emailService.sendWelcomeResidentEmail(userToAdd.getEmail(), userToAdd.getFirstname(), buildingAddress, apartment.getApartmentNumber());
 
         userService.promoteUserToResident(currentAdmin.getId(),userToAdd.getId());
 

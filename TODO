@@ -1,7 +1,5 @@
- - Az email sending megy de meg kell csinálni am ezmail kinézetet valami jobbra. Kell több fajta az alapján hogy company vagy resident jön.
- - A regisztrációnál meg kell csinálni, hogy az automatiksuan hozzáadott user-ek mellett is lehessen regisztrálni
- - A regisztrációnál check-el ni kell, hogy biztos hogy @gmail legyen vagy amit a sendgrid elfogad.
- - Meg kell csinálni azt is, hogy ha elfelejti a jelszavat valaki akkor hogyann legyen
+ - Meg kell csinálni azt is, hogy ha elfelejti a jelszavat valaki akkor hogyan legyen
+    - Kell egy új component aminek az url-jét be lehet admin majd a thymeleaf-os html-be és az email.ben lehet majd redirectelni
+    - Valami más backend művelet fog kelleni, hogy ne keljen megadni a régi jelszavat.
 
- - Valahol van a kódban egy css bug ami miatt szarul írja ki a service type-ot az adminPanel-on a notification-nál és a felugró ablaknál is.
- - Admin panel company list ha túl hosszú az adrress akkor szarul néz ki a grid.
+ - Email kell akkor is ha manuálisan excellel adjuk hozzá usert
