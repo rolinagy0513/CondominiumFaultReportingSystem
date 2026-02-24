@@ -10,6 +10,7 @@ import org.example.condominiumfaultreportingsystem.security.token.Token;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -58,6 +59,11 @@ public class User implements UserDetails {
 
   @OneToMany(mappedBy = "user")
   private List<Token> tokens;
+
+  private LocalDateTime tempTokenExpiryDate;
+
+  private String resetToken;
+  private LocalDateTime resetTokenExpiration;
 
   @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
   private List<Apartment> ownedApartments = new ArrayList<>();

@@ -21,7 +21,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   List<User> findAllByIdNot(Long id);
 
-    boolean existsByEmail(String email);
+  boolean existsByEmail(String email);
 
   Long company(Company company);
+
+  @Query("SELECT u FROM User u WHERE u.resetToken = :resetToken")
+  Optional<User> findByResetTokenOpt(@Param("resetToken") String resetToken);
+
 }

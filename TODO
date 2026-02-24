@@ -1,5 +1,7 @@
- - Meg kell csinálni azt is, hogy ha elfelejti a jelszavat valaki akkor hogyan legyen
-    - Kell egy új component aminek az url-jét be lehet admin majd a thymeleaf-os html-be és az email.ben lehet majd redirectelni
-    - Valami más backend művelet fog kelleni, hogy ne keljen megadni a régi jelszavat.
+ - Kell a method hoz a user service-be egy exception arra az esetre ha invalid a token (reset)
+ - Kell maga az email is.
+ - Kell a frontend impl (link email input modal vagy valami, a reset page)
 
- - Email kell akkor is ha manuálisan excellel adjuk hozzá usert
+ - Meg kell csinálni azt is, hogy ha elfelejti a jelszavat valaki akkor hogyan legyen
+   - User - Email sender - Tokent elküldi az emailben a limkel eggyütt a reset-hez
+   - A method checkeli ezt a már db-be mentett tokent és ha jó akkor reseteli

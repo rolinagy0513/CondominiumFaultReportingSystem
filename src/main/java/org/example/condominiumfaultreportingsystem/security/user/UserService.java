@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.LongFunction;
 import java.util.stream.Collectors;
 
@@ -161,6 +162,26 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         user.setMustChangePassword(false);
+
+        userRepository.save(user);
+    }
+
+    public void forgotPassword(ForgotPasswordRequest forgotPasswordRequest){
+
+        Optional<User> userOpt = userRepository.findByResetTokenOpt(forgotPasswordRequest.getResetToken());
+
+//        if (userOpt.isEmpty()){
+//            throw new UserNotFoundException()
+//        }
+
+        User user  = userOpt.get();
+
+        if (!forgotPasswordRequest.getNewPassword().equals(forgotPasswordRequest.getConfirmationPassword())) {
+            throw new IllegalStateException("Password are not the same");
+        }
+
+        user.setPassword(passwordEncoder.encode(forgotPasswordRequest.getNewPassword()));
+        user.setResetToken(null);
 
         userRepository.save(user);
     }

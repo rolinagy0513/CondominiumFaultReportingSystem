@@ -11,6 +11,6 @@ import org.example.condominiumfaultreportingsystem.security.user.User;
 public class UserRegistrationResult {
 
     private User user;
-    private String plainPassword;
+    private String plainToken;
 
 }

@@ -579,6 +579,23 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handles EmailLimitReachedException.
+     * Returns HTTP 409 when the daily email limit has been reached.
+     *
+     * @param ex the  thrown EmailLimitReachedException
+     * @return ResponseEntity with ApiError and HTTP 409 status
+     */
+    @ExceptionHandler(EmailLimitReachedException.class)
+    public ResponseEntity<ApiError> handleInvalidPriceRangeException(EmailLimitReachedException ex) {
+        return new ResponseEntity<>(
+                new ApiError(ex.getMessage(),
+                        "You have reached the daily emil limit.",
+                        LocalDateTime.now()),
+                HttpStatus.CONFLICT
+        );
+    }
+
+    /**
      * Handles DataAccessException from Spring Data.
      * Returns HTTP 500 for database operation failures with details.
      *

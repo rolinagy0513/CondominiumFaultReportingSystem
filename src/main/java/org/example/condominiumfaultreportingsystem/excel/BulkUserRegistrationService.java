@@ -12,19 +12,25 @@ import org.example.condominiumfaultreportingsystem.apartment.ApartmentStatus;
 import org.example.condominiumfaultreportingsystem.building.Building;
 import org.example.condominiumfaultreportingsystem.building.BuildingRepository;
 import org.example.condominiumfaultreportingsystem.cache.CacheService;
+import org.example.condominiumfaultreportingsystem.email.TemporaryPasswordRecipient;
+import org.example.condominiumfaultreportingsystem.eventHandler.events.TemporaryPasswordEmailSenderEvent;
 import org.example.condominiumfaultreportingsystem.exception.ApartmentNotFoundException;
 import org.example.condominiumfaultreportingsystem.group.impl.GroupService;
 import org.example.condominiumfaultreportingsystem.report.ReportRepository;
 import org.example.condominiumfaultreportingsystem.security.user.Role;
 import org.example.condominiumfaultreportingsystem.security.user.User;
 import org.example.condominiumfaultreportingsystem.security.user.UserRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,7 +46,8 @@ public class BulkUserRegistrationService {
     private final ExcelParserService excelParserService;
     private final GroupService groupService;
     private final CacheService cacheService;
-    private final ReportRepository reportRepository;
+
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public ExcelUploadResultDTO processExcelUpload(MultipartFile file) throws IOException {
@@ -49,9 +56,11 @@ public class BulkUserRegistrationService {
 
         List<UserDTO> createdUsers = new ArrayList<>();
         List<ExcelUploadErrorDTO> errors = new ArrayList<>();
+        List<TemporaryPasswordRecipient> recipients = new ArrayList<>();
 
         int successCount = 0;
         int failCount = 0;
+        String buildingAddress = null;
 
         for (ExcelUploadDTO data : uploadData) {
             try {
@@ -71,9 +80,15 @@ public class BulkUserRegistrationService {
                 UserRegistrationResult userData = registerUser(data);
                 assignUserToApartment(userData.getUser(), data);
 
-                log.info("THIS IS THE NEEDED LOG");
-                log.info("Generated password for {}: {}", userData.getUser().getEmail(), userData.getPlainPassword());
-                log.info("END OF THE NEEDED LOG");
+                if (buildingAddress == null && data.getBuildingAddress() != null) {
+                    buildingAddress = data.getBuildingAddress();
+                }
+
+                recipients.add(new TemporaryPasswordRecipient(
+                        userData.getUser().getEmail(),
+                        userData.getUser().getFirstname(),
+                        userData.getPlainToken()
+                ));
 
                 createdUsers.add(mapToUserDTO(userData.getUser()));
                 successCount++;
@@ -88,6 +103,11 @@ public class BulkUserRegistrationService {
                         .build());
                 failCount++;
             }
+        }
+
+        if (!recipients.isEmpty() && buildingAddress != null) {
+            eventPublisher.publishEvent(new TemporaryPasswordEmailSenderEvent(buildingAddress, recipients));
+            log.info("Published email event for {} successful registrations", recipients.size());
         }
 
         return ExcelUploadResultDTO.builder()
@@ -173,16 +193,16 @@ public class BulkUserRegistrationService {
 
     private UserRegistrationResult registerUser(ExcelUploadDTO data) {
 
-        String plainPassword = data.getPassword() != null ?
-                data.getPassword() : generateDefaultPassword();
+        String plainToken = generateSecureToken();
 
         User user = User.builder()
                 .firstname(data.getFirstname())
                 .lastname(data.getLastname())
                 .email(data.getEmail())
-                .password(passwordEncoder.encode(plainPassword))
+                .password(passwordEncoder.encode(plainToken))
                 .mustChangePassword(true)
                 .role(Role.RESIDENT)
+                .tempTokenExpiryDate(LocalDateTime.now().plusHours(48))
                 .groups(new ArrayList<>())
                 .build();
 
@@ -190,7 +210,7 @@ public class BulkUserRegistrationService {
 
         return UserRegistrationResult.builder()
                 .user(user)
-                .plainPassword(plainPassword)
+                .plainToken(plainToken)
                 .build();
     }
 
@@ -233,15 +253,17 @@ public class BulkUserRegistrationService {
         return email.matches(emailRegex);
     }
 
-    private String generateDefaultPassword() {
-        return "TempPassword" + System.currentTimeMillis();
-    }
-
     private UserDTO mapToUserDTO(User user) {
         return UserDTO.builder()
                 .id(user.getId())
                 .userName(user.getName())
                 .build();
+    }
+
+    private String generateSecureToken() {
+        byte[] bytes = new byte[16];
+        new SecureRandom().nextBytes(bytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
 
     @Data
