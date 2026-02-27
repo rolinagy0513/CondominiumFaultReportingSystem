@@ -2,6 +2,7 @@ package org.example.condominiumfaultreportingsystem.security.user;
 
 import lombok.RequiredArgsConstructor;
 import org.example.condominiumfaultreportingsystem.DTO.UserDTO;
+import org.example.condominiumfaultreportingsystem.DTO.UserEmailDTO;
 import org.example.condominiumfaultreportingsystem.DTO.UserWithRoleDTO;
 import org.example.condominiumfaultreportingsystem.company.Company;
 import org.example.condominiumfaultreportingsystem.exception.*;
@@ -14,6 +15,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.LongFunction;
@@ -136,6 +140,29 @@ public class UserService {
     }
 
     /**
+     * Validates a password against the confirmation password and strength requirements.
+     *
+     * @param password        The password to validate.
+     * @param confirmPassword The confirmation password to match against.
+     * @return A validation error message if invalid; otherwise {@code null}.
+     */
+    public String validatePassword(String password, String confirmPassword) {
+        if (!password.equals(confirmPassword)) {
+            return "Passwords do not match.";
+        }
+
+        if (password.length() < 8) {
+            return "Password must be at least 8 characters long.";
+        }
+
+        if (!password.matches(".*\\d.*")) {
+            return "Password must contain at least one number.";
+        }
+
+        return null;
+    }
+
+    /**
      * Changes the password of the authenticated user after validating the current password
      * and confirming that the new password matches the confirmation.
      *
@@ -146,6 +173,10 @@ public class UserService {
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
 
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+
+        if (user.isMustChangePassword()) {
+            validateTempToken(user);
+        }
 
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
             throw new IllegalStateException("Wrong password");
@@ -161,30 +192,77 @@ public class UserService {
         }
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.setTempTokenExpiryDate(null);
         user.setMustChangePassword(false);
 
         userRepository.save(user);
     }
 
+    @Transactional
+    public UserEmailDTO emailValidation(String usersEmail){
+
+        User user  = userRepository.findByEmail(usersEmail)
+                .orElseThrow(() -> new UserNotFoundException(usersEmail));
+
+        String resetToken = generateSecureToken();
+
+        user.setResetToken(resetToken);
+        user.setResetTokenExpiration(LocalDateTime.now().plusHours(1));
+
+        userRepository.save(user);
+
+        return UserEmailDTO.builder()
+                .usersEmail(usersEmail)
+                .resetToken(resetToken)
+                .build();
+
+    }
+
+    public void validateTempToken(User user) {
+        if (user.getTempTokenExpiryDate() == null ||
+                user.getTempTokenExpiryDate().isBefore(LocalDateTime.now())) {
+
+            user.setMustChangePassword(false);
+            user.setTempTokenExpiryDate(null);
+            userRepository.save(user);
+
+            throw new InvalidTempTokenException();
+        }
+    }
+
+    public User validateResetToken(String resetToken) {
+        User user = userRepository.findByResetTokenOpt(resetToken)
+                .orElseThrow(InvalidResetTokenException::new);
+
+        if (user.getResetTokenExpiration() == null ||
+                user.getResetTokenExpiration().isBefore(LocalDateTime.now())) {
+
+            user.setResetToken(null);
+            user.setResetTokenExpiration(null);
+            userRepository.save(user);
+
+            throw new InvalidResetTokenException();
+        }
+
+        return user;
+    }
+
+    @Transactional
     public void forgotPassword(ForgotPasswordRequest forgotPasswordRequest){
 
-        Optional<User> userOpt = userRepository.findByResetTokenOpt(forgotPasswordRequest.getResetToken());
-
-//        if (userOpt.isEmpty()){
-//            throw new UserNotFoundException()
-//        }
-
-        User user  = userOpt.get();
+        User user = validateResetToken(forgotPasswordRequest.getResetToken());
 
         if (!forgotPasswordRequest.getNewPassword().equals(forgotPasswordRequest.getConfirmationPassword())) {
             throw new IllegalStateException("Password are not the same");
         }
 
         user.setPassword(passwordEncoder.encode(forgotPasswordRequest.getNewPassword()));
+        user.setResetTokenExpiration(null);
         user.setResetToken(null);
 
         userRepository.save(user);
     }
+
 
     @Transactional(propagation = Propagation.MANDATORY)
     public void promoteUserToCompany(Long currentUserId, Long userToUpdateId) {
@@ -256,26 +334,10 @@ public class UserService {
 
     }
 
-    /**
-     * Validates a password against the confirmation password and strength requirements.
-     *
-     * @param password        The password to validate.
-     * @param confirmPassword The confirmation password to match against.
-     * @return A validation error message if invalid; otherwise {@code null}.
-     */
-    public String validatePassword(String password, String confirmPassword) {
-        if (!password.equals(confirmPassword)) {
-            return "Passwords do not match.";
-        }
-
-        if (password.length() < 8) {
-            return "Password must be at least 8 characters long.";
-        }
-
-        if (!password.matches(".*\\d.*")) {
-            return "Password must contain at least one number.";
-        }
-
-        return null;
+    private String generateSecureToken() {
+        byte[] bytes = new byte[16];
+        new SecureRandom().nextBytes(bytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
+
 }

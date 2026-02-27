@@ -596,6 +596,40 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handles InvalidResetTokenException.
+     * Returns HTTP 409 when the reset token is invalid or expired.
+     *
+     * @param ex the  thrown InvalidResetTokenException
+     * @return ResponseEntity with ApiError and HTTP 409 status
+     */
+    @ExceptionHandler(InvalidResetTokenException.class)
+    public ResponseEntity<ApiError> handleInvalidResetTokenException(InvalidResetTokenException ex) {
+        return new ResponseEntity<>(
+                new ApiError(ex.getMessage(),
+                        "The reset token for the forgot password is either expired or invalid.",
+                        LocalDateTime.now()),
+                HttpStatus.CONFLICT
+        );
+    }
+
+    /**
+     * Handles InvalidTempTokenException.
+     * Returns HTTP 409 when the temp token is invalid or expired.
+     *
+     * @param ex the  thrown InvalidTempTokenException
+     * @return ResponseEntity with ApiError and HTTP 409 status
+     */
+    @ExceptionHandler(InvalidTempTokenException.class)
+    public ResponseEntity<ApiError> handleInvalidResetTokenException(InvalidTempTokenException ex) {
+        return new ResponseEntity<>(
+                new ApiError(ex.getMessage(),
+                        "The temp token for the forgot password is either expired or invalid.",
+                        LocalDateTime.now()),
+                HttpStatus.CONFLICT
+        );
+    }
+
+    /**
      * Handles DataAccessException from Spring Data.
      * Returns HTTP 500 for database operation failures with details.
      *

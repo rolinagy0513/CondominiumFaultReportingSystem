@@ -2,6 +2,7 @@ package org.example.condominiumfaultreportingsystem.security.user;
 
 import lombok.RequiredArgsConstructor;
 import org.example.condominiumfaultreportingsystem.DTO.UserDTO;
+import org.example.condominiumfaultreportingsystem.DTO.UserEmailDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,6 +62,21 @@ public class UserController {
     @GetMapping("/me")
     public UserDTO getAuthenticatedUser(){
         return service.getCurrentUser();
+    }
+
+
+    @PostMapping("/emailValidation")
+    public UserEmailDTO emailValidation(
+            @RequestBody String usersEmail
+    ){
+        return service.emailValidation(usersEmail);
+    }
+
+    @PostMapping("/forgotPassword")
+    public void forgotPassword(
+            @RequestBody ForgotPasswordRequest forgotPasswordRequest
+    ){
+        service.forgotPassword(forgotPasswordRequest);
     }
 
 }
