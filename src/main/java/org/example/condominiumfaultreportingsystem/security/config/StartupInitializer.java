@@ -20,7 +20,7 @@ public class StartupInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        Optional<Group> group = groupRepository.findByGroupName("Admins");
+        Optional<Group> group = groupRepository.findByGroupName(adminGroupName);
 
         if (group.isEmpty()){
             Group newGroup = Group.builder()

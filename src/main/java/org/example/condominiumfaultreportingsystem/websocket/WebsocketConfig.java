@@ -22,7 +22,7 @@ import java.util.List;
 @Configuration
 @EnableWebSocketMessageBroker
 @RequiredArgsConstructor
-public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
+public class    WebsocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final AuthHandshakeInterceptor authHandshakeInterceptor;
 

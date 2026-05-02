@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Building {
+public class    Building {
 
     @Id
     @GeneratedValue

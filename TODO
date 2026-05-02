@@ -1,5 +1,4 @@
- - Email ami küldi a reset tokent, A frontend page ahova vezet majd az email =es ahol fogmom változtatni a jelszavat.
-
- - Meg kell csinálni azt is, hogy ha elfelejti a jelszavat valaki akkor hogyan legyen
-   - User - Email sender - Tokent elküldi az emailben a limkel eggyütt a reset-hez
-   - A method checkeli ezt a már db-be mentett tokent és ha jó akkor reseteli
+ - Le kell tesztelni hogy a többi email is megy illetve kell csinálni több fajta emailt pl:
+    - Ha kész a bejelentésük
+    - Ha a jelszó sikeresen megváltozott
+    - Ha kibaszták a rendszerből

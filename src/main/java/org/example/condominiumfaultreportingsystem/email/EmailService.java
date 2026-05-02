@@ -129,5 +129,32 @@ public class EmailService {
         }
     }
 
+    public void sendPasswordResetEmail(String toEmail, String name, String resetToken) {
+
+        Context context = new Context();
+        context.setVariable("name", name);
+        context.setVariable("resetToken", resetToken);
+        context.setVariable("resetLink", "\"http://localhost:5174/reset-password?token=\"" + resetToken);
+        String htmlBody = templateEngine.process("email/resetPassword", context);
+
+        Email from = new Email(FROM_EMAIL);
+        Email to = new Email(toEmail);
+        Content content = new Content("text/html", htmlBody);
+        Mail mail = new Mail(from, "Reset your HomeLink password", to, content);
+
+        Request request = new Request();
+        try {
+            request.setMethod(Method.POST);
+            request.setEndpoint("mail/send");
+            request.setBody(mail.build());
+            Response response = sendGrid.api(request);
+            if (response.getStatusCode() >= 400) {
+                throw new RuntimeException("Failed to send reset email. Status: " + response.getStatusCode());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error sending reset email via SendGrid", e);
+        }
+    }
+
 
 }

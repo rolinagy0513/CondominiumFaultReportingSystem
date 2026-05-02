@@ -39,7 +39,7 @@ public class User implements UserDetails {
           name = "users_generator",
           sequenceName = "users_id_seq",
           allocationSize = 1,
-          initialValue = 22
+          initialValue = 13
   )
   private Long id;
 

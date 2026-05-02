@@ -229,7 +229,12 @@ public class ApartmentRequestService implements IApartmentRequestService {
 
         GroupDTO usersGroup = groupService.addUserToGroup(buildingNumber,buildingAddress, userToAdd, apartment);
 
-        emailService.sendWelcomeResidentEmail(userToAdd.getEmail(), userToAdd.getFirstname(), buildingAddress, apartment.getApartmentNumber());
+        try{
+            emailService.sendWelcomeResidentEmail(userToAdd.getEmail(), userToAdd.getFirstname(), buildingAddress, apartment.getApartmentNumber());
+        }catch (Exception e){
+            log.warn("Failed to send welcome email to {} — continuing anyway. Reason: {}",
+                    userToAdd.getEmail(), e.getMessage());
+        }
 
         userService.promoteUserToResident(currentAdmin.getId(),userToAdd.getId());
 

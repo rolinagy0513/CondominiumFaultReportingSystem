@@ -1,6 +1,7 @@
 package org.example.condominiumfaultreportingsystem.companyRequest.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.condominiumfaultreportingsystem.DTO.*;
 import org.example.condominiumfaultreportingsystem.apartmentRequest.ApartmentRequest;
 import org.example.condominiumfaultreportingsystem.apartmentRequest.ApartmentRequestRepository;
@@ -40,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CompanyRequestService implements ICompanyRequestService {
@@ -241,7 +243,12 @@ public class CompanyRequestService implements ICompanyRequestService {
 
         GroupDTO companyGroup = groupService.addUserToGroup(companyRequest.getBuildingNumber(), companyRequest.getBuildingAddress(), user, null);
 
-        emailService.sendWelcomeCompanyEmail(companyRequest.getCompanyEmail(), companyRequest.getCompanyName(), building.getAddress());
+        try{
+            emailService.sendWelcomeCompanyEmail(companyRequest.getCompanyEmail(), companyRequest.getCompanyName(), building.getAddress());
+        }catch (Exception e){
+            log.warn("Failed to send welcome email to {} — continuing anyway. Reason: {}",
+                    user.getEmail(), e.getMessage());
+        }
 
         eventPublisher.publishEvent(
                 new CompanyRequestAcceptedEvent(companyRequest, companyGroup)
